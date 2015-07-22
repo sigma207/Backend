@@ -1,6 +1,7 @@
 package com.jelly.test;
 
 import com.jelly.service.BulletinService;
+import com.jelly.thread.RunCache;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -13,9 +14,13 @@ public class CacheTest {
 
         BulletinService service = (BulletinService)ctx.getBean("bulletinServiceBean");
 
-        System.out.println("first query");
-        service.getBulletinList();
-        System.out.println("second query");
-        service.getBulletinList();
+        Thread t = new Thread(new RunCache(service));
+        t.start();
+//        System.out.println("first query");
+//        service.getBulletinList();
+//        System.out.println("second query");
+//        service.getBulletinList();
     }
+
+
 }

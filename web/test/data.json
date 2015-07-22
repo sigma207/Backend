@@ -1,0 +1,218 @@
+{
+  "roleData": [
+    {
+      "id": "admin",
+      "name": "管理者"
+    }
+  ],
+  "permissionData": [
+    {
+      "label": "權限管理",
+      "inode": true,
+      "open": true,
+      "icon": "folder",
+      "branch": [
+        {
+          "id":"permission",
+          "label":"權限設定",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "id":"role",
+          "label":"角色設定",
+          "inode":false,
+          "icon":"file"
+        }
+      ]
+    },
+
+    {
+      "label": "商品管理",
+      "inode": true,
+      "open": true,
+      "icon": "folder",
+      "branch": [
+        {
+          "label":"主商品設定",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"假日,交易時間設定",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"每日商品屬性",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"可交易商品設定",
+          "inode":false,
+          "icon":"file"
+        }
+      ]
+    },
+
+    {
+      "label": "下單監控",
+      "inode": true,
+      "open": true,
+      "icon": "folder",
+      "branch": [
+        {
+          "label":"代客下單",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"即時部位監控",
+          "inode":false,
+          "icon":"file"
+        }
+      ]
+    },
+
+    {
+      "label": "後台帳號管理",
+      "inode": true,
+      "open": true,
+      "icon": "folder",
+      "branch": [
+        {
+          "label":"開帳號",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"配角色",
+          "inode":false,
+          "icon":"file"
+        }
+      ]
+    },
+
+    {
+      "label": "交易帳號管理",
+      "inode": true,
+      "open": true,
+      "icon": "folder",
+      "branch": [
+        {
+          "label":"開代理",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"開會員",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"開交易員",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"群組設定，配交易員",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"出入金",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"客戶個人資料",
+          "inode":false,
+          "icon":"file"
+        }
+      ]
+    },
+
+    {
+      "label": "報表",
+      "inode": true,
+      "open": true,
+      "icon": "folder",
+      "branch": [
+        {
+          "label":"操作日誌查詢",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"各式交易報表",
+          "inode":false,
+          "icon":"file"
+        }
+      ]
+    },
+
+    {
+      "label": "其他操作",
+      "inode": true,
+      "open": true,
+      "icon": "folder",
+      "branch": [
+        {
+          "label":"公告",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"投顧信息",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"報價查詢",
+          "inode":false,
+          "icon":"file"
+        },
+        {
+          "label":"黑名單",
+          "inode":false,
+          "icon":"file"
+        }
+      ]
+    }
+
+
+
+  ],
+  "pData":
+  [
+    { "id":1, "pId":0, "name":"權限管理", "open":true},
+    { "id":11, "pId":1, "name":"權限設定"},
+    { "id":12, "pId":1, "name":"角色設定"},
+    { "id":2, "pId":0, "name":"商品管理", "open":true},
+    { "id":21, "pId":2, "name":"主商品設定"},
+    { "id":22, "pId":2, "name":"每日商品屬性"},
+    { "id":23, "pId":2, "name":"可交易商品設定"},
+    { "id":3, "pId":0, "name":"下單監控", "open":true},
+    { "id":31, "pId":3, "name":"代客下單"},
+    { "id":32, "pId":3, "name":"即時部位監控"},
+    { "id":4, "pId":0, "name":"後台帳號管理", "open":true},
+    { "id":41, "pId":4, "name":"開帳號"},
+    { "id":42, "pId":4, "name":"配角色"},
+    { "id":5, "pId":0, "name":"交易帳號管理", "open":true},
+    { "id":51, "pId":5, "name":"開代理"},
+    { "id":52, "pId":5, "name":"開會員"},
+    { "id":53, "pId":5, "name":"開交易員"},
+    { "id":54, "pId":5, "name":"群組設定，配交易員"},
+    { "id":55, "pId":5, "name":"出入金"},
+    { "id":56, "pId":5, "name":"客戶個人資料"},
+    { "id":6, "pId":0, "name":"報表", "open":true},
+    { "id":61, "pId":6, "name":"操作日誌查詢"},
+    { "id":62, "pId":6, "name":"各式交易報表"},
+    { "id":7, "pId":0, "name":"其他操作", "open":true},
+    { "id":71, "pId":7, "name":"公告"},
+    { "id":72, "pId":7, "name":"投顧信息"},
+    { "id":73, "pId":7, "name":"報價查詢"},
+    { "id":74, "pId":7, "name":"黑名單"}
+  ]
+}

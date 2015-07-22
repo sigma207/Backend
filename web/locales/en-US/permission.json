@@ -1,0 +1,16 @@
+{
+  "position":"位置",
+  "function":{
+    "save":"存檔",
+    "newGroup":"新增群組",
+    "newItem":"新增功能",
+    "newChildGroup":"新增子群組",
+    "newChildItem":"新增子功能",
+    "MoveFirst":"移到最上",
+    "MoveUp":"往上移",
+    "MoveDown":"往下移",
+    "MoveLast":"移到最下",
+    "Edit":"編輯",
+    "Remove":"移除"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "roleCode":"角色代碼",
+  "roleName":"角色名稱",
+  "roleManage":"角色管理",
+  "newRole":"新增角色",
+  "allocatePermission":"分配權限"
+}

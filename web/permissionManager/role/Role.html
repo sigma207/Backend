@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Role</title>
+    <script type="text/javascript" src="permissionManager/role/role.js"></script>
+</head>
+<body>
+<input type="button" data-i18n="[value]newRole"/>
+<table class="roleTable">
+    <thead>
+        <tr>
+            <th field="id" data-i18n="roleCode">id</th>
+            <th field="name" data-i18n="roleName">name</th>
+            <th templateClass="roleManagerTh" data-i18n="roleManage">管理</th>
+        </tr>
+    </thead>
+</table>
+<div class="roleManagerTh" style="display: none;">
+    <input name="allocate" type="button" data-i18n="[value]allocatePermission"/>
+</div>
+</body>
+</html>

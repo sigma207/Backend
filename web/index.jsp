@@ -1,3 +1,6 @@
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="com.jelly.service.SocketService" %>
 <%--
   Created by IntelliJ IDEA.
   User: user
@@ -6,14 +9,18 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+  ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletConfig().getServletContext());
+  SocketService socketService = (SocketService)context.getBean("socketServiceBean");
+  int value = socketService.getCurrentValue();
+%>
 <html>
   <head>
     <title></title>
   </head>
   <body>
-dsfasdsaf
   <div>
-    fgg
+    currentValue=<%=value%>
   </div>
   </body>
 </html>

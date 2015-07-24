@@ -3,6 +3,9 @@
  */
 var roleTable;
 var dataSourceManager;
+var RolePage = {
+    roleDialog:undefined
+};
 $(document).ready(function () {
     console.log("role....");
     roleTable = ReportTable.createNew("roleTable");
@@ -12,6 +15,13 @@ $(document).ready(function () {
     //$.getJSON("../../test/data.json",onTestDataLoad).fail(onTestDataFail);
     $(document).on("rowClick",roleTableRowClick);
     dataSourceManager.setDataSource(Main.testData.roleData);
+    RolePage.editDialog = $("#roleDialog");
+    RolePage.editDialog.dialog({
+        modal: true,
+        autoOpen: false
+    });
+
+    $("#newRoleBt").on("click",newRoleClick);
 });
 
 function onTestDataLoad(data,status,xhr){
@@ -20,6 +30,11 @@ function onTestDataLoad(data,status,xhr){
 }
 function onTestDataFail(jqXHR, textStatus, errorThrown){
     console.log( textStatus );
+}
+
+function newRoleClick(e){
+    RolePage.editDialog.dialog({title:i18n.t("newRole")});
+    RolePage.editDialog.dialog("open");
 }
 
 function roleTableRowClick(e,obj){

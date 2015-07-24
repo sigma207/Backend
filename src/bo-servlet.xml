@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/mvc
+	   http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="com.jelly.jt8.bo.*"/>
+
+    <mvc:annotation-driven />
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:prefix="/"
+          p:suffix=".jsp"/>
+
+    <!-- apache.dbcp -->
+    <bean id="jt8Ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"></property>
+        <property name="url" value="jdbc:sqlserver://122.116.99.96:1433;DatabaseName=jt8"></property>
+        <property name="username" value="jt8_web_user"></property>
+        <property name="password" value="jt8_web_user123"></property>
+        <property name="maxActive" value="100"></property>
+        <property name="maxIdle" value="30"></property>
+        <property name="maxWait" value="500"></property>
+        <property name="defaultAutoCommit" value="true"></property>
+    </bean>
+</beans>

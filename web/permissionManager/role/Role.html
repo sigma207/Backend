@@ -6,18 +6,24 @@
     <script type="text/javascript" src="permissionManager/role/role.js"></script>
 </head>
 <body>
-<input type="button" data-i18n="[value]newRole"/>
+<input id="newRoleBt" type="button" data-i18n="[value]newRole"/>
 <table class="roleTable">
     <thead>
         <tr>
             <th field="id" data-i18n="roleCode">id</th>
             <th field="name" data-i18n="roleName">name</th>
-            <th templateClass="roleManagerTh" data-i18n="roleManage">管理</th>
+            <th templateClass="roleManagerTh" data-i18n="roleManage"></th>
         </tr>
     </thead>
 </table>
 <div class="roleManagerTh" style="display: none;">
     <input name="allocate" type="button" data-i18n="[value]allocatePermission"/>
+</div>
+<div id="roleDialog">
+    <label data-i18n="roleCode" for="roleCode"></label>
+    <input id="roleCode" type="text"/>
+    <label data-i18n="roleName" for="roleName"></label>
+    <input id="roleName" type="text"/>
 </div>
 </body>
 </html>

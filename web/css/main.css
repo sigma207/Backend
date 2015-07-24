@@ -52,7 +52,7 @@ html,body{
 }
 
 .mainMenu{
-    background-color: #CAFFCA;
+    /*background-color: #CAFFCA;*/
     display: inline-block;
     width: 15%;
     height: 100%;
@@ -60,7 +60,7 @@ html,body{
 }
 
 .content{
-    background-color: bisque;
+    /*background-color: bisque;*/
     display: inline-block;
     width: 85%;
     height: 100%;

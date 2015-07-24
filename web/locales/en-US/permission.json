@@ -1,11 +1,10 @@
 {
-  "position":"位置",
+  "position":"位置:",
+  "code":"代碼:",
   "function":{
     "save":"存檔",
-    "newGroup":"新增群組",
-    "newItem":"新增功能",
-    "newChildGroup":"新增子群組",
-    "newChildItem":"新增子功能",
+    "newNode":"新增節點",
+    "newChildNode":"新增子節點",
     "MoveFirst":"移到最上",
     "MoveUp":"往上移",
     "MoveDown":"往下移",

@@ -4,20 +4,16 @@
     <meta charset="UTF-8">
     <title>base</title>
     <link rel="stylesheet" href="permissionManager/permission/permission.css">
-    <script type="text/javascript" src="permissionManager/permission/permission2.js"></script>
+    <script type="text/javascript" src="permissionManager/permission/permission.js"></script>
 </head>
 <body>
-<input id="locale_zh_tw" type="button" value="繁">
-<input id="locale_zh_cn" type="button" value="簡">
-<input id="locale_en_us" type="button" value="英">
 <ul id="permissionTree" class="ztree"></ul>
-<input type="button" id="newGroupBt" data-i18n="[value]function.newGroup">
-<input type="button" id="newItemBt" data-i18n="[value]function.newItem">
+<input type="button" id="newNodeBt" data-i18n="[value]function.newNode">
 <div id="editDialog" class="form">
-    <label><span>ID:</span><input id="id" type="text" value=""></label>
-    <label><span>繁:</span><input id="describe_zh_tw" type="text" value=""></label>
-    <label><span>簡:</span><input id="describe_zh_cn" type="text" value=""></label>
-    <label><span>英:</span><input id="describe_en_us" type="text" value=""></label>
+    <label><span data-i18n="code"></span><input id="permission_code" type="text" value=""></label>
+    <label><span>繁:</span><input id="describe_zh-TW" type="text" value=""></label>
+    <label><span>簡:</span><input id="describe_zh-CN" type="text" value=""></label>
+    <label><span>英:</span><input id="describe_en-US" type="text" value=""></label>
     <div id="positionContainer">
         <label><span data-i18n="position"></span><select id="position">
         </select></label>

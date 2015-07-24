@@ -16,9 +16,12 @@ var Main = {
         }
     }
 };
+var locale = Locale.createNew(Locale.zh_TW);
 
 $(document).ready(function () {
-    Main.contentItem = MenuItem.Role;
+    Main.contentItem = MenuItem.Permission;
+    Main.testData = pData;
+    //initZTree(Main.testData);
     $.getJSON("test/data.json",onTestDataLoad).fail(onTestDataFail);
 });
 
@@ -27,6 +30,7 @@ function onTestDataLoad(data,status,xhr){
     console.log(data);
     //initMenu(Main.testData.permissionData);
     initZTree(Main.testData.pData);
+
 }
 
 function onTestDataFail(jqXHR, textStatus, error){
@@ -58,12 +62,12 @@ function contentLoad(response, status, xhr) {
     //console.log(response);
     //console.log(status);
     //console.log(xhr);
-    changeLang("zh-TW");
+    changeLang(locale.lang);
 }
 
 function changeLang(lang) {
     var option = {resGetPath: "locales/" + lang + "/"+Main.contentItem.localesFile+".json"};
     i18n.init(option, function (t) {
-        $(".content").i18n();
+        $(".content").add(".ui-dialog").i18n();
     });
 }

@@ -11,11 +11,7 @@ var RequestJSON = {
         req.hostUrl = hostUrl;
         req.ajax = function (url, setting) {
             req.url = url;
-            req.callback = setting.success;
-            req.failCallback = setting.error;
-            setting.success = req.beforeCallback;
-            setting.error = req.beforeFailCallBack;
-            $.ajax(req.hostUrl + req.url, setting);
+            return $.ajax(req.hostUrl + req.url, setting).done(req.beforeCallback).fail(req.beforeFailCallBack);
         };
 
         req.getJSON = function (url, callback, failCallback) {
@@ -25,23 +21,29 @@ var RequestJSON = {
             $.getJSON(req.hostUrl + req.url, req.beforeCallback).fail(req.beforeFailCallBack);
         };
 
-        req.beforeCallback = function (data, status, jqXHR ) {
+        req.beforeCallback = function (data, status, jqXHR) {
             log(data);
-            log(status);
-            log(jqXHR );
-            req.callback.call(req, [data, status, jqXHR ]);
         };
 
         req.beforeFailCallBack = function (jqXHR, textStatus, errorThrown) {
-            log(jqXHR);
-            log(textStatus);
-            log(errorThrown);
-            if (typeof req.failCallback !== typeof undefined) {
-                req.failCallback.call(req, [jqXHR, textStatus, errorThrown]);
+            if(jqXHR.responseText!=""){
+                alert(i18n.t("error."+jqXHR.responseText))
             }
-
+            log(jqXHR);
         };
 
         return req;
     }
 };
+
+function formatPermissionList(permissionList) {
+    var permission = undefined;
+
+    for (var i = 0; i < permissionList.length; i++) {
+        permission = permissionList[i];
+        if (permission.children) {
+            formatPermissionList(permission.children);
+        }
+        locale.node(permission, permission);
+    }
+}

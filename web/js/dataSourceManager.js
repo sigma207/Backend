@@ -45,6 +45,28 @@ var DataSourceManager = {
             }
         };
 
+        dsr.addRowData = function(rowData){
+            dsr.dataSource.push(rowData);
+            dsr.dataSize = dsr.dataSource.length;
+            dsr.allocateData();
+            dsr.clearSort();
+            dsr.refresh();
+            if (dsr.usePage) {
+                dsr.renderPageInfo();
+            }
+        };
+
+        dsr.removeRow = function (index) {
+            dsr.dataSource.splice(index,1);
+            dsr.dataSize = dsr.dataSource.length;
+            dsr.allocateData();
+            dsr.clearSort();
+            dsr.refresh();
+            if (dsr.usePage) {
+                dsr.renderPageInfo();
+            }
+        };
+
         dsr.updateRowData = function (index, rowData) {
             dsr.refreshRow(index);
         };

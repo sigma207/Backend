@@ -12,6 +12,7 @@ public class Permission {
     private int parent_permission_id;
     private int sequence;
     private Map<String,String> permissionNameMap;
+    private List<Permission> children;
 
     public Permission(int permission_id, String permission_code, int parent_permission_id, int sequence) {
         this.permission_id = permission_id;
@@ -58,5 +59,13 @@ public class Permission {
 
     public void setPermissionNameMap(Map<String, String> permissionNameMap) {
         this.permissionNameMap = permissionNameMap;
+    }
+
+    public List<Permission> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Permission> children) {
+        this.children = children;
     }
 }

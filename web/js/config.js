@@ -2,7 +2,12 @@
  * Created by user on 2015/7/21.
  */
 var Config = {
-    HostUrl: "http://localhost:8080/Backend"
+    HostUrl: "http://localhost:8080/Backend",
+    Dialog:{
+        modal: true,
+        autoOpen: false,
+        appendTo: ".content"
+    }
 };
 var MenuItem = {
     Demo: {
@@ -18,6 +23,18 @@ var MenuItem = {
     }
 };
 
+var Action = {
+    NewNode: "newNode",
+    NewChildNode: "newChildNode",
+    MoveUp: "moveUp",
+    MoveDown: "moveDown",
+    MoveFirst: "moveFirst",
+    MoveLast: "moveLast",
+    Add: "add",
+    Edit: "edit",
+    Remove: "remove"
+};
+
 var Locale = {
     zh_TW: "zh-TW",
     zh_CN: "zh-CN",
@@ -29,10 +46,11 @@ var Locale = {
         locale.getLangAttribute = function () {
             return locale.lang.replace("-", "_");
         };
-        locale.node = function (node, localesObj) {
+        locale.node = function (node, permission) {
             //var lang = locale.getLangAttribute();
-            locale.copyLocalesAttribute(node, localesObj);
-            node["name"] = node[locale.lang];
+
+            locale.copyLocalesAttribute(node, permission.permissionNameMap);
+            node["name"] = node[locale.lang]+"("+permission.permission_code+")";
         };
 
         locale.copyLocalesAttribute = function (obj, localesObj) {
@@ -54,9 +72,9 @@ var Locale = {
             for (var i = 0; i < locale.list.length; i++) {
                 var language = locale.list[i];
                 var propertyLocale = permissionNameMap[language];
-                if(propertyLocale){
+                //if(propertyLocale){
                     $(selector + language).val(propertyLocale);
-                }
+                //}
             }
         };
         return locale;

@@ -19,7 +19,7 @@ var Main = {
 var locale = Locale.createNew(Locale.zh_TW);
 
 $(document).ready(function () {
-    Main.contentItem = MenuItem.Permission;
+    Main.contentItem = MenuItem.Demo;
     Main.testData = pData;
     //initZTree(Main.testData);
     $.getJSON("test/data.json",onTestDataLoad).fail(onTestDataFail);
@@ -68,6 +68,7 @@ function contentLoad(response, status, xhr) {
 function changeLang(lang) {
     var option = {resGetPath: "locales/" + lang + "/"+Main.contentItem.localesFile+".json"};
     i18n.init(option, function (t) {
+        console.log(lang+":"+Main.contentItem.localesFile+".json");
         $(".content").add(".ui-dialog").i18n();
     });
 }

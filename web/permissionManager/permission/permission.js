@@ -1,16 +1,7 @@
 /**
  * Created by user on 2015/7/17.
  */
-var Action = {
-    NewNode: "newNode",
-    NewChildNode: "newChildNode",
-    MoveUp: "moveUp",
-    MoveDown: "moveDown",
-    MoveFirst: "moveFirst",
-    MoveLast: "moveLast",
-    Edit: "edit",
-    Remove: "remove"
-};
+
 var Position = {
     Before: "前",
     After: "後",
@@ -32,15 +23,20 @@ var PermissionPage = {
     },
     editDialog: undefined,
     editPermission: undefined,
-    request: RequestJSON.createNew(Config.HostUrl + "/permission")
+    request: RequestJSON.createNew(Config.HostUrl + "/permission"),
+    initNodeName: function (node, permission) {
+        locale.node(node, permission);
+    },
+    nodeMoveSetting:{
+        targetNode:undefined,
+        treeNode:undefined,
+        moveType:undefined
+    }
 };
 var currentAction;
 $(document).ready(function () {
     PermissionPage.editDialog = $("#editDialog");
-    PermissionPage.editDialog.dialog({
-        modal: true,
-        autoOpen: false
-    });
+    PermissionPage.editDialog.dialog(Config.Dialog);
 
     $("#save").on("click", onSaveClick);
     $("#newNodeBt").on("click", onNewNodeClick);
@@ -52,22 +48,70 @@ function getPermissionList() {
     PermissionPage.request.ajax("/query/list", {
         success: onPermissionListLoad
     });
-    //initZTree(Main.testData.pData);
 }
 
 function onPermissionListLoad(data, status, xhr) {
-
+    var permissionList = JSON.parse(data);
+    if (permissionList.result && permissionList.result == "noData") {
+        initZTree([]);
+    } else {
+        initZTree(permissionList);
+    }
 }
 
 function onPermissionAdd(data, status, xhr) {
-    if(data.permission_id==-1){
+    if (data.permission_id == -1) {
         alert("add error");
+    } else {
+        PermissionPage.editPermission = data;
+        PermissionPage.editDialog.dialog("close");
+
+        PermissionPage.initNodeName(PermissionPage.editPermission, PermissionPage.editPermission);
+        switch (currentAction) {
+            case Action.NewNode:
+                if(PermissionPage.editPermission.parent_permission_id){
+                    var parent_node = PermissionPage.zTreeObj.getNodeByParam("permission_id",PermissionPage.editPermission.parent_permission_id);
+                    PermissionPage.zTreeObj.addNodes(parent_node, PermissionPage.editPermission, true);
+                }else{
+                    PermissionPage.zTreeObj.addNodes(null, PermissionPage.editPermission, true);
+                }
+                break;
+            case Action.NewChildNode:
+                var selectedNode = PermissionPage.zTreeObj.getSelectedNodes()[0];
+                PermissionPage.zTreeObj.addNodes(selectedNode, PermissionPage.editPermission, true);
+                PermissionPage.zTreeObj.expandNode(selectedNode,true);
+                break;
+        }
+
     }
+}
+
+function onPermissionUpdate(data, status, xhr){
+    PermissionPage.editDialog.dialog("close");
+    var selectedNode = PermissionPage.zTreeObj.getSelectedNodes()[0];
+
+    selectedNode.permission_code = data.permission_code;
+    PermissionPage.initNodeName(selectedNode, data);
+    PermissionPage.zTreeObj.updateNode(selectedNode);
+}
+
+function onPermissionDelete(data, status, xhr){
+    var selectedNode = PermissionPage.zTreeObj.getSelectedNodes()[0];
+    PermissionPage.zTreeObj.removeNode(selectedNode);
+}
+
+function onPermissionMove(data,status, xhr){
+    console.log("onPermissionMove");
+    for(var i=0;i<data.length;i++){
+        var node = PermissionPage.zTreeObj.getNodeByParam("permission_id",data[i].permission_id);
+        node.sequence = data[i].sequence;
+    }
+    PermissionPage.zTreeObj.moveNode(PermissionPage.nodeMoveSetting.targetNode, PermissionPage.nodeMoveSetting.treeNode, PermissionPage.nodeMoveSetting.moveType, true);
 }
 
 function initZTree(data) {
     PermissionPage.tree = $("#permissionTree");
-
+    formatPermissionList(data);
     $.fn.zTree.init(PermissionPage.tree, PermissionPage.treeSetting, data);
     PermissionPage.zTreeObj = $.fn.zTree.getZTreeObj("permissionTree");
     initContextMenu();
@@ -79,20 +123,10 @@ function initContextMenu() {
         selector: ".zTreeItem",
         build: function (element) {
             var treeId = element.attr("id").replace("_a", "");
-            var nodes = PermissionPage.zTreeObj.getNodes();
+            var moveNodes = PermissionPage.zTreeObj.getNodes();
             var currentNode = PermissionPage.zTreeObj.getNodeByTId(treeId);
-            var nextNode = currentNode.getNextNode();
-            var preNode = currentNode.getPreNode();
-            var parentNode = currentNode.getParentNode();
-            var firstNode = undefined;
-            var lastNode = undefined;
-
-            if (parentNode && typeof parentNode !== typeof undefined) {
-                firstNode = parentNode.children[0];
-                lastNode = parentNode.children[parentNode.children.length - 1];
-            } else {
-                firstNode = nodes[0];
-                lastNode = nodes[nodes.length - 1];
+            if(currentNode.level!=0){
+                moveNodes = currentNode.getParentNode().children;
             }
 
             PermissionPage.zTreeObj.selectNode(currentNode);
@@ -101,8 +135,11 @@ function initContextMenu() {
                 name: i18n.t("function.newNode"),
                 callback: function () {
                     currentAction = Action.NewNode;
-                    addPositionOption();
-                    initEditDialogVal();
+                    if(currentNode.level==0){
+                        editNewPermission();
+                    }else{
+                        editNewPermission(currentNode.getParentNode());
+                    }
                     PermissionPage.editDialog.dialog({title: i18n.t("function.newNode")});
                     PermissionPage.editDialog.dialog("open");
                 }
@@ -111,8 +148,7 @@ function initContextMenu() {
                 name: i18n.t("function.newChildNode"),
                 callback: function () {
                     currentAction = Action.NewChildNode;
-                    addPositionOption();
-                    initEditDialogVal();
+                    editNewPermission(currentNode);
                     PermissionPage.editDialog.dialog({title: currentNode[Locale.zh_TW] + ":" + i18n.t("function.newChildNode")});
                     PermissionPage.editDialog.dialog("open");
                 }
@@ -120,29 +156,75 @@ function initContextMenu() {
             menu[Action.MoveFirst] = {
                 name: "移到最上",
                 callback: function () {
-                    PermissionPage.zTreeObj.moveNode(firstNode, currentNode, "prev", true);
+                    PermissionPage.nodeMoveSetting.moveNodes = moveNodes;
+                    PermissionPage.nodeMoveSetting.targetNode = moveNodes[0];
+                    PermissionPage.nodeMoveSetting.treeNode = currentNode;
+                    PermissionPage.nodeMoveSetting.moveType = "prev";
+                    PermissionPage.nodeMoveSetting.moveAction = Action.MoveFirst;
+
+                    PermissionPage.request.ajax("/move", {
+                        dataType: "json",
+                        contentType: "application/json",
+                        type: 'POST',
+                        data: JSON.stringify(PermissionPage.nodeMoveSetting),
+                        success: onPermissionMove
+                    });
                 }
             };
             menu[Action.MoveUp] = {
                 name: "往上移",
+                disabled: !currentNode.getPreNode(),
                 callback: function () {
-                    if (typeof preNode !== typeof undefined) {
-                        PermissionPage.zTreeObj.moveNode(preNode, currentNode, "prev", true);
-                    }
+                    PermissionPage.nodeMoveSetting.moveNodes = moveNodes;
+                    PermissionPage.nodeMoveSetting.targetNode = currentNode.getPreNode();
+                    PermissionPage.nodeMoveSetting.treeNode = currentNode;
+                    PermissionPage.nodeMoveSetting.moveType = "prev";
+                    PermissionPage.nodeMoveSetting.moveAction = Action.MoveUp;
+
+                    PermissionPage.request.ajax("/move", {
+                        dataType: "json",
+                        contentType: "application/json",
+                        type: 'POST',
+                        data: JSON.stringify(PermissionPage.nodeMoveSetting),
+                        success: onPermissionMove
+                    });
                 }
             };
             menu[Action.MoveDown] = {
                 name: "往下移",
+                disabled: !currentNode.getNextNode(),
                 callback: function () {
-                    if (typeof nextNode !== typeof undefined) {
-                        PermissionPage.zTreeObj.moveNode(nextNode, currentNode, "next", true);
-                    }
+                    PermissionPage.nodeMoveSetting.moveNodes = moveNodes;
+                    PermissionPage.nodeMoveSetting.targetNode = currentNode.getNextNode();
+                    PermissionPage.nodeMoveSetting.treeNode = currentNode;
+                    PermissionPage.nodeMoveSetting.moveType = "next";
+                    PermissionPage.nodeMoveSetting.moveAction = Action.MoveDown;
+
+                    PermissionPage.request.ajax("/move", {
+                        dataType: "json",
+                        contentType: "application/json",
+                        type: 'POST',
+                        data: JSON.stringify(PermissionPage.nodeMoveSetting),
+                        success: onPermissionMove
+                    });
                 }
             };
             menu[Action.MoveLast] = {
                 name: "移到最下",
                 callback: function () {
-                    PermissionPage.zTreeObj.moveNode(lastNode, currentNode, "next", true);
+                    PermissionPage.nodeMoveSetting.moveNodes = moveNodes;
+                    PermissionPage.nodeMoveSetting.targetNode = moveNodes[moveNodes.length-1];
+                    PermissionPage.nodeMoveSetting.treeNode = currentNode;
+                    PermissionPage.nodeMoveSetting.moveType = "next";
+                    PermissionPage.nodeMoveSetting.moveAction = Action.MoveLast;
+
+                    PermissionPage.request.ajax("/move", {
+                        dataType: "json",
+                        contentType: "application/json",
+                        type: 'POST',
+                        data: JSON.stringify(PermissionPage.nodeMoveSetting),
+                        success: onPermissionMove
+                    });
                 }
             };
             menu['sep2'] = '';
@@ -150,7 +232,6 @@ function initContextMenu() {
                 name: "編輯",
                 callback: function () {
                     currentAction = Action.Edit;
-                    addPositionOption();
                     initEditDialogVal(currentNode);
                     PermissionPage.editDialog.dialog({title: currentNode.name + ":編輯"});
                     PermissionPage.editDialog.dialog("open");
@@ -159,7 +240,16 @@ function initContextMenu() {
             menu[Action.Remove] = {
                 name: "移除",
                 callback: function () {
-                    PermissionPage.zTreeObj.removeNode(currentNode);
+                    console.log("remove...");
+                    console.log(currentNode);
+                    PermissionPage.request.ajax("/delete", {
+                        dataType: "json",
+                        contentType: "application/json",
+                        type: 'POST',
+                        data: JSON.stringify(currentNode),
+                        success: onPermissionDelete
+                    });
+
                 }
             };
             return {
@@ -174,9 +264,9 @@ function onSaveClick(e) {
     PermissionPage.editPermission.permission_code = $("#permission_code").val();
     var position = $("#position").val();
     locale.getDomVal(PermissionPage.editPermission.permissionNameMap, "#describe_");
-    log(PermissionPage.editPermission);
     switch (currentAction) {
         case Action.NewNode:
+        case Action.NewChildNode:
             PermissionPage.request.ajax("/add", {
                 dataType: "json",
                 contentType: "application/json",
@@ -185,37 +275,32 @@ function onSaveClick(e) {
                 success: onPermissionAdd
             });
             break;
+        case Action.Edit:
+            PermissionPage.request.ajax("/update", {
+                dataType: "json",
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify(PermissionPage.editPermission),
+                success: onPermissionUpdate
+            });
+            break;
     }
-
-    //var node = getNewNode(PermissionPage.editPermission);
-    //var currentNode = PermissionPage.zTreeObj.getSelectedNodes()[0];
-    //switch (currentAction) {
-    //    case Action.NewNode:
-    //        if(currentNode){
-    //            var parentNode = currentNode.getParentNode();
-    //            PermissionPage.zTreeObj.addNodes(parentNode, node, true);
-    //        }else{
-    //            PermissionPage.zTreeObj.addNodes(null, node, true);
-    //        }
-    //
-    //        break;
-    //    case Action.NewChildNode:
-    //        PermissionPage.zTreeObj.addNodes(currentNode, node, true);
-    //        PermissionPage.zTreeObj.expandNode(currentNode,true);
-    //        break;
-    //    case Action.Edit:
-    //        locale.node(currentNode, obj);
-    //        PermissionPage.zTreeObj.updateNode(currentNode);
-    //        break;
-    //}
-    //var div = $("#editDialog");
-    //div.dialog("close");
 }
 
 function onNewNodeClick() {
     currentAction = Action.NewNode;
-    addPositionOption();
-    initEditDialogVal();
+    var selectedNodes = PermissionPage.zTreeObj.getSelectedNodes();
+    log(selectedNodes);
+    var selectedNode = undefined;
+    if(selectedNodes.length>0){
+        selectedNode = selectedNodes[0];
+    }
+    if(selectedNode&&selectedNode.level==0){
+        editNewPermission();
+    }else{
+        editNewPermission(selectedNode);
+    }
+
     PermissionPage.editDialog.dialog({title: i18n.t("function.newNode")});
     PermissionPage.editDialog.dialog("open");
 }
@@ -227,9 +312,9 @@ function addPositionOption() {
     positionContainer.hide();
     switch (currentAction) {
         case Action.NewNode:
-            options += getOption(Position.Before);
-            options += getOption(Position.After);
-            positionContainer.show();
+            //options += getOption(Position.Before);
+            //options += getOption(Position.After);
+            //positionContainer.show();
             break;
     }
     select.empty();
@@ -240,22 +325,37 @@ function getOption(value) {
     return "<option value='" + value + "'>" + value + "</option>";
 }
 
-function initEditDialogVal(obj) {
-    if (typeof obj === typeof undefined) {
-        PermissionPage.editPermission = {};
-        PermissionPage.editPermission.permission_id = undefined;
-        PermissionPage.editPermission.permission_code = undefined;
-        PermissionPage.editPermission.permissionNameMap = {};
+function editNewPermission(parentNode) {
+    addPositionOption();
+    PermissionPage.editPermission = {};
+    PermissionPage.editPermission.permission_id = undefined;
+    PermissionPage.editPermission.permission_code = undefined;
+    if(parentNode){
+        if(parentNode.isParent){
+            PermissionPage.editPermission.sequence = parentNode.children.length;
+        }else{
+            PermissionPage.editPermission.sequence = 0;
+        }
+        PermissionPage.editPermission.parent_permission_id = parentNode.permission_id;
     } else {
-        PermissionPage.editPermission = obj;
+        var rootNodes = PermissionPage.zTreeObj.getNodes();
+        if (rootNodes) {
+            PermissionPage.editPermission.sequence = rootNodes.length;
+        } else {
+            PermissionPage.editPermission.sequence = 0;
+        }
+        PermissionPage.editPermission.parent_permission_id = undefined;
     }
+    PermissionPage.editPermission.permissionNameMap = {};
 
     $("#permission_code").val(PermissionPage.editPermission.permission_code);
     locale.setDomVal(PermissionPage.editPermission.permissionNameMap, "#describe_");
 }
 
-function getNewNode(localesObj, folder) {
-    var node = {};
-    locale.node(node, localesObj);
-    return node;
+function initEditDialogVal(currentNode) {
+    console.log(currentNode);
+    PermissionPage.editPermission = currentNode;
+    console.log(PermissionPage);
+    $("#permission_code").val(PermissionPage.editPermission.permission_code);
+    locale.setDomVal(PermissionPage.editPermission.permissionNameMap, "#describe_");
 }

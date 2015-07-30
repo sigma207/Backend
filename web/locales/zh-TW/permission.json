@@ -1,6 +1,6 @@
 {
   "position":"位置:",
-  "code":"代碼:",
+  "code":"代碼",
   "function":{
     "save":"存檔",
     "newNode":"新增節點",

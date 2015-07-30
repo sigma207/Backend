@@ -1,7 +1,19 @@
 {
+  "query":"查詢",
   "roleCode":"角色代碼",
   "roleName":"角色名稱",
   "roleManage":"角色管理",
   "newRole":"新增角色",
-  "allocatePermission":"分配權限"
+  "editRole":"角色編輯",
+  "allocatePermission":"分配權限",
+  "function":{
+    "save":"存檔",
+    "addRole":"新增角色",
+    "editRole":"角色編輯",
+    "removeRole":"角色刪除",
+    "allocatePermission":"分配權限"
+  },
+  "error":{
+    "dirtyData":"資料已被編輯過,請重新查詢後再編輯"
+  }
 }

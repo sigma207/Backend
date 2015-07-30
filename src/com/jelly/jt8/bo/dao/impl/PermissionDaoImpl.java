@@ -16,15 +16,18 @@ import java.util.List;
  */
 @Repository("PermissionDao")
 public class PermissionDaoImpl implements PermissionDao {
-    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence from Permission ";
+    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence from Permission ORDER BY parent_permission_id,sequence";
     private final static String WHERE_PARENT = "where parent_permission_id = ? ";
-    private final static String INSERT = "INSERT INTO Permission A(permission_code, parent_permission_id, sequence) VALUES (?, ?, ?);";
+    private final static String INSERT = "INSERT INTO Permission (permission_code, parent_permission_id, sequence) VALUES (?, ?, ?);";
+    private final static String DELETE = "DELETE Permission where permission_id = ? ";
+    private final static String UPDATE = "UPDATE Permission set permission_code = ?,sequence = ? where permission_id = ? ";
+
     @Autowired
     @Qualifier("jt8Ds")
     private DataSource jt8Ds;
 
     @Override
-    public List<Permission> selectPermission() throws SQLException {
+    public List<Permission> selectPermission() throws Exception {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Connection conn = null;
@@ -44,10 +47,8 @@ public class PermissionDaoImpl implements PermissionDao {
                 );
                 list.add(obj);
             }
-        }catch (SQLException se) {
-            throw se;
         } catch (Exception e){
-            e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if (rs != null) {
@@ -67,7 +68,7 @@ public class PermissionDaoImpl implements PermissionDao {
     }
 
     @Override
-    public List<Permission> selectPermissionByParent(Permission parentPermission) throws SQLException {
+    public List<Permission> selectPermissionByParent(Permission parentPermission) throws Exception {
 
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -94,10 +95,8 @@ public class PermissionDaoImpl implements PermissionDao {
                 );
                 list.add(obj);
             }
-        }catch (SQLException se) {
-            throw se;
         } catch (Exception e){
-            e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if (rs != null) {
@@ -117,15 +116,18 @@ public class PermissionDaoImpl implements PermissionDao {
     }
 
     @Override
-    public int insertPermission(Permission permission) throws SQLException {
+    public int insertPermission(Connection connection,Permission permission) throws Exception {
         PreparedStatement stmt = null;
-        Connection conn = null;
         int lastKey = -1;
         try {
-            conn = jt8Ds.getConnection();
-            stmt = conn.prepareStatement(INSERT,Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1,permission.getPermission_code());
-            stmt.setInt(2, permission.getParent_permission_id());
+            stmt = connection.prepareStatement(INSERT,Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, permission.getPermission_code());
+            if(permission.getParent_permission_id()==0){
+                stmt.setNull(2, Types.INTEGER);
+            }else{
+                stmt.setInt(2, permission.getParent_permission_id());
+            }
+
             stmt.setInt(3,permission.getSequence());
             stmt.executeUpdate();
             ResultSet keys = stmt.getGeneratedKeys();
@@ -133,22 +135,61 @@ public class PermissionDaoImpl implements PermissionDao {
             if (keys.next()) {
                 lastKey = keys.getInt(1);
             }
-        } catch (SQLException se) {
-            throw se;
         } catch (Exception e){
-            e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if (stmt != null) {
                     stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return lastKey;
+    }
+
+    @Override
+    public void deletePermission(Connection connection, Permission permission) throws Exception {
+        PreparedStatement stmt = null;
+        try {
+            stmt = connection.prepareStatement(DELETE);
+
+            stmt.setInt(1, permission.getPermission_id());
+            stmt.executeUpdate();
+        } catch (Exception e){
+            throw e;
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void updatePermission(Connection connection, Permission permission) throws Exception {
+        PreparedStatement stmt = null;
+        try {
+            stmt = connection.prepareStatement(UPDATE);
+
+            stmt.setString(1,permission.getPermission_code());
+            stmt.setInt(2,permission.getSequence());
+            stmt.setInt(3, permission.getPermission_id());
+            stmt.executeUpdate();
+        } catch (Exception e){
+            throw e;
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

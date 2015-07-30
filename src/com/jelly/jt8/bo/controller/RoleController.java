@@ -3,8 +3,9 @@ package com.jelly.jt8.bo.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.jelly.jt8.bo.model.Permission;
-import com.jelly.jt8.bo.model.PermissionMoveSetting;
-import com.jelly.jt8.bo.service.PermissionService;
+import com.jelly.jt8.bo.model.Role;
+import com.jelly.jt8.bo.model.RolePermission;
+import com.jelly.jt8.bo.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -18,34 +19,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.nio.charset.Charset;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Created by user on 2015/7/24.
+ * Created by user on 2015/7/28.
  */
 @Controller
-@RequestMapping("/permission")
-public class PermissionController {
+@RequestMapping("/role")
+public class RoleController {
     @Autowired
-    @Qualifier("permissionService")
-    private PermissionService permissionService;
+    @Qualifier("roleService")
+    private RoleService roleService;
 
-    @RequestMapping(value="/query/list",method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<String> getPermissionList(){
-        System.out.println("getPermissionList");
+    @RequestMapping(value = "/query/list", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<String> getRoleList() {
+        System.out.println("getRoleList");
 
-        List<Permission> list = null;
+        List<Role> list = null;
         String payload = "";
         try {
-            list = permissionService.getPermissionList();
-            if(list.size()==0){
-                JsonObject myObj = new JsonObject();
-                myObj.addProperty("result","noData");
-                payload = myObj.toString();
-                return getResponseEntity(payload);
-            }
-        } catch (Exception e){
+            list = roleService.getRoleList();
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
         }
@@ -55,71 +49,87 @@ public class PermissionController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/add",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> addPermission(@RequestBody Permission permission){
-        System.out.println("addPermission");
+    @RequestMapping(value = "/query/rolePermissionList", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> getRolePermissionList(@RequestBody Role role) {
+        System.out.println("getRolePermissionList");
 
+        List<RolePermission> list = null;
         String payload = "";
         try {
-            permissionService.addPermission(permission);
-        } catch (Exception e){
+            roleService.getRolePermissionList(role);
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         Gson gson = new Gson();
-        payload = gson.toJson(permission);
+        payload = gson.toJson(role);
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/delete",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> removePermission(@RequestBody Permission permission){
-        System.out.println("removePermission");
+    @RequestMapping(value="/addRole",method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> addRole(@RequestBody Role role){
+        System.out.println("addRole");
 
         String payload = "";
         try {
-            permissionService.deletePermission(permission);
+            roleService.addRole(role);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         Gson gson = new Gson();
-        payload = gson.toJson(permission);
+        payload = gson.toJson(role);
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/update",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updatePermission(@RequestBody Permission permission){
-        System.out.println("updatePermission");
+    @RequestMapping(value="/updateRole",method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> updateRole(@RequestBody Role role){
 
         String payload = "";
         try {
-            permissionService.updatePermission(permission);
+            roleService.updateRole(role);
         } catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         Gson gson = new Gson();
-        payload = gson.toJson(permission);
+        payload = gson.toJson(role);
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/move",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> movePermission(@RequestBody PermissionMoveSetting permissionMoveSetting){
-        System.out.println("movePermission");
+    @RequestMapping(value="/deleteRole",method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> deleteRole(@RequestBody Role role){
 
         String payload = "";
         try {
-            permissionService.movePermission(permissionMoveSetting);
+            roleService.deleteRole(role);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         Gson gson = new Gson();
-        payload = gson.toJson(permissionMoveSetting.getMoveNodes());
+        payload = gson.toJson(role);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value="/allocatePermission",method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> allocatePermission(@RequestBody Role role){
+        System.out.println("allocatePermission");
+
+        String payload = "";
+        try {
+            roleService.allocatePermission(role);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        Gson gson = new Gson();
+        payload = gson.toJson(role);
         return getResponseEntity(payload);
     }
 
@@ -131,5 +141,4 @@ public class PermissionController {
         responseHeaders.setContentType(mediaType);
         return new ResponseEntity<String>(payload, responseHeaders, HttpStatus.OK);
     }
-
 }

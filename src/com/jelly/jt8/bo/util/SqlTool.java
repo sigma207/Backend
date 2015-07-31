@@ -18,31 +18,22 @@ public class SqlTool {
     private ResultSet rs = null;
     private Connection conn = null;
 
-    public void connect(DataSource dataSource, String sql)throws SQLException{
-        this.dataSource = dataSource;
-        this.sql = sql;
+    public void connect(Connection conn, String sql)throws Exception{
         try {
-            conn = dataSource.getConnection();
             preparedStatement = conn.prepareStatement(sql);
         } catch (Exception e){
-            e.printStackTrace();
             if (preparedStatement != null) {
                 preparedStatement.close();
             }
             if (conn != null) {
                 conn.close();
             }
-            if(e instanceof SQLException){
-                throw e;
-            }
         }
     }
 
-    public ResultSet query() throws SQLException{
+    public ResultSet executeQuery() throws Exception{
         try {
             rs = preparedStatement.executeQuery();
-        }catch (SQLException se) {
-            throw se;
         } catch (Exception e){
             e.printStackTrace();
         } finally {

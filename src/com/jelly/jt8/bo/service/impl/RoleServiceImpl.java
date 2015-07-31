@@ -35,12 +35,12 @@ public class RoleServiceImpl implements RoleService {
     private DataSource jt8Ds;
 
     @Override
-    public List<Role> getRoleList() throws Exception {
+    public List<Role> selectRole() throws Exception {
         return roleDao.selectRole();
     }
 
     @Override
-    public void getRolePermissionList(Role role) throws Exception {
+    public void selectRolePermission(Role role) throws Exception {
         role.setPermissionList(rolePermissionDao.selectRolePermissionByRole(role));
     }
 

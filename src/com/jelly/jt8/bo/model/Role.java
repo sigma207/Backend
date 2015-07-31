@@ -1,6 +1,5 @@
 package com.jelly.jt8.bo.model;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -12,16 +11,16 @@ public class Role {
     private String role_code;
     private String role_name;
     private String update_time;
-    private byte[] row_version;
+    private byte[] rv;
     private List<RolePermission> permissionList;
 
-    public Role(int role_id, int parent_role_id, String role_code, String role_name, String update_time, byte[] row_version) {
+    public Role(int role_id, int parent_role_id, String role_code, String role_name, String update_time, byte[] rv) {
         this.role_id = role_id;
         this.parent_role_id = parent_role_id;
         this.role_code = role_code;
         this.role_name = role_name;
         this.update_time = update_time;
-        this.row_version = row_version;
+        this.rv = rv;
     }
 
     public int getRole_id() {
@@ -64,12 +63,12 @@ public class Role {
         this.update_time = update_time;
     }
 
-    public byte[] getRow_version() {
-        return row_version;
+    public byte[] getRv() {
+        return rv;
     }
 
-    public void setRow_version(byte[] row_version) {
-        this.row_version = row_version;
+    public void setRv(byte[] rv) {
+        this.rv = rv;
     }
 
     public List<RolePermission> getPermissionList() {

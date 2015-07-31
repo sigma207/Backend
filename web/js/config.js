@@ -20,6 +20,10 @@ var MenuItem = {
     Role: {
         url: "permissionManager/role/Role.html",
         localesFile: "role"
+    },
+    User: {
+        url: "userManager/user/User.html",
+        localesFile: "user"
     }
 };
 

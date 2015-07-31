@@ -1,8 +1,6 @@
 package com.jelly.jt8.bo.controller;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.jelly.jt8.bo.model.Permission;
 import com.jelly.jt8.bo.model.Role;
 import com.jelly.jt8.bo.model.RolePermission;
 import com.jelly.jt8.bo.service.RoleService;
@@ -33,12 +31,12 @@ public class RoleController {
 
     @RequestMapping(value = "/query/list", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getRoleList() {
-        System.out.println("getRoleList");
+        System.out.println("selectRole");
 
         List<Role> list = null;
         String payload = "";
         try {
-            list = roleService.getRoleList();
+            list = roleService.selectRole();
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
@@ -51,12 +49,12 @@ public class RoleController {
 
     @RequestMapping(value = "/query/rolePermissionList", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> getRolePermissionList(@RequestBody Role role) {
-        System.out.println("getRolePermissionList");
+        System.out.println("selectRolePermission");
 
         List<RolePermission> list = null;
         String payload = "";
         try {
-            roleService.getRolePermissionList(role);
+            roleService.selectRolePermission(role);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
@@ -108,7 +106,7 @@ public class RoleController {
             roleService.deleteRole(role);
         } catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         Gson gson = new Gson();

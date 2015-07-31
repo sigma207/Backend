@@ -27,8 +27,8 @@ var RolePage = {
         RolePage.editRole = {};
         $("#roleCode").val(RolePage.editRole.role_code);
         $("#roleName").val(RolePage.editRole.role_name);
-        RolePage.editDialog.dialog({title: i18n.t("function.addRole")});
-        RolePage.editDialog.dialog("open");
+        RolePage.roleDialog.dialog({title: i18n.t("function.addRole")});
+        RolePage.roleDialog.dialog("open");
     },
     onRoleSaveClick: function (e) {
         RolePage.editRole.role_code = $("#roleCode").val();
@@ -42,8 +42,9 @@ var RolePage = {
                 }
             )
                 .done(function (data, status, xhr) {
-                    dataSourceManager.addRowData(data);
-                    RolePage.editDialog.dialog("close");
+                    //dataSourceManager.addRowData(data);
+                    getRoleList();
+                    RolePage.roleDialog.dialog("close");
                 }
             );
         }else if(RolePage.action == Action.Edit){
@@ -55,8 +56,9 @@ var RolePage = {
                 }
             )
                 .done(function (data, status, xhr) {
-                    dataSourceManager.updateRowData(RolePage.editRowIndex);
-                    RolePage.editDialog.dialog("close");
+                    //dataSourceManager.updateRowData(RolePage.editRowIndex);
+                    getRoleList();
+                    RolePage.roleDialog.dialog("close");
                 }
             );
         }
@@ -91,8 +93,8 @@ $(document).ready(function () {
 
     $(document).on("rowClick", roleTableRowClick);
 
-    RolePage.editDialog = $("#roleDialog");
-    RolePage.editDialog.dialog(Config.Dialog);
+    RolePage.roleDialog = $("#roleDialog");
+    RolePage.roleDialog.dialog(Config.Dialog);
     RolePage.permissionDialog = $("#permissionDialog");
     RolePage.permissionDialog.dialog(Config.Dialog);
 
@@ -145,8 +147,8 @@ function editRole(){
     RolePage.action = Action.Edit;
     $("#roleCode").val(RolePage.editRole.role_code);
     $("#roleName").val(RolePage.editRole.role_name);
-    RolePage.editDialog.dialog({title: RolePage.editRole.role_code+":"+ i18n.t("function.editRole")});
-    RolePage.editDialog.dialog("open");
+    RolePage.roleDialog.dialog({title: RolePage.editRole.role_code+":"+ i18n.t("function.editRole")});
+    RolePage.roleDialog.dialog("open");
 }
 
 function deleteRole(){

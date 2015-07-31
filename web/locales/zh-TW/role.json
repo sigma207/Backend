@@ -14,6 +14,6 @@
     "allocatePermission":"分配權限"
   },
   "error":{
-    "dirtyData":"資料已被編輯過,請重新查詢後再編輯"
+    "dirtyData":"資料已被異動過,請重新查詢後再操作"
   }
 }

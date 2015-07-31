@@ -15,5 +15,5 @@ public interface RoleDao{
 
     public void deleteRole(Connection connection, Role role) throws Exception;
 
-    public int updateRole(Connection connection, Role role) throws Exception;
+    public void updateRole(Connection connection, Role role) throws Exception;
 }

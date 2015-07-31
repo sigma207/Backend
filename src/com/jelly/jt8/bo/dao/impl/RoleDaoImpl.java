@@ -1,7 +1,6 @@
 package com.jelly.jt8.bo.dao.impl;
 
 import com.jelly.jt8.bo.dao.RoleDao;
-import com.jelly.jt8.bo.model.Permission;
 import com.jelly.jt8.bo.model.Role;
 import com.jelly.jt8.bo.util.ErrorMsg;
 import com.jelly.jt8.common.Utils;
@@ -19,11 +18,10 @@ import java.util.List;
  */
 @Repository("RoleDao")
 public class RoleDaoImpl implements RoleDao{
-    private final static String CHECK = "SELECT row_version from Role where row_version = ? ";
-    private final static String QUERY = "SELECT role_id, parent_role_id, role_code, role_name, update_time, row_version from Role ";
+    private final static String QUERY = "SELECT role_id, parent_role_id, role_code, role_name, update_time, rv from Role ";
     private final static String INSERT = "INSERT INTO Role (parent_role_id, role_code, role_name, update_time) VALUES (?, ?, ?, ?);";
-    private final static String UPDATE = "UPDATE Role set role_code = ?,role_name = ?,update_time = ? where role_id = ? and row_version = ? ";
-    private final static String DELETE = "DELETE Role where role_id = ? ";
+    private final static String UPDATE = "UPDATE Role set role_code = ?,role_name = ?,update_time = ? where role_id = ? and rv = ? ";
+    private final static String DELETE = "DELETE Role where role_id = ? and rv = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -48,7 +46,7 @@ public class RoleDaoImpl implements RoleDao{
                         rs.getString("role_code"),
                         rs.getString("role_name"),
                         rs.getString("update_time"),
-                        rs.getBytes("row_version")
+                        rs.getBytes("rv")
                 );
                 list.add(obj);
             }
@@ -77,6 +75,7 @@ public class RoleDaoImpl implements RoleDao{
         PreparedStatement stmt = null;
         int lastKey = -1;
         try {
+
             stmt = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
             stmt.setNull(1, Types.INTEGER);
             stmt.setString(2, role.getRole_code());
@@ -105,36 +104,12 @@ public class RoleDaoImpl implements RoleDao{
     @Override
     public void deleteRole(Connection connection, Role role) throws Exception {
         PreparedStatement stmt = null;
+        int updateCount = 0;
         try {
             stmt = connection.prepareStatement(DELETE);
 
             stmt.setInt(1, role.getRole_id());
-            stmt.executeUpdate();
-        } catch (Exception e){
-            throw e;
-        } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public int updateRole(Connection connection, Role role) throws Exception {
-        PreparedStatement stmt = null;
-        int updateCount = 0;
-        try {
-            stmt = connection.prepareStatement(UPDATE);
-
-            stmt.setString(1, role.getRole_code());
-            stmt.setString(2, role.getRole_name());
-            stmt.setString(3, Utils.updateTime());
-            stmt.setInt(4, role.getRole_id());
-            stmt.setBytes(5, role.getRow_version());
+            stmt.setBytes(2, role.getRv());
             updateCount =stmt.executeUpdate();
             if(updateCount==0){
                 throw new Exception(ErrorMsg.DIRTY_DATA);
@@ -150,6 +125,33 @@ public class RoleDaoImpl implements RoleDao{
                 e.printStackTrace();
             }
         }
-        return updateCount;
+    }
+
+    @Override
+    public void updateRole(Connection connection, Role role) throws Exception {
+        PreparedStatement stmt = null;
+        try {
+            stmt = connection.prepareStatement(UPDATE);
+
+            stmt.setString(1, role.getRole_code());
+            stmt.setString(2, role.getRole_name());
+            stmt.setString(3, Utils.updateTime());
+            stmt.setInt(4, role.getRole_id());
+            stmt.setBytes(5, role.getRv());
+            int updateCount =stmt.executeUpdate();
+            if(updateCount==0){
+                throw new Exception(ErrorMsg.DIRTY_DATA);
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

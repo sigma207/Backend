@@ -44,11 +44,15 @@ function initZTree(data){
 
 function onMenuClick(event, treeId, treeNode){
     console.log("onMenuClick");
+    Main.contentItem = undefined;
     if(treeNode.id=="11"){
         Main.contentItem = MenuItem.Permission;
-        loadContentUrl();
     }else if(treeNode.id=="12"){
         Main.contentItem = MenuItem.Role;
+    }else if(treeNode.id=="41"){
+        Main.contentItem = MenuItem.User;
+    }
+    if(typeof Main.contentItem !== typeof undefined){
         loadContentUrl();
     }
 }

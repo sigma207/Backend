@@ -119,7 +119,7 @@ var ReportTable = {
             thObj[ReportTable.TD_CLASS_RENDERER] = $th.attr(ReportTable.TD_CLASS_RENDERER);
             if (typeof thObj[dt.TEMPLATE_CLASS] !== typeof undefined) {
                 thObj[dt.TEMPLATE_HTML] = $("." + thObj[dt.TEMPLATE_CLASS]).html();
-                console.log("html=%s", thObj[dt.TEMPLATE_HTML]);
+                //console.log("html=%s", thObj[dt.TEMPLATE_HTML]);
             }
             var format = "";
             var originalFormat = "";

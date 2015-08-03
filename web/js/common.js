@@ -26,10 +26,12 @@ var RequestJSON = {
         };
 
         req.beforeFailCallBack = function (jqXHR, textStatus, errorThrown) {
+            log(jqXHR);
             if(jqXHR.responseText!=""){
+                //$("#errorContent").html(jqXHR.responseText);
+                //MainPage.errorDialog.dialog("open");
                 alert(i18n.t("error."+jqXHR.responseText))
             }
-            log(jqXHR);
         };
 
         return req;

@@ -1,11 +1,11 @@
 /**
  * Created by user on 2015/7/20.
  */
-var Main = {
-    contentItem:undefined,
-    lang:undefined,
-    testData:undefined,
-    treeSetting:{
+var MainPage = {
+    contentItem: undefined,
+    lang: undefined,
+    testData: undefined,
+    treeSetting: {
         data: {
             simpleData: {
                 enable: true
@@ -14,52 +14,72 @@ var Main = {
         callback: {
             onClick: onMenuClick
         }
+    },
+    errorDialog: undefined,
+    permissionRequest: RequestJSON.createNew(Config.HostUrl + "/permission"),
+    getPermissionList: function () {
+        MainPage.permissionRequest.ajax("/query/list").
+            done(function (data, status, xhr) {
+                var permissionList = JSON.parse(data);
+                initZTree(permissionList);
+            }
+        );
     }
 };
 var locale = Locale.createNew(Locale.zh_TW);
 
 $(document).ready(function () {
-    Main.contentItem = MenuItem.Demo;
-    Main.testData = pData;
+    MainPage.contentItem = MenuItem.Demo;
+    MainPage.testData = pData;
+
+    MainPage.errorDialog = $("#errorDialog");
+    MainPage.errorDialog.dialog(Config.Dialog);
     //initZTree(Main.testData);
-    $.getJSON("test/data.json",onTestDataLoad).fail(onTestDataFail);
+    //$.getJSON("test/data.json", onTestDataLoad).fail(onTestDataFail);
+    MainPage.getPermissionList();
 });
 
-function onTestDataLoad(data,status,xhr){
-    Main.testData = data;
+function onTestDataLoad(data, status, xhr) {
+    MainPage.testData = data;
     console.log(data);
     //initMenu(Main.testData.permissionData);
-    initZTree(Main.testData.pData);
+    initZTree(MainPage.testData.pData);
 
 }
 
-function onTestDataFail(jqXHR, textStatus, error){
-    console.log( error.code+":"+error.message );
+function onTestDataFail(jqXHR, textStatus, error) {
+    console.log(error.code + ":" + error.message);
 }
 
-function initZTree(data){
-    $.fn.zTree.init($("#menuTree"), Main.treeSetting, data);
+function initZTree(data) {
+    formatPermissionList(data);
+    MainPage.tree = $("#menuTree");
+    $.fn.zTree.init(MainPage.tree, MainPage.treeSetting, data);
+    MainPage.zTreeObj = $.fn.zTree.getZTreeObj("menuTree");
+    MainPage.zTreeObj.expandAll(true);
     loadContentUrl();
 }
 
-function onMenuClick(event, treeId, treeNode){
+function onMenuClick(event, treeId, treeNode) {
     console.log("onMenuClick");
-    Main.contentItem = undefined;
-    if(treeNode.id=="11"){
-        Main.contentItem = MenuItem.Permission;
-    }else if(treeNode.id=="12"){
-        Main.contentItem = MenuItem.Role;
-    }else if(treeNode.id=="41"){
-        Main.contentItem = MenuItem.User;
-    }
-    if(typeof Main.contentItem !== typeof undefined){
+    MainPage.contentItem = treeNode;
+    //if (treeNode.id == "11") {
+    //    MainPage.contentItem = MenuItem.Permission;
+    //} else if (treeNode.id == "12") {
+    //    MainPage.contentItem = MenuItem.Role;
+    //} else if (treeNode.id == "41") {
+    //    MainPage.contentItem = MenuItem.User;
+    //}
+    if (typeof MainPage.contentItem !== typeof undefined) {
         loadContentUrl();
     }
 }
 
 function loadContentUrl() {
-    console.log("loadContentUrl:"+Main.contentItem.url);
-    $(".content").load(Main.contentItem.url, contentLoad);
+    console.log("loadContentUrl:" + MainPage.contentItem.path);
+    if(MainPage.contentItem&&MainPage.contentItem.path){
+        $(".content").load(MainPage.contentItem.path, contentLoad);
+    }
 }
 
 function contentLoad(response, status, xhr) {
@@ -70,9 +90,15 @@ function contentLoad(response, status, xhr) {
 }
 
 function changeLang(lang) {
-    var option = {resGetPath: "locales/" + lang + "/"+Main.contentItem.localesFile+".json"};
-    i18n.init(option, function (t) {
-        console.log(lang+":"+Main.contentItem.localesFile+".json");
-        $(".content").add(".ui-dialog").i18n();
-    });
+    var startIndex = MainPage.contentItem.path.lastIndexOf("/")+1;
+    var endIndex = MainPage.contentItem.path.lastIndexOf(".html");
+    if(endIndex!=-1){
+        var item = MainPage.contentItem.path.substring(startIndex,endIndex).toLowerCase();
+        var option = {resGetPath: "locales/" + lang + "/" + item + ".json"};
+        i18n.init(option, function (t) {
+            //console.log(lang + ":" + item + ".json");
+            $(".content").add(".ui-dialog").i18n();
+        });
+    }
+
 }

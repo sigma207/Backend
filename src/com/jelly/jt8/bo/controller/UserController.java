@@ -64,13 +64,13 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/addUser",method = RequestMethod.POST)
+    @RequestMapping(value="/insertUser",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addRole(@RequestBody User user){
-        System.out.println("addUser");
+        System.out.println("insertUser");
 
         String payload = "";
         try {
-            userService.addUser(user);
+            userService.insertUser(user);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
@@ -87,6 +87,23 @@ public class UserController extends BaseController{
         String payload = "";
         try {
             userService.deleteUser(user);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        Gson gson = new Gson();
+        payload = gson.toJson(user);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value="/allocateUserRole",method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> allocateUserRole(@RequestBody User user){
+        System.out.println("allocateUserRole");
+
+        String payload = "";
+        try {
+            userService.allocateUserRole(user);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);

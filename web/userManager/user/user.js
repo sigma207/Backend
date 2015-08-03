@@ -10,8 +10,8 @@ var UserPage = {
     roleDialog: undefined,
     roleRequest: RequestJSON.createNew(Config.HostUrl + "/role"),
     userRequest: RequestJSON.createNew(Config.HostUrl + "/user"),
-    userTable : undefined,
-    userDataSourceManager : undefined,
+    userTable: undefined,
+    userDataSourceManager: undefined,
     roleTable: undefined,
     roleDataSourceManager: undefined,
     onQueryClick: function (e) {
@@ -29,8 +29,8 @@ var UserPage = {
     onUserSaveClick: function (e) {
         UserPage.editUser.login_id = $("#login_id").val();
         UserPage.editUser.password = $("#password").val();
-        if(UserPage.action == Action.Add){
-            UserPage.userRequest.ajax("/addUser", {
+        if (UserPage.action == Action.Add) {
+            UserPage.userRequest.ajax("/insertUser", {
                     dataType: "json",
                     contentType: "application/json",
                     type: 'POST',
@@ -42,7 +42,7 @@ var UserPage = {
                     UserPage.userDialog.dialog("close");
                 }
             );
-        }else if(UserPage.action == Action.Edit){
+        } else if (UserPage.action == Action.Edit) {
             UserPage.userRequest.ajax("/updateUser", {
                     dataType: "json",
                     contentType: "application/json",
@@ -57,6 +57,23 @@ var UserPage = {
             );
         }
 
+    },
+    onRoleSaveClick: function (e) {
+        var list = UserPage.roleTable.getSelectedData();
+        UserPage.editUser.userRoleList = [];
+        for (var i = 0, count = list.length; i < count; i++) {
+            UserPage.editUser.userRoleList.push({login_id: UserPage.editUser.login_id, role_id: list[i].role_id});
+        }
+        UserPage.userRequest.ajax("/allocateUserRole", {
+                dataType: "json",
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify(UserPage.editUser)
+            }
+        ).done(function (data, status, xhr) {
+                UserPage.roleDialog.dialog("close");
+            }
+        );
     }
 };
 $(document).ready(function () {
@@ -68,7 +85,7 @@ $(document).ready(function () {
     UserPage.roleDataSourceManager = DataSourceManager.createNew(false);
     UserPage.roleDataSourceManager.addRenderer(UserPage.roleTable);
 
-    $(document).on("rowClick", userTableRowClick);
+    UserPage.userTable.$table.on("rowClick", userTableRowClick);
 
     UserPage.userDialog = $("#userDialog");
     UserPage.userDialog.dialog(Config.Dialog);
@@ -79,6 +96,7 @@ $(document).ready(function () {
     $("#queryBt").on("click", UserPage.onQueryClick);
     $("#newUserBt").on("click", UserPage.onNewUserClick);
     $("#userSave").on("click", UserPage.onUserSaveClick);
+    $("#roleSave").on("click", UserPage.onRoleSaveClick);
 
     getUserList();
 });
@@ -101,7 +119,6 @@ function getRoleList() {
 }
 
 function userTableRowClick(e, obj) {
-    console.log("userTableRowClick");
     var tagName = $(obj.clickEvent.target).prop("tagName");
     var name = $(obj.clickEvent.target).prop("name");
     if (tagName == "INPUT") {
@@ -109,15 +126,15 @@ function userTableRowClick(e, obj) {
         UserPage.editRowIndex = obj.rowIndex;
         if (name == "allocate") {
             allocate();
-        } else if(name=="editUser"){
+        } else if (name == "editUser") {
             //editUser();
-        } else if(name=="removeUser"){
+        } else if (name == "removeUser") {
             deleteUser();
         }
     }
 }
 
-function deleteUser(){
+function deleteUser() {
     UserPage.userRequest.ajax("/deleteUser", {
         dataType: "json",
         contentType: "application/json",
@@ -138,14 +155,19 @@ function allocate() {
         data: JSON.stringify(UserPage.editUser)
     })
         .done(function (data, status, xhr) {
-            //var permissionList = data.permissionList;
-            //console.log(permissionList);
-            //RolePage.zTreeObj.checkAllNodes(false);
-            //var node = undefined;
-            //for (var i = 0; i < permissionList.length; i++) {
-            //    node = RolePage.zTreeObj.getNodeByParam("permission_id", permissionList[i].permission_id);
-            //    RolePage.zTreeObj.checkNode(node, true, false);
-            //}
+            UserPage.roleTable.clearSelected();
+            var userRoleList = data;
+            var i, count;
+            var roleMap = {};
+            for (i = 0, count = userRoleList.length; i < count; i++) {
+                roleMap[userRoleList[i].role_id] = 0;
+            }
+            var roleList = UserPage.roleDataSourceManager.dataSource;
+            for (i = 0, count = roleList.length; i < count; i++) {
+                if (typeof roleMap[roleList[i].role_id] !== typeof undefined) {
+                    UserPage.roleTable.selectRow(i, true);
+                }
+            }
 
             UserPage.roleDialog.dialog({title: UserPage.editUser.login_id + ":" + i18n.t("function.allocateRole")});
             UserPage.roleDialog.dialog("open");

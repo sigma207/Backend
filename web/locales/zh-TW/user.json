@@ -1,5 +1,6 @@
 {
   "query":"查詢",
+  "check":"勾選",
   "login_id":"用戶代碼",
   "userPassword":"用戶密碼",
   "inputAgain":"再輸入一次",

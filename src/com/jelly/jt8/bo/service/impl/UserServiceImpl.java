@@ -1,6 +1,5 @@
 package com.jelly.jt8.bo.service.impl;
 
-import com.jelly.jt8.bo.dao.RoleDao;
 import com.jelly.jt8.bo.dao.UserDao;
 import com.jelly.jt8.bo.dao.UserRoleDao;
 import com.jelly.jt8.bo.model.User;
@@ -46,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(User user) throws Exception {
+    public void insertUser(User user) throws Exception {
         Connection conn = null;
         try {
             conn = jt8Ds.getConnection();
@@ -76,6 +75,7 @@ public class UserServiceImpl implements UserService {
         try {
             conn = jt8Ds.getConnection();
             conn.setAutoCommit(false);
+            userRoleDao.deleteUserRole(conn, user);
             userDao.deleteUser(conn, user);
             conn.commit();
         }catch (Exception e) {
@@ -94,4 +94,31 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void allocateUserRole(User user) throws Exception {
+        Connection conn = null;
+        try {
+            conn = jt8Ds.getConnection();
+            conn.setAutoCommit(false);
+            userDao.updateUser(conn, user);
+            userRoleDao.deleteUserRole(conn, user);
+            for(UserRole userRole: user.getUserRoleList()){
+                userRoleDao.insertUserRole(conn,userRole);
+            }
+            conn.commit();
+        }catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                }catch (SQLException se){
+                    se.printStackTrace();
+                }
+            }
+        }
+    }
 }

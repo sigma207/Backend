@@ -91,7 +91,7 @@ $(document).ready(function () {
     dataSourceManager = DataSourceManager.createNew(false);
     dataSourceManager.addRenderer(roleTable);
 
-    $(document).on("rowClick", roleTableRowClick);
+    roleTable.$table.on("rowClick", roleTableRowClick);
 
     RolePage.roleDialog = $("#roleDialog");
     RolePage.roleDialog.dialog(Config.Dialog);
@@ -165,6 +165,7 @@ function deleteRole(){
 }
 
 function allocate() {
+    console.log("roleAllocate");
     RolePage.roleRequest.ajax("/query/rolePermissionList", {
         dataType: "json",
         contentType: "application/json",

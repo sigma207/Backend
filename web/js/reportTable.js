@@ -8,6 +8,7 @@ var ReportTable = {
         var dt = DataSourceRenderer.createNew();//dragTable
         dt.tableClass = tableClass;
         dt.$table = $("." + dt.tableClass);
+        dt.pkey = dt.$table.attr("pkey");
         dt.$headTr = dt.$table.find("thead>tr");
         dt.$thArrowDiv;
         /**
@@ -28,6 +29,9 @@ var ReportTable = {
         dt.columnFields = [];
         dt.renderTBody = "";
         dt.tdClassRenderers = {};
+        dt.selectedMap = {};
+        dt.selectedKey = {};
+        dt.keepSelected = true;
 
         dt.DRAG_OVER_CLASS = "dragOverColumn";
         dt.BASIC_TH_CLASS = "basicTH";
@@ -65,6 +69,7 @@ var ReportTable = {
         dt.initTHead = function () {
             dt.initColumnField();
             var $th;
+            var field;
             for (var colIndex = 0; colIndex < dt.columnSize; colIndex++) {
                 $th = dt.getThByIndex(colIndex);
                 if (typeof($th.attr(dt.COLUMN_TYPE)) == "undefined") {
@@ -74,7 +79,10 @@ var ReportTable = {
                 //$th.addClass(dt.BASIC_TH_CLASS);
                 //append the arrow div for sort
                 $th.append("<div class='" + dt.ARROW_DIV + "'></div>");
-                $th.on("click", dt.sortColumnClick);
+                field = $th.attr(dt.FIELD);
+                if(field){
+                    $th.on("click", dt.sortColumnClick);
+                }
             }
             dt.$thArrowDiv = dt.$headTr.find("th>." + dt.ARROW_DIV);
             //add event listener for drag&down
@@ -238,6 +246,7 @@ var ReportTable = {
          * @param changeOrderBy
          */
         dt.sortOrderBy = function (sortIndex, changeOrderBy) {
+            dt.keepSelected = false;
             var $th = dt.getThByIndex(sortIndex);
             var currentOrderBy = $th.attr(dt.ORDER_BY);
             currentOrderBy = (currentOrderBy == dt.ASC || currentOrderBy == "") ? dt.ASC : dt.DESC;
@@ -309,7 +318,34 @@ var ReportTable = {
                 $(this).click(dt.onRowClick);
             });
 
+            dt.initSelected();
             //console.timeEnd("renderDom");
+        };
+
+        dt.initSelected = function () {
+            console.log("initSelected");
+            var tableSelectCheckbox = dt.$table.find(".tableSelectCheckbox");
+            tableSelectCheckbox.on("change", dt.onRowSelectChange);
+            if(dt.keepSelected){
+                dt.selectedMap = {};
+                dt.selectedKey = {};
+            }else{
+                var rowPKeyValue = undefined;
+                for(var rowIndex= 0;rowIndex<dt.dataSize;rowIndex++){
+                    rowPKeyValue = dt.data[rowIndex][dt.pkey];
+                    if(dt.selectedKey.hasOwnProperty(rowPKeyValue)){
+                        dt.selectRow(rowIndex,true);
+                    }
+                }
+            }
+            dt.keepSelected = true;
+        };
+
+        dt.clearSelected = function () {
+            dt.selectedMap = {};
+            dt.selectedKey = {};
+            var tableSelectCheckbox = dt.$table.find(".tableSelectCheckbox");
+            tableSelectCheckbox.prop("checked", false);
         };
 
         dt.renderRow = function (index) {
@@ -321,7 +357,6 @@ var ReportTable = {
 
         dt.onRowClick = function (e) {
             var tr = e.currentTarget;
-            //var evt = new Event("rowClick");
             var tableClass = dt.tableClass;
             var rowIndex = $(tr).attr("rowIndex");
             var rowData = dt.data[rowIndex];
@@ -331,8 +366,39 @@ var ReportTable = {
                 rowIndex: rowIndex,
                 rowData: rowData
             };
-            $(document).trigger("rowClick", [obj]);
-            //document.dispatchEvent(evt);
+            dt.$table.trigger("rowClick", [obj]);
+        };
+
+        dt.onRowSelectChange = function(e){
+            var rowIndex = $(this).closest("tr").attr("rowIndex");
+            //var name = $(this).attr("name");
+            dt.select(rowIndex,$(this).is(':checked'));
+        };
+
+        dt.select = function (rowIndex,selected) {
+            var rowData = dt.data[rowIndex] || {};
+            var pKeyValue = rowData[dt.pkey];
+            if(selected){
+                dt.selectedMap[rowIndex] = rowData;
+                dt.selectedKey[pKeyValue] = rowIndex;
+            }else{
+                delete dt.selectedMap[rowIndex];
+                delete dt.selectedKey[pKeyValue];
+            }
+        };
+
+        dt.selectRow = function (rowIndex,selected) {
+            dt.select(rowIndex,selected);
+            var tr = dt.trList.filter("[rowIndex="+rowIndex+"]");
+            tr.find(".tableSelectCheckbox").prop("checked", true);
+        };
+
+        dt.getSelectedData = function () {
+            var list = [];
+            for(var rowIndex in dt.selectedMap){
+                list.push(dt.selectedMap[rowIndex]);
+            }
+            return list;
         };
 
         dt.generateTr = function (rowIndex) {
@@ -341,28 +407,20 @@ var ReportTable = {
             var rowData = dt.data[rowIndex] || {};
             for (var colIndex = 0; colIndex < dt.columnSize; colIndex++) {
                 thObj = dt.thObjList[colIndex];
-                tr += dt.generateTd(thObj, colIndex, rowData);
+                tr += dt.generateTd(thObj, rowIndex, colIndex, rowData);
             }
             tr += "</tr>";
             return tr;
         };
 
-        /**
-         *
-         * @param thObj  reusable object
-         * @param colIndex
-         * @param rowData
-         * @returns {string}
-         */
-        dt.generateTd = function (thObj, colIndex, rowData) {
-
+        dt.generateTd = function (thObj, rowIndex, colIndex, rowData) {
             var tdClass = dt.generateTdClass(thObj, rowData);
             var tdStyle = dt.generateStyle(thObj.display);
             var tdContent = "";
-            if (typeof thObj.field !== typeof undefined) {
+            if (typeof thObj[dt.TEMPLATE_HTML] === typeof undefined) {
                 tdContent = dt.generateValue(thObj, rowData);
             } else {
-                tdContent = dt.generateByTemplate(thObj);
+                tdContent = dt.generateByTemplate(thObj, rowIndex, rowData);
             }
 
             return "<td" + tdClass + tdStyle + ">" + tdContent + "</td>";
@@ -430,9 +488,8 @@ var ReportTable = {
             }
         };
 
-        dt.generateByTemplate = function (thObj) {
-            var templateHtml = thObj[dt.TEMPLATE_HTML];
-            return templateHtml;
+        dt.generateByTemplate = function (thObj,rowIndex,rowData) {
+            return thObj[dt.TEMPLATE_HTML];
         };
         /**
          * ------------------------------------------------------------------

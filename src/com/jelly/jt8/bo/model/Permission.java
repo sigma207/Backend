@@ -11,14 +11,16 @@ public class Permission {
     private String permission_code;
     private int parent_permission_id;
     private int sequence;
+    private String path;
     private Map<String,String> permissionNameMap;
     private List<Permission> children;
 
-    public Permission(int permission_id, String permission_code, int parent_permission_id, int sequence) {
+    public Permission(int permission_id, String permission_code, int parent_permission_id, int sequence, String path) {
         this.permission_id = permission_id;
         this.permission_code = permission_code;
         this.parent_permission_id = parent_permission_id;
         this.sequence = sequence;
+        this.path = path;
     }
 
     public int getPermission_id() {
@@ -67,5 +69,13 @@ public class Permission {
 
     public void setChildren(List<Permission> children) {
         this.children = children;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

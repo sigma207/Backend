@@ -10,9 +10,14 @@ import java.util.List;
  */
 public interface UserService {
     public List<User> selectUser() throws Exception;
+
     public List<UserRole> selectUserRole(User user) throws Exception;
-    public void addUser(User role) throws Exception;
-    public void deleteUser(User role) throws Exception;
+
+    public void insertUser(User user) throws Exception;
+
+    public void deleteUser(User user) throws Exception;
+
+    public void allocateUserRole(User user) throws Exception;
 }
 
 

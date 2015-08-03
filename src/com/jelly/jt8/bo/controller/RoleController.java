@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/role")
-public class RoleController {
+public class RoleController extends BaseController{
     @Autowired
     @Qualifier("roleService")
     private RoleService roleService;
@@ -129,14 +129,5 @@ public class RoleController {
         Gson gson = new Gson();
         payload = gson.toJson(role);
         return getResponseEntity(payload);
-    }
-
-    private ResponseEntity<String> getResponseEntity(String payload) {
-        MediaType mediaType=new MediaType("text","html", Charset.forName("UTF-8"));
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Access-Control-Allow-Origin", "*");
-        responseHeaders.setContentType(MediaType.APPLICATION_JSON);
-        responseHeaders.setContentType(mediaType);
-        return new ResponseEntity<String>(payload, responseHeaders, HttpStatus.OK);
     }
 }

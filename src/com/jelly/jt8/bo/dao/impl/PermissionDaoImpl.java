@@ -16,11 +16,11 @@ import java.util.List;
  */
 @Repository("PermissionDao")
 public class PermissionDaoImpl implements PermissionDao {
-    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence from Permission ORDER BY parent_permission_id,sequence";
+    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence, path from Permission ORDER BY parent_permission_id,sequence";
     private final static String WHERE_PARENT = "where parent_permission_id = ? ";
-    private final static String INSERT = "INSERT INTO Permission (permission_code, parent_permission_id, sequence) VALUES (?, ?, ?);";
+    private final static String INSERT = "INSERT INTO Permission (permission_code, parent_permission_id, sequence, path) VALUES (?, ?, ?, ?);";
     private final static String DELETE = "DELETE Permission where permission_id = ? ";
-    private final static String UPDATE = "UPDATE Permission set permission_code = ?,sequence = ? where permission_id = ? ";
+    private final static String UPDATE = "UPDATE Permission set permission_code = ?,sequence = ?, path = ? where permission_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -43,7 +43,8 @@ public class PermissionDaoImpl implements PermissionDao {
                         rs.getInt("permission_id"),
                         rs.getString("permission_code"),
                         rs.getInt("parent_permission_id"),
-                        rs.getInt("sequence")
+                        rs.getInt("sequence"),
+                        rs.getString("path")
                 );
                 list.add(obj);
             }
@@ -91,7 +92,8 @@ public class PermissionDaoImpl implements PermissionDao {
                         rs.getInt("permission_id"),
                         rs.getString("permission_code"),
                         rs.getInt("parent_permission_id"),
-                        rs.getInt("sequence")
+                        rs.getInt("sequence"),
+                        rs.getString("path")
                 );
                 list.add(obj);
             }
@@ -129,6 +131,7 @@ public class PermissionDaoImpl implements PermissionDao {
             }
 
             stmt.setInt(3,permission.getSequence());
+            stmt.setString(4,permission.getPath());
             stmt.executeUpdate();
             ResultSet keys = stmt.getGeneratedKeys();
 
@@ -176,9 +179,11 @@ public class PermissionDaoImpl implements PermissionDao {
         try {
             stmt = connection.prepareStatement(UPDATE);
 
-            stmt.setString(1,permission.getPermission_code());
+            stmt.setString(1, permission.getPermission_code());
             stmt.setInt(2,permission.getSequence());
-            stmt.setInt(3, permission.getPermission_id());
+            stmt.setString(3, permission.getPath());
+            stmt.setInt(4, permission.getPermission_id());
+
             stmt.executeUpdate();
         } catch (Exception e){
             throw e;

@@ -36,7 +36,12 @@ var PermissionPage = {
 var currentAction;
 $(document).ready(function () {
     PermissionPage.editDialog = $("#editDialog");
-    PermissionPage.editDialog.dialog(Config.Dialog);
+    PermissionPage.editDialog.dialog({
+        modal: true,
+        autoOpen: false,
+        appendTo: ".content",
+        width: 400
+    });
 
     $("#save").on("click", onSaveClick);
     $("#newNodeBt").on("click", onNewNodeClick);
@@ -262,6 +267,7 @@ function initContextMenu() {
 
 function onSaveClick(e) {
     PermissionPage.editPermission.permission_code = $("#permission_code").val();
+    PermissionPage.editPermission.path = $("#path").val();
     var position = $("#position").val();
     locale.getDomVal(PermissionPage.editPermission.permissionNameMap, "#describe_");
     switch (currentAction) {
@@ -290,7 +296,7 @@ function onSaveClick(e) {
 function onNewNodeClick() {
     currentAction = Action.NewNode;
     var selectedNodes = PermissionPage.zTreeObj.getSelectedNodes();
-    log(selectedNodes);
+    //log(selectedNodes);
     var selectedNode = undefined;
     if(selectedNodes.length>0){
         selectedNode = selectedNodes[0];
@@ -330,6 +336,7 @@ function editNewPermission(parentNode) {
     PermissionPage.editPermission = {};
     PermissionPage.editPermission.permission_id = undefined;
     PermissionPage.editPermission.permission_code = undefined;
+    PermissionPage.editPermission.path = undefined;
     if(parentNode){
         if(parentNode.isParent){
             PermissionPage.editPermission.sequence = parentNode.children.length;
@@ -349,6 +356,7 @@ function editNewPermission(parentNode) {
     PermissionPage.editPermission.permissionNameMap = {};
 
     $("#permission_code").val(PermissionPage.editPermission.permission_code);
+    $("#path").val(PermissionPage.editPermission.path);
     locale.setDomVal(PermissionPage.editPermission.permissionNameMap, "#describe_");
 }
 
@@ -357,5 +365,6 @@ function initEditDialogVal(currentNode) {
     PermissionPage.editPermission = currentNode;
     console.log(PermissionPage);
     $("#permission_code").val(PermissionPage.editPermission.permission_code);
+    $("#path").val(PermissionPage.editPermission.path);
     locale.setDomVal(PermissionPage.editPermission.permissionNameMap, "#describe_");
 }

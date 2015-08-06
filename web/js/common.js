@@ -13,6 +13,16 @@ var RequestJSON = {
             req.url = url;
             return $.ajax(req.hostUrl + req.url, setting).done(req.beforeCallback).fail(req.beforeFailCallBack);
         };
+        req.json = function (url, data) {
+            req.url = url;
+            var setting = {
+                dataType: "json",
+                contentType: "application/json",
+                type: 'POST',
+                data: JSON.stringify(data)
+            };
+            return $.ajax(req.hostUrl + req.url, setting).done(req.beforeCallback).fail(req.beforeFailCallBack);
+        };
 
         req.getJSON = function (url, callback, failCallback) {
             req.url = url;

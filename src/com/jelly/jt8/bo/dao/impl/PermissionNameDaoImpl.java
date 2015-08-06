@@ -16,10 +16,10 @@ import java.util.List;
  */
 @Repository("PermissionNameDao")
 public class PermissionNameDaoImpl implements PermissionNameDao {
-    private final static String QUERY = "SELECT permission_id, language, name from Permission_Name ";
-    private final static String INSERT = "INSERT INTO Permission_Name (permission_id, language, name) VALUES (?, ?, ?);";
-    private final static String DELETE = "DELETE Permission_Name where permission_id = ? ";
-    private final static String UPDATE = "UPDATE Permission_Name set name = ? where permission_id = ? and language = ? ";
+    private final static String QUERY = "SELECT permission_id, language, name FROM permission_name ";
+    private final static String INSERT = "INSERT INTO permission_name (permission_id, language, name) VALUES (?, ?, ?);";
+    private final static String DELETE = "DELETE permission_name WHERE permission_id = ? ";
+    private final static String UPDATE = "UPDATE permission_name SET name = ? WHERE permission_id = ? AND language = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")

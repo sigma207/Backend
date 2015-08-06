@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Holiday</title>
+    <script type="text/javascript" src="goodsManage/holiday/holiday.js"></script>
+</head>
+<body>
+<div>
+    <select id="exchange_id"></select>
+    <select id="main_symbol_id"></select>
+</div>
+<input id="batchAddHolidayBt" type="button" data-i18n="[value]function.addHoliday" class="button"/>
+<table class="holidayTable">
+    <thead>
+    <tr>
+        <th field="exchange_id" data-i18n="exchange_id"></th>
+        <th field="main_symbol_id" data-i18n="main_symbol_id"></th>
+        <th field="begin_date" data-i18n="begin_date"></th>
+        <th field="end_date" data-i18n="end_date"></th>
+        <th field="memo" data-i18n="memo"></th>
+        <th templateClass="holidayManage" data-i18n="holidayManage"></th>
+    </tr>
+    </thead>
+</table>
+
+<input id="addExceptionBt" type="button" data-i18n="[value]function.addException" class="button"/>
+<table class="exceptionTable">
+    <thead>
+    <tr>
+        <th field="exchange_id" data-i18n="exchange_id"></th>
+        <th field="main_symbol_id" data-i18n="main_symbol_id"></th>
+        <th field="calendar" data-i18n="calendar"></th>
+        <th field="memo" data-i18n="memo"></th>
+        <th templateClass="exceptionManage" data-i18n="exceptionManage"></th>
+    </tr>
+    </thead>
+</table>
+
+<div id="holidayBatchDialog">
+    <input id="addHolidayBt" type="button" data-i18n="[value]function.addHoliday" class="button"/>
+    <table class="holidayEditTable">
+        <thead>
+        <tr>
+            <th templateClass="column0"></th>
+            <th templateClass="begin_date" data-i18n="begin_date"></th>
+            <th templateClass="end_date" data-i18n="end_date"></th>
+            <th templateClass="holidayMemo" data-i18n="memo"></th>
+        </tr>
+        </thead>
+    </table>
+
+    <input id="batchSaveHolidayBt" type="button" data-i18n="[value]function.save" class="button">
+    <div style="display: none;">
+        <div class="column0">
+            <div class="rowDeleteImg"></div>
+        </div>
+        <div class="begin_date">
+            <input name="begin_date" type="text" class="dateInput startDate"/>
+        </div>
+        <div class="end_date">
+            <input name="end_date" type="text" class="dateInput endDate"/>
+        </div>
+        <div class="holidayMemo">
+            <input name="holidayMemo" type="text" class="baseInput"/>
+        </div>
+    </div>
+</div>
+<div id="holidayDialog">
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label data-i18n="begin_date" for="begin_date" class="col-sm-4 control-label"></label>
+            <div class="col-sm-8">
+                <input id="begin_date" type="text" class="form-control"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label data-i18n="end_date" for="end_date" class="col-sm-4 control-label"></label>
+            <div class="col-sm-8">
+                <input id="end_date" type="text" class="form-control"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label data-i18n="memo" for="holidayMemo" class="col-sm-4 control-label"></label>
+            <div class="col-sm-8">
+                <input id="holidayMemo" type="text" class="form-control"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <input id="saveHoliday" type="button" data-i18n="[value]function.save" class="button">
+            </div>
+        </div>
+    </form>
+</div>
+<div id="exceptionDialog">
+    <form class="form-horizontal" role="form">
+        <div class="form-group">
+            <label data-i18n="calendar" for="calendar" class="col-sm-4 control-label"></label>
+            <div class="col-sm-8">
+                <input id="calendar" type="text" class="form-control"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label data-i18n="memo" for="exceptionMemo" class="col-sm-4 control-label"></label>
+            <div class="col-sm-8">
+                <input id="exceptionMemo" type="text" class="form-control"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <input id="exceptionSave" type="button" data-i18n="[value]function.save" class="button">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

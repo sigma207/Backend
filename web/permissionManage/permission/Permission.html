@@ -3,56 +3,55 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>base</title>
-    <script type="text/javascript" src="permissionManage/permission/permission.js"></script>
 </head>
 <body>
-<ul id="permissionTree" class="ztree"></ul>
-<input type="button" id="newNodeBt" data-i18n="[value]function.newNode" class="button">
-<div id="editDialog">
-    <form class="form-horizontal" role="form">
-        <div class="form-group">
-            <label data-i18n="code" for="permission_code" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input id="permission_code" type="text" class="form-control"/>
-            </div>
+<div ng-controller="PermissionController">
+    <ul id="permissionTree" class="ztree"></ul>
+    <button type="button" class="btn btn-default" ng-click="addNodeClick()">新增節點</button>
+    <script type="text/ng-template" id="permissionEdit.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
         </div>
-        <div class="form-group">
-            <label for="describe_zh-TW" class="col-md-2 control-label">繁</label>
-            <div class="col-md-10">
-                <input id="describe_zh-TW" type="text" class="form-control"/>
-            </div>
+        <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="permission_code" class="col-md-2 control-label">代碼</label>
+                    <div class="col-md-10">
+                        <input id="permission_code" type="text" ng-model="editPermission.permission_code" class="form-control" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="zh-TW" class="col-md-2 control-label">繁</label>
+                    <div class="col-md-10">
+                        <input id="zh-TW" type="text" ng-model="editPermission.permissionNameMap.zh_TW" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="zh-CN" class="col-md-2 control-label">簡</label>
+                    <div class="col-md-10">
+                        <input id="zh-CN" type="text" ng-model="editPermission.permissionNameMap.zh_CN" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="en-US" class="col-md-2 control-label">英</label>
+                    <div class="col-md-10">
+                        <input id="en-US" type="text" ng-model="editPermission.permissionNameMap.en_US" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="path" class="col-md-2 control-label">路徑</label>
+                    <div class="col-md-10">
+                        <input id="path" type="text" size="30" ng-model="editPermission.path" class="form-control"/>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="describe_zh-CN" class="col-md-2 control-label">簡</label>
-            <div class="col-md-10">
-                <input id="describe_zh-CN" type="text" class="form-control"/>
-            </div>
+        <div class="modal-footer">
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
         </div>
-        <div class="form-group">
-            <label for="describe_en-US" class="col-md-2 control-label">英</label>
-            <div class="col-md-10">
-                <input id="describe_en-US" type="text" class="form-control"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="path" class="col-md-2 control-label">路徑</label>
-            <div class="col-md-10">
-                <input id="path" type="text" size="30" class="form-control"/>
-            </div>
-        </div>
-        <div id="positionContainer" style="display: none;" class="form-group">
-            <label data-i18n="position" for="position" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select id="position">
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input id="save" type="button" data-i18n="[value]function.save" class="button">
-            </div>
-        </div>
-    </form>
+    </script>
 </div>
+
 </body>
 </html>

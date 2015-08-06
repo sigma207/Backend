@@ -16,11 +16,11 @@ import java.util.List;
  */
 @Repository("PermissionDao")
 public class PermissionDaoImpl implements PermissionDao {
-    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence, path from Permission ORDER BY parent_permission_id,sequence";
-    private final static String WHERE_PARENT = "where parent_permission_id = ? ";
-    private final static String INSERT = "INSERT INTO Permission (permission_code, parent_permission_id, sequence, path) VALUES (?, ?, ?, ?);";
-    private final static String DELETE = "DELETE Permission where permission_id = ? ";
-    private final static String UPDATE = "UPDATE Permission set permission_code = ?,sequence = ?, path = ? where permission_id = ? ";
+    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence, path FROM permission ORDER BY parent_permission_id,sequence";
+    private final static String WHERE_PARENT = "WHERE parent_permission_id = ? ";
+    private final static String INSERT = "INSERT INTO permission (permission_code, parent_permission_id, sequence, path) VALUES (?, ?, ?, ?);";
+    private final static String DELETE = "DELETE permission WHERE permission_id = ? ";
+    private final static String UPDATE = "UPDATE permission SET permission_code = ?,sequence = ?, path = ? WHERE permission_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")

@@ -7,6 +7,9 @@ var Config = {
         modal: true,
         autoOpen: false,
         appendTo: ".content"
+    },
+    DatePicker:{
+        dateFormat:"yymmdd"
     }
 };
 var MenuItem = {

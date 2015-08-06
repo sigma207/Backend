@@ -17,10 +17,10 @@ import java.util.List;
  */
 @Repository("RolePermissionDao")
 public class RolePermissionDaoImpl implements RolePermissionDao {
-    private final static String QUERY = "SELECT role_id, permission_id from Role_Permission ";
-    private final static String WHERE_ROLE = "where role_id = ? ";
-    private final static String INSERT = "INSERT INTO Role_Permission (role_id, permission_id) VALUES (?, ?);";
-    private final static String DELETE = "DELETE Role_Permission where role_id = ? ";
+    private final static String QUERY = "SELECT role_id, permission_id FROM role_permission ";
+    private final static String WHERE_ROLE = "WHERE role_id = ? ";
+    private final static String INSERT = "INSERT INTO role_permission (role_id, permission_id) VALUES (?, ?);";
+    private final static String DELETE = "DELETE role_permission WHERE role_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")

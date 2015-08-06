@@ -16,7 +16,7 @@ var RolePage = {
     },
     roleDialog: undefined,
     permissionDialog: undefined,
-    permissionList: undefined,
+    menuList: undefined,
     roleRequest: RequestJSON.createNew(Config.HostUrl + "/role"),
     permissionRequest: RequestJSON.createNew(Config.HostUrl + "/permission"),
     onQueryClick: function (e) {
@@ -68,9 +68,9 @@ var RolePage = {
         var checkedNodes = RolePage.zTreeObj.getCheckedNodes();
         var role_id = RolePage.editRole.role_id;
         var count = checkedNodes.length;
-        RolePage.editRole.permissionList = [];
+        RolePage.editRole.menuList = [];
         for (var i = 0; i < count; i++) {
-            RolePage.editRole.permissionList.push({permission_id: checkedNodes[i].permission_id, role_id: role_id});
+            RolePage.editRole.menuList.push({permission_id: checkedNodes[i].permission_id, role_id: role_id});
         }
         RolePage.roleRequest.ajax("/allocatePermission", {
                 dataType: "json",
@@ -118,10 +118,10 @@ function getRoleList() {
 function getPermissionList() {
     RolePage.permissionRequest.ajax("/query/list")
         .done(function (data, status, xhr) {
-            RolePage.permissionList = JSON.parse(data);
+            RolePage.menuList = JSON.parse(data);
             RolePage.tree = $("#permissionTree");
-            formatPermissionList(RolePage.permissionList, RolePage.permissionList);
-            $.fn.zTree.init(RolePage.tree, RolePage.treeSetting, RolePage.permissionList);
+            formatPermissionList(RolePage.menuList, RolePage.menuList);
+            $.fn.zTree.init(RolePage.tree, RolePage.treeSetting, RolePage.menuList);
             RolePage.zTreeObj = $.fn.zTree.getZTreeObj("permissionTree");
         });
 }
@@ -173,7 +173,7 @@ function allocate() {
         data: JSON.stringify(RolePage.editRole)
     })
         .done(function (data, status, xhr) {
-            var permissionList = data.permissionList;
+            var permissionList = data.menuList;
             console.log(permissionList);
             RolePage.zTreeObj.checkAllNodes(false);
             var node = undefined;

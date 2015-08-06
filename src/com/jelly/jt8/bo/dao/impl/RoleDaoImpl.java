@@ -18,10 +18,10 @@ import java.util.List;
  */
 @Repository("RoleDao")
 public class RoleDaoImpl implements RoleDao{
-    private final static String QUERY = "SELECT role_id, parent_role_id, role_code, role_name, update_time, rv from Role ";
-    private final static String INSERT = "INSERT INTO Role (parent_role_id, role_code, role_name, update_time) VALUES (?, ?, ?, ?);";
-    private final static String UPDATE = "UPDATE Role set role_code = ?,role_name = ?,update_time = ? where role_id = ? and rv = ? ";
-    private final static String DELETE = "DELETE Role where role_id = ? and rv = ? ";
+    private final static String QUERY = "SELECT role_id, parent_role_id, role_code, role_name, update_time, rv FROM role ";
+    private final static String INSERT = "INSERT INTO role (parent_role_id, role_code, role_name, update_time) VALUES (?, ?, ?, ?);";
+    private final static String UPDATE = "UPDATE role SET role_code = ?,role_name = ?,update_time = ? WHERE role_id = ? AND rv = ? ";
+    private final static String DELETE = "DELETE role WHERE role_id = ? AND rv = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")

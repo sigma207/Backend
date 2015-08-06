@@ -18,10 +18,10 @@ import java.util.List;
  */
 @Repository("UserRoleDao")
 public class UserRoleDaoImpl implements UserRoleDao {
-    private final static String QUERY = "SELECT login_id, role_id from User_Role ";
-    private final static String WHERE_ROLE = "where login_id = ? ";
-    private final static String INSERT = "INSERT INTO User_Role (login_id, role_id) VALUES (?, ?);";
-    private final static String DELETE = "DELETE User_Role where login_id = ? ";
+    private final static String QUERY = "SELECT login_id, role_id FROM user_role ";
+    private final static String WHERE_ROLE = "WHERE login_id = ? ";
+    private final static String INSERT = "INSERT INTO user_role (login_id, role_id) VALUES (?, ?);";
+    private final static String DELETE = "DELETE user_role WHERE login_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")

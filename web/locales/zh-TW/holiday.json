@@ -1,0 +1,14 @@
+{
+  "begin_date": "起始日期",
+  "end_date": "結束日期",
+  "holiday_name": "假日名稱",
+  "memo": "備註",
+  "holidayManage": "假日管理",
+  "exceptionManage": "例外管理",
+  "calendar": "日期",
+  "function": {
+    "save":"存檔",
+    "addHoliday": "新增假日",
+    "addException":"新增例外"
+  }
+}

@@ -36,6 +36,7 @@ $(document).ready(function () {
     MainPage.errorDialog.dialog(Config.Dialog);
     //initZTree(Main.testData);
     //$.getJSON("test/data.json", onTestDataLoad).fail(onTestDataFail);
+    login();
     MainPage.getPermissionList();
 });
 
@@ -92,6 +93,7 @@ function contentLoad(response, status, xhr) {
 function changeLang(lang) {
     var startIndex = MainPage.contentItem.path.lastIndexOf("/")+1;
     var endIndex = MainPage.contentItem.path.lastIndexOf(".html");
+
     if(endIndex!=-1){
         var item = MainPage.contentItem.path.substring(startIndex,endIndex).toLowerCase();
         var option = {resGetPath: "locales/" + lang + "/" + item + ".json"};
@@ -100,5 +102,8 @@ function changeLang(lang) {
             $(".content").add(".ui-dialog").i18n();
         });
     }
+}
 
+function login(){
+    $.datepicker.setDefaults( $.datepicker.regional[ locale.lang ] );
 }

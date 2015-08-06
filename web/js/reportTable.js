@@ -80,7 +80,7 @@ var ReportTable = {
                 //append the arrow div for sort
                 $th.append("<div class='" + dt.ARROW_DIV + "'></div>");
                 field = $th.attr(dt.FIELD);
-                if(field){
+                if (field) {
                     $th.on("click", dt.sortColumnClick);
                 }
             }
@@ -315,26 +315,86 @@ var ReportTable = {
             dt.$table.find("tbody").html(dt.renderTBody);
             dt.trList = dt.$table.find("tbody").children();
             dt.trList.each(function (index) {
-                $(this).click(dt.onRowClick);
+                var tr = $(this);
+                var rowIndex = tr.attr("rowIndex");
+                tr.click(dt.onRowClick);
+                dt.initTr(tr, rowIndex, dt.data[rowIndex]);
             });
 
             dt.initSelected();
             //console.timeEnd("renderDom");
         };
 
+        dt.initTr = function (tr, rowIndex, rowData) {
+            var baseInputs = tr.find(".baseInput");
+            baseInputs.each(function (i) {
+                var input = $(this);
+                var name = input.attr("name");
+                input.on("change", onInputChange);
+
+                if (rowData.hasOwnProperty(name)) {
+                    input.val(rowData[name]);
+                }
+                function onInputChange(e) {
+                    rowData[name] = input.val();
+                    console.log("onBaseInputChange");
+                }
+            });
+            var dateInputs = tr.find(".dateInput");
+            dateInputs.each(function (i) {
+                var input = $(this);
+                input.datepicker();
+                input.datepicker("option", Config.DatePicker);
+                var name = input.attr("name");
+                input.on("change", onInputChange);
+                if (rowData.hasOwnProperty(name)) {
+                    input.datepicker("setDate", rowData[name]);
+                }
+                if (input.hasClass("startDate")) {
+                    var startDate = input;
+                    var endDate = dateInputs.filter(".endDate").eq(0);
+                    startDate.datepicker("option", "onClose", selectBeginDate);
+                    endDate.datepicker("option", "onClose", selectEndDate);
+                }
+                function onInputChange(e) {
+                    rowData[name] = $.datepicker.formatDate("yymmdd", input.datepicker("getDate"));
+                }
+
+                function selectBeginDate(selectedDate) {
+                    endDate.datepicker("option", "minDate", selectedDate);
+                }
+
+                function selectEndDate(selectedDate) {
+                    startDate.datepicker("option", "maxDate", selectedDate);
+                }
+
+            });
+            var deleteImgs = tr.find(".rowDeleteImg");
+            deleteImgs.each(function (i) {
+                var img = $(this);
+                img.on("click", function (e) {
+                    dt.dsr.removeRow(rowIndex);
+                });
+            });
+            var tableSelectCheckBoxes = tr.find("tableSelectCheckbox");
+            tableSelectCheckBoxes.each(function (i) {
+                var checkbox = $(this);
+                checkbox.on("change", dt.onRowSelectChange);
+            })
+        };
+
         dt.initSelected = function () {
-            console.log("initSelected");
-            var tableSelectCheckbox = dt.$table.find(".tableSelectCheckbox");
-            tableSelectCheckbox.on("change", dt.onRowSelectChange);
-            if(dt.keepSelected){
+            //var tableSelectCheckbox = dt.$table.find(".tableSelectCheckbox");
+            //tableSelectCheckbox.on("change", dt.onRowSelectChange);
+            if (dt.keepSelected) {
                 dt.selectedMap = {};
                 dt.selectedKey = {};
-            }else{
+            } else {
                 var rowPKeyValue = undefined;
-                for(var rowIndex= 0;rowIndex<dt.dataSize;rowIndex++){
+                for (var rowIndex = 0; rowIndex < dt.dataSize; rowIndex++) {
                     rowPKeyValue = dt.data[rowIndex][dt.pkey];
-                    if(dt.selectedKey.hasOwnProperty(rowPKeyValue)){
-                        dt.selectRow(rowIndex,true);
+                    if (dt.selectedKey.hasOwnProperty(rowPKeyValue)) {
+                        dt.selectRow(rowIndex, true);
                     }
                 }
             }
@@ -348,11 +408,16 @@ var ReportTable = {
             tableSelectCheckbox.prop("checked", false);
         };
 
-        dt.renderRow = function (index) {
-            var tr = dt.generateTr(index);
-            dt.trList.eq(index).replaceWith(tr);
+        dt.renderRow = function (rowIndex) {
+            var tr = dt.generateTr(rowIndex);
+            dt.trList.filter("[rowIndex="+rowIndex+"]").replaceWith(tr);
+            //dt.trList.eq(index).replaceWith(tr);
             dt.trList = dt.$table.find("tbody").children();
-            dt.trList.eq(index).click(dt.onRowClick);
+
+            //tr = dt.trList.eq(index);
+            tr = dt.trList.filter("[rowIndex="+rowIndex+"]");
+            tr.click(dt.onRowClick);
+            dt.initTr(tr, rowIndex, dt.data[rowIndex]);
         };
 
         dt.onRowClick = function (e) {
@@ -369,33 +434,33 @@ var ReportTable = {
             dt.$table.trigger("rowClick", [obj]);
         };
 
-        dt.onRowSelectChange = function(e){
+        dt.onRowSelectChange = function (e) {
             var rowIndex = $(this).closest("tr").attr("rowIndex");
             //var name = $(this).attr("name");
-            dt.select(rowIndex,$(this).is(':checked'));
+            dt.select(rowIndex, $(this).is(':checked'));
         };
 
-        dt.select = function (rowIndex,selected) {
+        dt.select = function (rowIndex, selected) {
             var rowData = dt.data[rowIndex] || {};
             var pKeyValue = rowData[dt.pkey];
-            if(selected){
+            if (selected) {
                 dt.selectedMap[rowIndex] = rowData;
                 dt.selectedKey[pKeyValue] = rowIndex;
-            }else{
+            } else {
                 delete dt.selectedMap[rowIndex];
                 delete dt.selectedKey[pKeyValue];
             }
         };
 
-        dt.selectRow = function (rowIndex,selected) {
-            dt.select(rowIndex,selected);
-            var tr = dt.trList.filter("[rowIndex="+rowIndex+"]");
+        dt.selectRow = function (rowIndex, selected) {
+            dt.select(rowIndex, selected);
+            var tr = dt.trList.filter("[rowIndex=" + rowIndex + "]");
             tr.find(".tableSelectCheckbox").prop("checked", true);
         };
 
         dt.getSelectedData = function () {
             var list = [];
-            for(var rowIndex in dt.selectedMap){
+            for (var rowIndex in dt.selectedMap) {
                 list.push(dt.selectedMap[rowIndex]);
             }
             return list;
@@ -488,7 +553,7 @@ var ReportTable = {
             }
         };
 
-        dt.generateByTemplate = function (thObj,rowIndex,rowData) {
+        dt.generateByTemplate = function (thObj, rowIndex, rowData) {
             return thObj[dt.TEMPLATE_HTML];
         };
         /**

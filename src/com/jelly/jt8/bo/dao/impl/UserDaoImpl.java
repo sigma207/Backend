@@ -20,10 +20,10 @@ import java.util.List;
 @Repository("UserDao")
 public class UserDaoImpl implements UserDao {
     private final static String QUERY = "SELECT login_id, password, create_time, permission, concurrent, retry, max_retry, active_date, duration, expire_date, update_time," +
-            " is_active, login_time, last_login_time, org_id from Bo_User ";
-    private final static String INSERT = "INSERT INTO Bo_User (login_id, password, create_time, permission, concurrent, retry, max_retry, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-    private final static String UPDATE = "UPDATE Bo_User set update_time = ? where login_id = ? ";
-    private final static String DELETE = "DELETE Bo_User where login_id = ? ";
+            " is_active, login_time, last_login_time, org_id FROM bo_user ";
+    private final static String INSERT = "INSERT INTO bo_user (login_id, password, create_time, permission, concurrent, retry, max_retry, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+    private final static String UPDATE = "UPDATE bo_user SET update_time = ? WHERE login_id = ? ";
+    private final static String DELETE = "DELETE bo_user WHERE login_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")

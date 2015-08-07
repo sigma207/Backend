@@ -1,7 +1,7 @@
 /**
  * Created by user on 2015/8/5.
  */
-var backendApp = angular.module("backendApp", ["ui.bootstrap","ngRoute","requestFactory","localeFactory"]);
+var backendApp = angular.module("backendApp", ["pascalprecht.translate","ui.bootstrap","ui.grid","ngRoute","requestFactory","localeFactory"]);
 backendApp.constant("HostUrl","http://localhost:8080/Backend");
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
@@ -11,10 +11,21 @@ backendApp.config(["$routeProvider", function ($routeProvider) {
         when("/A2",{
             templateUrl:"permissionManage/role/Role.html"
         }).
+        when("/C1",{
+            templateUrl:"userManage/user/User.html"
+        }).
         otherwise({redirectTo: '/'})
 }]);
+backendApp.config(function ($translateProvider,$translatePartialLoaderProvider) {
+    $translatePartialLoaderProvider.addPart('main');
+    $translatePartialLoaderProvider.addPart('common');
+    $translateProvider.useLoader('$translatePartialLoader', {
+        urlTemplate: 'i18n/{part}/{lang}.json'
+    });
+    $translateProvider.preferredLanguage("zh-TW");
+});
 backendApp.controller("BackendController", BackendController);
-function BackendController($scope,$location,HostUrl,request,locale){
+function BackendController($scope,$translate,$location,HostUrl,request,locale){
     console.log("BackendController!!");
     request.changeHostUrl(HostUrl);
     locale.changeLang(locale.zh_TW);

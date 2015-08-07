@@ -1,0 +1,9 @@
+{
+  "addRole":"新增角色",
+  "roleCode":"角色代碼",
+  "roleName":"角色名稱",
+  "roleManage":"角色管理",
+  "editRole":"角色編輯",
+  "removeRole":"角色刪除",
+  "allocatePermission":"分配權限"
+}

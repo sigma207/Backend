@@ -1,0 +1,12 @@
+{
+  "loginId": "用戶代碼",
+  "userPassword": "用戶密碼",
+  "inputAgain": "再輸入一次",
+  "userManage": "用戶管理",
+  "roleCode": "角色代碼",
+  "roleName": "角色名稱",
+  "addUser": "新增用戶",
+  "editUser": "用戶編輯",
+  "removeUser": "用戶刪除",
+  "allocateRole": "分配角色"
+}

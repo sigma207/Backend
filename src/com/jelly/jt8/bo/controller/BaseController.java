@@ -1,5 +1,7 @@
 package com.jelly.jt8.bo.controller;
 
+import com.google.gson.Gson;
+import com.jelly.jt8.bo.model.ErrorJson;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,5 +20,12 @@ public class BaseController {
         responseHeaders.setContentType(MediaType.APPLICATION_JSON);
         responseHeaders.setContentType(mediaType);
         return new ResponseEntity<String>(payload, responseHeaders, HttpStatus.OK);
+    }
+
+    protected ErrorJson exceptionToJson(Exception e) {
+        e.printStackTrace();
+        ErrorJson errorJson = new ErrorJson();
+        errorJson.setMessage(e.getMessage());
+        return errorJson;
     }
 }

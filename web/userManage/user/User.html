@@ -3,77 +3,112 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>user</title>
-    <script type="text/javascript" src="userManage/user/user.js"></script>
+    <!--<script type="text/javascript" src="userManage/user/user.js"></script>-->
 </head>
 <body>
-<input id="queryBt" type="button" data-i18n="[value]query" class="button"/>
-<input id="newUserBt" type="button" data-i18n="[value]function.addUser" class="button"/>
-<table class="userTable">
-    <thead>
-    <tr>
-        <th field="login_id" data-i18n="login_id"></th>
-        <th templateClass="userManagerTh" data-i18n="userManage"></th>
-    </tr>
-    </thead>
-</table>
-<div class="userManagerTh" style="display: none;">
-    <input name="removeUser" type="button" data-i18n="[value]function.removeUser" class="button"/>
-    <!--<input name="editUser" type="button" data-i18n="[value]function.editUser" class="button"/>-->
-    <input name="allocate" type="button" data-i18n="[value]function.allocateRole" class="button"/>
-</div>
-<div id="userDialog">
-    <form class="form-horizontal" role="form">
-        <div class="form-group">
-            <label data-i18n="login_id" for="login_id" class="col-sm-5 control-label"></label>
-            <div class="col-sm-7">
-                <input id="login_id" type="text" class="form-control"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label data-i18n="userPassword" for="password" class="col-sm-5 control-label"></label>
-            <div class="col-sm-7">
-                <input id="password" type="password" class="form-control"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label data-i18n="inputAgain" for="inputAgain" class="col-sm-5 control-label"></label>
-            <div class="col-sm-7">
-                <input id="inputAgain" type="password" class="form-control"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-5 col-sm-7">
-                <input id="userSave" type="button" data-i18n="[value]function.save" class="button">
-            </div>
-        </div>
-    </form>
-</div>
-<div id="roleDialog">
-    <form class="form-horizontal" role="form">
-        <div class="form-group">
-            <div class="col-sm-12">
-                <table class="roleTable" pkey="role_id">
-                    <thead>
-                    <tr>
-                        <th templateClass="roleCheckboxTh" data-i18n="check"></th>
-                        <th field="role_code" data-i18n="roleCode"></th>
-                        <th field="role_name" data-i18n="roleName"></th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
+<div ng-controller="UserController">
+    <button type="button" class="btn-xs btn-primary" translate="query" ng-click="queryClick()"></button>
+    <button type="button" class="btn-xs btn-primary" translate="addUser" ng-click="addUserClick()"></button>
+    <div ui-grid="gridOptions" class="grid"></div>
 
-        <div class="form-group">
-            <div class="col-sm-12">
-                <input id="roleSave" type="button" data-i18n="[value]function.save" class="button pull-right">
-            </div>
+    <script type="text/ng-template" id="userEdit.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
         </div>
-    </form>
-
-    <div class="roleCheckboxTh" style="display: none;">
-        <input type="checkbox" name="role_id" class="tableSelectCheckbox"/>
-    </div>
+        <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="login_id" class="col-md-2 control-label" translate="loginId"></label>
+                    <div class="col-md-10">
+                        <input id="login_id" type="text" ng-model="editObj.login_id" class="form-control" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-md-2 control-label" translate="roleName"></label>
+                    <div class="col-md-10">
+                        <input id="password" type="password" ng-model="editObj.password" class="form-control" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputAgain" class="col-md-2 control-label" translate="roleName"></label>
+                    <div class="col-md-10">
+                        <input id="inputAgain" type="password" ng-model="editObj.inputAgain" class="form-control" required/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
+            <button class="btn btn-primary" ng-click="save()" translate="save"></button>
+        </div>
+    </script>
 </div>
+<!--<table class="userTable">-->
+<!--<thead>-->
+<!--<tr>-->
+<!--<th field="login_id" data-i18n="login_id"></th>-->
+<!--<th templateClass="userManagerTh" data-i18n="userManage"></th>-->
+<!--</tr>-->
+<!--</thead>-->
+<!--</table>-->
+<!--<div class="userManagerTh" style="display: none;">-->
+<!--<input name="removeUser" type="button" data-i18n="[value]function.removeUser" class="button"/>-->
+<!--&lt;!&ndash;<input name="editUser" type="button" data-i18n="[value]function.editUser" class="button"/>&ndash;&gt;-->
+<!--<input name="allocate" type="button" data-i18n="[value]function.allocateRole" class="button"/>-->
+<!--</div>-->
+<!--<div id="userDialog">-->
+<!--<form class="form-horizontal" role="form">-->
+<!--<div class="form-group">-->
+<!--<label data-i18n="login_id" for="login_id" class="col-sm-5 control-label"></label>-->
+<!--<div class="col-sm-7">-->
+<!--<input id="login_id" type="text" class="form-control"/>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="form-group">-->
+<!--<label data-i18n="userPassword" for="password" class="col-sm-5 control-label"></label>-->
+<!--<div class="col-sm-7">-->
+<!--<input id="password" type="password" class="form-control"/>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="form-group">-->
+<!--<label data-i18n="inputAgain" for="inputAgain" class="col-sm-5 control-label"></label>-->
+<!--<div class="col-sm-7">-->
+<!--<input id="inputAgain" type="password" class="form-control"/>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div class="form-group">-->
+<!--<div class="col-sm-offset-5 col-sm-7">-->
+<!--<input id="userSave" type="button" data-i18n="[value]function.save" class="button">-->
+<!--</div>-->
+<!--</div>-->
+<!--</form>-->
+<!--</div>-->
+<!--<div id="roleDialog">-->
+<!--<form class="form-horizontal" role="form">-->
+<!--<div class="form-group">-->
+<!--<div class="col-sm-12">-->
+<!--<table class="roleTable" pkey="role_id">-->
+<!--<thead>-->
+<!--<tr>-->
+<!--<th templateClass="roleCheckboxTh" data-i18n="check"></th>-->
+<!--<th field="role_code" data-i18n="roleCode"></th>-->
+<!--<th field="role_name" data-i18n="roleName"></th>-->
+<!--</tr>-->
+<!--</thead>-->
+<!--</table>-->
+<!--</div>-->
+<!--</div>-->
+
+<!--<div class="form-group">-->
+<!--<div class="col-sm-12">-->
+<!--<input id="roleSave" type="button" data-i18n="[value]function.save" class="button pull-right">-->
+<!--</div>-->
+<!--</div>-->
+<!--</form>-->
+
+<!--<div class="roleCheckboxTh" style="display: none;">-->
+<!--<input type="checkbox" name="role_id" class="tableSelectCheckbox"/>-->
+<!--</div>-->
+<!--</div>-->
 </body>
 </html>

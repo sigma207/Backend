@@ -31,10 +31,10 @@ angular.module("requestFactory", []).
             },
             onError: function (data, status, headers, config) {
                 console.log("json onError");
-                //console.log(data);
-                //console.log(status);
-                //console.log(headers);
-                //console.log(config);
+                console.log(data);
+                console.log(status);
+                console.log(headers);
+                console.log(config);
             }
         };
         return request;

@@ -3,63 +3,58 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Role</title>
-    <script type="text/javascript" src="permissionManage/role/role.js"></script>
 </head>
 <body>
 <div ng-controller="RoleController">
-    <input id="queryBt" type="button" data-i18n="[value]query" class="button"/>
-    <input id="newRoleBt" type="button" data-i18n="[value]function.addRole" class="button"/>
-    <!--<div id="grid1" ui-grid="{ data: roleList }" class="grid"></div>-->
-    <!--<table class="roleTable">-->
-        <!--<thead>-->
-        <!--<tr>-->
-            <!--<th field="role_code" data-i18n="roleCode"></th>-->
-            <!--<th field="role_name" data-i18n="roleName"></th>-->
-            <!--<th templateClass="roleManagerTh" data-i18n="roleManage"></th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-    <!--</table>-->
-    <!--<div class="roleManagerTh" style="display: none;">-->
-        <!--<input name="removeRole" type="button" data-i18n="[value]function.removeRole" class="button"/>-->
-        <!--<input name="editRole" type="button" data-i18n="[value]function.editRole" class="button"/>-->
-        <!--<input name="allocate" type="button" data-i18n="[value]function.allocatePermission" class="button"/>-->
-    <!--</div>-->
-    <!--<div id="roleDialog">-->
-        <!--<form class="form-horizontal" role="form">-->
-            <!--<div class="form-group">-->
-                <!--<label data-i18n="roleCode" for="roleCode" class="col-sm-4 control-label"></label>-->
-                <!--<div class="col-sm-8">-->
-                    <!--<input id="roleCode" type="text" class="form-control"/>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<label data-i18n="roleName" for="roleName" class="col-sm-4 control-label"></label>-->
-                <!--<div class="col-sm-8">-->
-                    <!--<input id="roleName" type="text" class="form-control"/>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<div class="col-sm-offset-4 col-sm-8">-->
-                    <!--<input id="roleSave" type="button" data-i18n="[value]function.save" class="button">-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</form>-->
-    <!--</div>-->
-    <!--<div id="permissionDialog">-->
-        <!--<form class="form-horizontal" role="form">-->
-            <!--<div class="form-group">-->
-                <!--<div class="col-sm-12">-->
-                    <!--<ul id="permissionTree" class="ztree"></ul>-->
-                <!--</div>-->
-            <!--</div>-->
+    <button type="button" class="btn-xs btn-primary" translate="query" ng-click="queryClick()"></button>
+    <button type="button" class="btn-xs btn-primary" translate="addRole" ng-click="addRoleClick()"></button>
+    <div ui-grid="gridOptions" class="grid"></div>
 
-            <!--<div class="form-group">-->
-                <!--<div class="col-sm-12">-->
-                    <!--<input id="permissionSave" type="button" data-i18n="[value]function.save" class="button pull-right">-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</form>-->
-    <!--</div>-->
+    <script type="text/ng-template" id="roleEdit.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="role_code" class="col-md-2 control-label" translate="roleCode"></label>
+                    <div class="col-md-10">
+                        <input id="role_code" type="text" ng-model="editObj.role_code" class="form-control" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="role_name" class="col-md-2 control-label" translate="roleName"></label>
+                    <div class="col-md-10">
+                        <input id="role_name" type="text" ng-model="editObj.role_name" class="form-control" required/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
+            <button class="btn btn-primary" ng-click="save()" translate="save"></button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="allocatePermission.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
+        </div>
+        <div class="modal-body" ng-init="init()">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <ul id="permissionTree" class="ztree"></ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
+            <button class="btn btn-primary" ng-click="save()" translate="save"></button>
+        </div>
+    </script>
+
 </div>
 
 </body>

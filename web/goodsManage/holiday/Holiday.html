@@ -6,7 +6,30 @@
     <script type="text/javascript" src="goodsManage/holiday/holiday.js"></script>
 </head>
 <body>
-<div>
+<div ng-controller="HolidayController">
+    <select ng-model="selectedExchange" ng-change="exchangeChange();"
+            ng-options="exchange.exchange_id for exchange in exchangeList">
+    </select>
+    <select ng-model="selectedMainSymbol" ng-change="mainSymbolChange();"
+            ng-options="main_symbol for main_symbol in selectedExchange.main_symbol">
+    </select>
+    <button type="button" class="btn-xs btn-primary" translate="addHoliday" ng-click="batchAddHolidayClick()"></button>
+    <div ui-grid="holidayGridOptions" class="grid"></div>
+    <div ui-grid="exceptionGridOptions" class="grid"></div>
+</div>
+<script type="text/ng-template" id="batchHoliday.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{title}}</h3>
+    </div>
+    <div class="modal-body" ng-init="init()">
+        <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
+        <button class="btn btn-primary" ng-click="save()" translate="save"></button>
+    </div>
+</script>
+<!--<div>
     <select id="exchange_id"></select>
     <select id="main_symbol_id"></select>
 </div>
@@ -114,5 +137,6 @@
         </div>
     </form>
 </div>
+-->
 </body>
 </html>

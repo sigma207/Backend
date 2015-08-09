@@ -1,7 +1,7 @@
 /**
  * Created by user on 2015/8/5.
  */
-var backendApp = angular.module("backendApp", ["pascalprecht.translate","ui.bootstrap","ui.grid","ngRoute","requestFactory","localeFactory"]);
+var backendApp = angular.module("backendApp", ["pascalprecht.translate","ui.bootstrap","ui.grid","ui.grid.selection","ui.grid.edit","ngRoute","requestFactory","localeFactory"]);
 backendApp.constant("HostUrl","http://localhost:8080/Backend");
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
@@ -10,6 +10,9 @@ backendApp.config(["$routeProvider", function ($routeProvider) {
         }).
         when("/A2",{
             templateUrl:"permissionManage/role/Role.html"
+        }).
+        when("/B2",{
+            templateUrl:"goodsManage/holiday/Holiday.html"
         }).
         when("/C1",{
             templateUrl:"userManage/user/User.html"

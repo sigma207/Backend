@@ -1,3 +1,9 @@
 {
-  "title":"我的标题"
+  "addRole":"新增角色",
+  "roleCode":"角色代码",
+  "roleName":"角色名称",
+  "roleManage":"角色管理",
+  "editRole":"角色编辑",
+  "removeRole":"角色删除",
+  "allocatePermission":"分配权限"
 }

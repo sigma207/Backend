@@ -1,3 +1,8 @@
 {
-  "title":"my title"
+  "query":"查詢",
+  "save":"存檔",
+  "cancel":"取消",
+  "error":{
+    "dirtyData":"資料已被異動過,請重新查詢後再操作"
+  }
 }

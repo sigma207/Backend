@@ -5,7 +5,22 @@ backendApp.controller("HolidayController", HolidayController);
 function HolidayController($scope, $translatePartialLoader, $translate, $log, $modal, request) {
     $translatePartialLoader.addPart("holiday");
     $translate.refresh();
-    $scope.fakeGoods= [
+    $scope.testDate = new Date();
+    $scope.status = {
+        opened: false
+    };
+    $scope.dateOptions = {
+        formatYear: 'yy',
+        startingDay: 1
+    };
+
+    $scope.open = function ($event) {
+        $log.info("open");
+        $scope.status.opened = true;
+    };
+    $scope.formats = ['yyyyMMdd', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+    $scope.format = $scope.formats[0];
+    $scope.fakeGoods = [
         {
             exchange_id: "1GCC",
             main_symbol: ["*"]
@@ -57,6 +72,8 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
     };
 
     $scope.batchAddHolidayClick = function () {
+        //$scope.editSize = "lg";
+        $scope.modalTitle = $translate.instant("addHoliday");
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: 'batchHoliday.html',
@@ -82,25 +99,40 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
 
 backendApp.controller('batchHolidayCtrl', function ($scope, $modalInstance, $log, $timeout, request, title) {
     $scope.title = title;
-    $scope.holidayList = [{begin_date:new Date(),end_date:new Date(),memo:"abc"}];
 
-    $scope.init = function() {
-        $scope.gridOptions = {};
-        $scope.gridOptions.enableHorizontalScrollbar = 0;
-        $scope.gridOptions.columnDefs = [
-            {name: 'begin_date', displayName: 'beginDate', headerCellFilter: 'translate',  type: 'date', cellFilter: 'date:"yyyy-MM-dd"'},
-            {name: 'end_date', displayName: 'endDate', headerCellFilter: 'translate',  type: 'date', cellFilter: 'date:"yyyy-MM-dd"'},
-            {name: 'memo', displayName: 'memo', headerCellFilter: 'translate', enableCellEdit: true }
-        ];
-        $scope.gridOptions.onRegisterApi = function(gridApi){
-            //set gridApi on scope
-            $scope.gridApi = gridApi;
+    $scope.init = function () {
+        $scope.rowCollection = [];
+        $scope.addHoliday();
+    };
 
-        };
-        $scope.gridOptions.data = $scope.holidayList;
+    $scope.getHoliday = function () {
+        return {begin_date: new Date(), end_date: new Date(), memo: "abc"};
+    };
+
+    $scope.beginDateButtonClick = function (row) {
+        row.beginDateOpened = true;
+    };
+    $scope.endDateButtonClick = function (row) {
+        row.endDateOpened = true;
+    };
+
+    $scope.addClick = function (index,row) {
+        $scope.addHoliday();
+    };
+
+    $scope.deleteClick = function (index,row) {
+        $scope.rowCollection.splice(index, 1);
+        if($scope.rowCollection.length==0){
+            $scope.addHoliday();
+        }
+    };
+
+    $scope.addHoliday = function () {
+        $scope.rowCollection.push($scope.getHoliday());
     };
 
     $scope.save = function () {
+        $log.info($scope.rowCollection);
         //var list = $scope.gridApi.selection.getSelectedRows();
         //$scope.editObj.userRoleList = [];
         //for(var i= 0,count=list.length;i<count;i++){

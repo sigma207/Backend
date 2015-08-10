@@ -24,7 +24,7 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
             method: "GET",
             url: "/user/selectUser"
         }).success(function (data, status, headers, config) {
-            $scope.gridOptions.data = data;
+            $scope.rowCollection = data;
             $scope.getRoleList();
         });
     };
@@ -43,10 +43,10 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.removeUserClick = function (row) {
-        request.json("/user/deleteUser", row.entity).
+        request.json("/user/deleteUser", row).
             success(function (data, status, headers, config) {
-                var index = $scope.gridOptions.data.indexOf(row.entity);
-                $scope.gridOptions.data.splice(index, 1);
+                var index = $scope.rowCollection.indexOf(row);
+                $scope.rowCollection.splice(index, 1);
             }
         );
     };
@@ -59,8 +59,8 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.allocateRoleClick = function (row) {
-        $scope.editUser = angular.copy(row.entity);
-        request.json("/user/selectUserRole", row.entity).
+        $scope.editUser = angular.copy(row);
+        request.json("/user/selectUserRole", row).
             success(function (data, status, headers, config) {
                 $scope.userRoleList = data;
                 $scope.openAllocateRole();

@@ -1,3 +1,11 @@
 {
-  "title":"my title"
+  "beginDate": "起始日期",
+  "endDate": "結束日期",
+  "holidayName": "假日名稱",
+  "memo": "備註",
+  "holidayManage": "假日管理",
+  "exceptionManage": "例外管理",
+  "addHoliday": "新增假日",
+  "addException":"新增例外",
+  "calendar": "日期"
 }

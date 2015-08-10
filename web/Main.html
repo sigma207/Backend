@@ -18,11 +18,16 @@
     <script type="text/javascript" src="js/angular-translate.min.js"></script>
     <script type="text/javascript" src="js/angular-translate-loader-partial.js"></script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate-loader-url/2.6.1/angular-translate-loader-url.js"></script>-->
-    <script type="text/javascript" src="js/ui-bootstrap-tpls-0.13.2.min.js"></script>
+    <script type="text/javascript" src="js/ui-bootstrap-tpls.js"></script>
+    <!--<script type="text/javascript" src="js/ui-bootstrap-tpls-0.13.2.min.js"></script>-->
+
     <script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js"></script>
     <!--<script type="text/javascript" src="js/ui-grid-stable.js"></script>-->
     <!--<script type="text/javascript" src="js/ui-grid.js"></script>-->
+    <script type="text/javascript" src="js/smart-table.js"></script>
     <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="js/angular-locale_zh-tw.js"></script>
+    <script type="text/javascript" src="js/angular-locale_zh-cn.js"></script>
     <!--<script type="text/javascript" src="js/i18next-1.8.0.js"></script>-->
     <!--<script type="text/javascript" src="js/jquery-ui.min.js"></script>-->
     <!--<script type="text/javascript" src="js/datepicker-zh-CN.js"></script>-->
@@ -41,6 +46,9 @@
 <body ng-controller="BackendController">
 <div class="space"></div>
 <div class="main">
+    <button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('zh-TW')">繁</button>
+    <button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('zh-CN')">簡</button>
+    <button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('en-US')">英</button>
     <div class="header">
         <div class="headerContainer">
 

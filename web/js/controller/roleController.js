@@ -6,26 +6,27 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     $translatePartialLoader.addPart("role");
     $translate.refresh();
     $log.info("RoleController");
-    $scope.gridOptions = {};
-    $scope.gridOptions.enableHorizontalScrollbar = 0;
-    $scope.gridOptions.columnDefs = [
-        {field: 'role_code', displayName: 'roleCode', headerCellFilter: 'translate'},
-        {field: 'role_name', displayName: 'roleName', headerCellFilter: 'translate'},
-        {
-            name: 'edit', displayName: 'roleManage', headerCellFilter: 'translate',
-            cellTemplate: '' +
-            '<button type="button" class="btn-xs btn-primary" translate="removeRole" ng-click="grid.appScope.removeRoleClick(row)" ></button>' +
-            '<button type="button" class="btn-xs btn-primary" translate="editRole" ng-click="grid.appScope.editRoleClick(row)" ></button>' +
-            '<button type="button" class="btn-xs btn-primary" translate="allocatePermission" ng-click="grid.appScope.allocatePermissionClick(row)" ></button>'
-        }
-    ];
+    //$scope.gridOptions = {};
+    //$scope.gridOptions.enableHorizontalScrollbar = 0;
+    //$scope.gridOptions.columnDefs = [
+    //    {field: 'role_code', displayName: 'roleCode', headerCellFilter: 'translate'},
+    //    {field: 'role_name', displayName: 'roleName', headerCellFilter: 'translate'},
+    //    {
+    //        name: 'edit', displayName: 'roleManage', headerCellFilter: 'translate',
+    //        cellTemplate: '' +
+    //        '<button type="button" class="btn-xs btn-primary" translate="removeRole" ng-click="grid.appScope.removeRoleClick(row)" ></button>' +
+    //        '<button type="button" class="btn-xs btn-primary" translate="editRole" ng-click="grid.appScope.editRoleClick(row)" ></button>' +
+    //        '<button type="button" class="btn-xs btn-primary" translate="allocatePermission" ng-click="grid.appScope.allocatePermissionClick(row)" ></button>'
+    //    }
+    //];
 
     $scope.getRoleList = function () {
         request.http({
             method: "GET",
             url: "/role/query/list"
         }).success(function (data, status, headers, config) {
-            $scope.gridOptions.data = data;
+            $scope.rowCollection = data;
+            //$scope.gridOptions.data = data;
             $scope.getPermissionList();
         });
     };
@@ -45,23 +46,23 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.removeRoleClick = function (row) {
-        request.json("/role/deleteRole", row.entity).
+        request.json("/role/deleteRole", row).
             success(function (data, status, headers, config) {
-                var index = $scope.gridOptions.data.indexOf(row.entity);
-                $scope.gridOptions.data.splice(index, 1);
+                var index = $scope.rowCollection.indexOf(row);
+                $scope.rowCollection.splice(index, 1);
             }
         );
     };
 
     $scope.editRoleClick = function (row) {
         $scope.currentAction = Action.Edit;
-        $scope.editRole = angular.copy(row.entity);
+        $scope.editRole = angular.copy(row);
         $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("editRole");
         $scope.openEditRole();
     };
 
     $scope.allocatePermissionClick = function (row) {
-        request.json("/role/query/rolePermissionList", row.entity).
+        request.json("/role/query/rolePermissionList", row).
             success(function (data, status, headers, config) {
                 $scope.editRole = data;
                 $scope.openAllocatePermission();

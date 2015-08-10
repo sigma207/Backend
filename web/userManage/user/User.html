@@ -8,8 +8,24 @@
 <div ng-controller="UserController">
     <button type="button" class="btn-xs btn-primary" translate="query" ng-click="queryClick()"></button>
     <button type="button" class="btn-xs btn-primary" translate="addUser" ng-click="addUserClick()"></button>
-    <div ui-grid="gridOptions" class="grid"></div>
-
+    <!--<div ui-grid="gridOptions" class="grid"></div>-->
+    <table st-table="rowCollection" class="table table-striped">
+        <thead>
+        <tr>
+            <th>{{'loginId'|translate}}</th>
+            <th>{{'userManage'|translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in rowCollection">
+            <td>{{row.login_id}}</td>
+            <td>
+                <button type="button" class="btn-xs btn-primary" translate="removeUser" ng-click="removeUserClick(row)" ></button>
+                <button type="button" class="btn-xs btn-primary" translate="allocateRole" ng-click="allocateRoleClick(row)" ></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
     <script type="text/ng-template" id="userEdit.html">
         <div class="modal-header">
             <h3 class="modal-title">{{title}}</h3>

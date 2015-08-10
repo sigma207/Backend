@@ -8,8 +8,25 @@
 <div ng-controller="RoleController">
     <button type="button" class="btn-xs btn-primary" translate="query" ng-click="queryClick()"></button>
     <button type="button" class="btn-xs btn-primary" translate="addRole" ng-click="addRoleClick()"></button>
-    <div ui-grid="gridOptions" class="grid"></div>
-
+    <!--<div ui-grid="gridOptions" class="grid"></div>-->
+    <table st-table="rowCollection" class="table table-striped">
+        <thead>
+        <tr>
+            <th>{{'roleCode'|translate}}</th>
+            <th>{{'roleName'|translate}}</th>
+            <th>{{'roleManage'|translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in rowCollection">
+            <td>{{row.role_code}}</td>
+            <td>{{row.role_name}}</td>
+            <td> <button type="button" class="btn-xs btn-primary" translate="removeRole" ng-click="removeRoleClick(row)" ></button>
+                <button type="button" class="btn-xs btn-primary" translate="editRole" ng-click="editRoleClick(row)" ></button>
+                <button type="button" class="btn-xs btn-primary" translate="allocatePermission" ng-click="allocatePermissionClick(row)" ></button></td>
+        </tr>
+        </tbody>
+    </table>
     <script type="text/ng-template" id="roleEdit.html">
         <div class="modal-header">
             <h3 class="modal-title">{{title}}</h3>

@@ -7,6 +7,9 @@
 </head>
 <body>
 <div ng-controller="HolidayController">
+    <!--<datepicker ng-model="testDate" ></datepicker>-->
+    <input type="text" ng-model="testDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="status.opened"/>
+    <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
     <select ng-model="selectedExchange" ng-change="exchangeChange();"
             ng-options="exchange.exchange_id for exchange in exchangeList">
     </select>
@@ -22,7 +25,34 @@
         <h3 class="modal-title">{{title}}</h3>
     </div>
     <div class="modal-body" ng-init="init()">
-        <div ui-grid="gridOptions" ui-grid-edit class="grid"></div>
+        <table st-table="rowCollection" class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{'beginDate'|translate}}</th>
+                <th>{{'endDate'|translate}}</th>
+                <th>{{'memo'|translate}}</th>
+                <th>{{'operate'|translate}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in rowCollection">
+                <td>
+                    <input type="text" ng-model="row.begin_date" max-date="row.endDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.beginDateOpened" size="10"/>
+                    <button type="button" class="btn-xs btn-default" ng-click="beginDateButtonClick(row)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </td>
+                <td>
+                    <input type="text" ng-model="row.endDate" min-date="row.begin_date" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.endDateOpened" size="10"/>
+                    <button type="button" class="btn-xs btn-default" ng-click="endDateButtonClick(row)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </td>
+                <td><input type="text" ng-model="row.memo"/></td>
+                <td>
+                    <button type="button" class="btn-xs btn-primary" translate="add" ng-click="addClick($index,row)"></button>
+                    <button type="button" class="btn-xs btn-primary" translate="delete" ng-click="deleteClick($index,row)"></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!--<div ui-grid="gridOptions" ui-grid-edit class="grid"></div>-->
     </div>
     <div class="modal-footer">
         <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>

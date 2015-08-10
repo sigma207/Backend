@@ -7,9 +7,6 @@
 </head>
 <body>
 <div ng-controller="HolidayController">
-    <!--<datepicker ng-model="testDate" ></datepicker>-->
-    <input type="text" ng-model="testDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="status.opened"/>
-    <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
     <select ng-model="selectedExchange" ng-change="exchangeChange();"
             ng-options="exchange.exchange_id for exchange in exchangeList">
     </select>
@@ -52,7 +49,6 @@
             </tr>
             </tbody>
         </table>
-        <!--<div ui-grid="gridOptions" ui-grid-edit class="grid"></div>-->
     </div>
     <div class="modal-footer">
         <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>

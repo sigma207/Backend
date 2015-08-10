@@ -112,6 +112,7 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.openAllocateRole = function () {
+        $scope.modalTitle = $translate.instant("allocateRole");
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: 'allocateRole.html',
@@ -178,40 +179,25 @@ backendApp.controller('allocateRoleCtrl', function ($scope, $modalInstance, $log
     $scope.editObj = editObj;
     $scope.userRoleList = userRoleList;
     $scope.roleList = roleList;
+    $scope.selectedRoleList = [];
 
     $scope.init = function() {
-        $scope.gridOptions = {
-            enableRowSelection: true,
-            enableSelectAll: true
-        };
-        $scope.gridOptions.enableHorizontalScrollbar = 0;
-        $scope.gridOptions.columnDefs = [
-            {field: 'role_code', displayName: 'roleCode', headerCellFilter: 'translate'},
-            {field: 'role_name', displayName: 'roleName', headerCellFilter: 'translate'},
-        ];
-        $scope.gridOptions.onRegisterApi = function(gridApi){
-            //set gridApi on scope
-            $scope.gridApi = gridApi;
-            $timeout(function() {
-                if($scope.gridApi.selection.selectRow){
-                    var i, count;
-                    var roleMap = {};
-                    for (i = 0, count = $scope.userRoleList.length; i < count; i++) {
-                        roleMap[userRoleList[i].role_id] = 0;
-                    }
-                    for (i = 0, count = $scope.roleList.length; i < count; i++) {
-                        if (typeof roleMap[$scope.roleList[i].role_id] !== typeof undefined) {
-                            $scope.gridApi.selection.selectRow($scope.gridOptions.data[i]);
-                        }
-                    }
-                }
-            });
-        };
-        $scope.gridOptions.data = $scope.roleList;
+        var i, count;
+        var roleMap = {};
+        for (i = 0, count = $scope.userRoleList.length; i < count; i++) {
+            roleMap[userRoleList[i].role_id] = 0;
+        }
+        for (i = 0, count = $scope.roleList.length; i < count; i++) {
+            if (typeof roleMap[$scope.roleList[i].role_id] !== typeof undefined) {
+                $scope.selectedRoleList.push(roleList[i]);
+            }
+        }
+        $scope.rowCollection = $scope.roleList;
     };
 
     $scope.save = function () {
-        var list = $scope.gridApi.selection.getSelectedRows();
+        $log.info($scope.selectedRoleList );
+        var list = $scope.selectedRoleList;
         $scope.editObj.userRoleList = [];
         for(var i= 0,count=list.length;i<count;i++){
             $scope.editObj.userRoleList.push({login_id: $scope.editObj.login_id, role_id: list[i].role_id});

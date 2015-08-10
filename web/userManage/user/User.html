@@ -63,7 +63,23 @@
             <h3 class="modal-title">{{title}}</h3>
         </div>
         <div class="modal-body" ng-init="init()">
-            <div ui-grid="gridOptions" ui-grid-selection class="grid"></div>
+            <table st-table="rowCollection" class="table table-striped" table-checkbox selected-Items="selectedRoleList">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>{{'roleCode'|translate}}</th>
+                    <th>{{'roleName'|translate}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in rowCollection">
+                    <td row-checkbox row="row" index="$index"></td>
+                    <td>{{row.role_code}}</td>
+                    <td>{{row.role_name}}</td>
+                </tr>
+                </tbody>
+            </table>
+            <!--<div ui-grid="gridOptions" ui-grid-selection class="grid"></div>-->
         </div>
         <div class="modal-footer">
             <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>

@@ -1,25 +1,25 @@
 /**
  * Created by user on 2015/8/5.
  */
-var backendApp = angular.module("backendApp", ["pascalprecht.translate","ui.bootstrap","smart-table","ui.grid","ui.grid.selection","ui.grid.edit","ngRoute","requestFactory","localeFactory"]);
-backendApp.constant("HostUrl","http://localhost:8080/Backend");
+var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ui.grid", "ui.grid.selection", "ui.grid.edit", "ngRoute", "requestFactory", "localeFactory"]);
+backendApp.constant("HostUrl", "http://localhost:8080/Backend");
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
-        when("/A1",{
-            templateUrl:"permissionManage/permission/Permission.html"
+        when("/A1", {
+            templateUrl: "permissionManage/permission/Permission.html"
         }).
-        when("/A2",{
-            templateUrl:"permissionManage/role/Role.html"
+        when("/A2", {
+            templateUrl: "permissionManage/role/Role.html"
         }).
-        when("/B2",{
-            templateUrl:"goodsManage/holiday/Holiday.html"
+        when("/B2", {
+            templateUrl: "goodsManage/holiday/Holiday.html"
         }).
-        when("/C1",{
-            templateUrl:"userManage/user/User.html"
+        when("/C1", {
+            templateUrl: "userManage/user/User.html"
         }).
         otherwise({redirectTo: '/'})
 }]);
-backendApp.config(function ($translateProvider,$translatePartialLoaderProvider) {
+backendApp.config(function ($translateProvider, $translatePartialLoaderProvider) {
     $translatePartialLoaderProvider.addPart('main');
     $translatePartialLoaderProvider.addPart('common');
     $translateProvider.useLoader('$translatePartialLoader', {
@@ -27,80 +27,58 @@ backendApp.config(function ($translateProvider,$translatePartialLoaderProvider) 
     });
     $translateProvider.preferredLanguage("zh-TW");
 });
-backendApp.directive("tableDate", function ($filter) {
-    function parseDateString(dateString) {
-        if (typeof(dateString) === 'undefined' || dateString === '') {
-            return null;
-        }
-        var parts = dateString.split('/');
-        if (parts.length !== 3) {
-            return null;
-        }
-        var year = parseInt(parts[2], 10);
-        var month = parseInt(parts[1], 10);
-        var day = parseInt(parts[0], 10);
 
-        if (month < 1 || year < 1 || day < 1) {
-            return null;
-        }
-        return new Date(year, (month - 1), day);
-    }
-    function pad(s) { return (s < 10) ? '0' + s : s; }
+backendApp.directive("tableCheckbox", function () {
     return {
-        priority: -100, // run after default uiGridEditor directive
-        require: '?ngModel',
-        link: function (scope, element, attrs, ngModel) {
-            console.log("link");
-            console.log(scope);
-            scope.istableDate = false;
-
-            scope.$on( 'uiGridEventBeginCellEdit', function () {
-                console.log("uiGridEventBeginCellEdit");
-                scope.istableDate = true;
-            });
-
-            element.on("click",function(){
-                console.log("click");
-                scope.istableDate = true;
-            });
-
-            element.bind( 'blur', function () {
-                if(!scope.istableDate){
-                    scope.$emit( 'uiGridEventEndCellEdit' );
-                }else{
-                    scope.istableDate =  false;
+        scope: {
+            selectedItems: '='
+        },
+        controller: function ($scope, $compile) {
+            //console.log("tableCheckbox controller");
+            //console.log($scope);
+            var ctrl = this;
+            this.itemSelect = function (item,selected) {
+                if(selected){
+                    if(!ctrl.itemHasBeenSelected(item)){
+                        $scope.selectedItems.push(item);
+                    }
+                } else {
+                    var index = $scope.selectedItems.indexOf(item);
+                    $scope.selectedItems.splice(index,1);
                 }
-            }); //when leaving the input element, emit the 'end cell edit' event
-
-            if (ngModel) {
-                ngModel.$formatters.push(function (modelValue) {
-                    var modelValue= new Date(modelValue);
-                    ngModel.$setValidity(null,(!modelValue || !isNaN(modelValue.getTime())));
-                    return $filter('date')(modelValue, 'yyyyMMdd');
-                });
-
-                ngModel.$parsers.push(function (viewValue) {
-                    if (viewValue ) {
-                        var dateString =  [pad(viewValue.getDate()), pad(viewValue.getMonth()+1), viewValue.getFullYear()].join('/')
-                        var dateValue = parseDateString(dateString);
-                        ngModel.$setValidity(null, (dateValue && !isNaN(dateValue.getTime())));
-                        return dateValue;
-                    }
-                    else {
-                        ngModel.$setValidity(null, true);
-                        return null;
-                    }
-                });
+            };
+            this.itemHasBeenSelected = function (item) {
+                return ($scope.selectedItems.indexOf(item)!=-1);
             }
         }
-    };
+    }
+});
+
+backendApp.directive("rowCheckbox", function () {
+    return {
+        template: "<input ng-model='selected' type='checkbox'/>",
+        require: "^tableCheckbox",
+        scope: {
+            row:"=",
+            index:"="
+        },
+        link: function (scope, element, attr, tableCheckboxCtrl) {
+            scope.selected = false;
+            if(tableCheckboxCtrl.itemHasBeenSelected(scope.row)){
+                scope.selected = true;
+            }
+            element.on('change', function (event) {
+                tableCheckboxCtrl.itemSelect(scope.row,scope.selected);
+            });
+        }
+    }
 });
 backendApp.controller("BackendController", BackendController);
-function BackendController($scope,$translate,$location,HostUrl,request,locale){
+function BackendController($scope, $translate, $location, HostUrl, request, locale) {
     console.log("BackendController!!");
     request.changeHostUrl(HostUrl);
     locale.changeLang(locale.zh_TW);
-    $scope.menuTreeSetting= {
+    $scope.menuTreeSetting = {
         data: {
             simpleData: {
                 enable: true
@@ -109,7 +87,7 @@ function BackendController($scope,$translate,$location,HostUrl,request,locale){
         callback: {
             onClick: function (event, treeId, treeNode) {
                 $scope.$apply(function () {
-                    $location.path("/"+treeNode.permission_code);
+                    $location.path("/" + treeNode.permission_code);
                 });
             }
         }

@@ -31,7 +31,7 @@ public class PermissionController extends BaseController{
     @Qualifier("permissionService")
     private PermissionService permissionService;
 
-    @RequestMapping(value="/query/list",method = RequestMethod.GET)
+    @RequestMapping(value="/select",method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getPermissionList(){
         System.out.println("getPermissionList");
 
@@ -55,7 +55,7 @@ public class PermissionController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/add",method = RequestMethod.POST)
+    @RequestMapping(value="/insert",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addPermission(@RequestBody Permission permission){
         System.out.println("addPermission");
 

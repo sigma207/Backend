@@ -5,6 +5,7 @@ import com.jelly.jt8.bo.model.Role;
 import com.jelly.jt8.bo.model.User;
 import com.jelly.jt8.bo.util.ErrorMsg;
 import com.jelly.jt8.bo.util.Password;
+import com.jelly.jt8.bo.util.RsMapper;
 import com.jelly.jt8.common.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,26 +42,27 @@ public class UserDaoImpl implements UserDao {
             conn = jt8Ds.getConnection();
             stmt = conn.prepareStatement(QUERY);
             rs = stmt.executeQuery();
-            while (rs.next()) {
-                obj = new User(
-                        rs.getString("login_id"),
-                        null,
-                        rs.getString("create_time"),
-                        rs.getInt("permission"),
-                        rs.getInt("concurrent"),
-                        rs.getInt("retry"),
-                        rs.getInt("max_retry"),
-                        rs.getString("active_date"),
-                        rs.getInt("duration"),
-                        rs.getString("expire_date"),
-                        rs.getString("update_time"),
-                        rs.getInt("is_active"),
-                        rs.getString("login_time"),
-                        rs.getString("last_login_time"),
-                        rs.getString("org_id")
-                        );
-                list.add(obj);
-            }
+            RsMapper.map(rs, list, User.class);//要改成可以不要set password
+//            while (rs.next()) {
+//                obj = new User(
+//                        rs.getString("login_id"),
+//                        null,
+//                        rs.getString("create_time"),
+//                        rs.getInt("permission"),
+//                        rs.getInt("concurrent"),
+//                        rs.getInt("retry"),
+//                        rs.getInt("max_retry"),
+//                        rs.getString("active_date"),
+//                        rs.getInt("duration"),
+//                        rs.getString("expire_date"),
+//                        rs.getString("update_time"),
+//                        rs.getInt("is_active"),
+//                        rs.getString("login_time"),
+//                        rs.getString("last_login_time"),
+//                        rs.getString("org_id")
+//                        );
+//                list.add(obj);
+//            }
         } catch (Exception e){
             throw e;
         } finally {

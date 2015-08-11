@@ -3,6 +3,7 @@ package com.jelly.jt8.bo.dao.impl;
 import com.jelly.jt8.bo.dao.RolePermissionDao;
 import com.jelly.jt8.bo.model.Role;
 import com.jelly.jt8.bo.model.RolePermission;
+import com.jelly.jt8.bo.util.RsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -39,13 +40,7 @@ public class RolePermissionDaoImpl implements RolePermissionDao {
             stmt = conn.prepareStatement(QUERY + WHERE_ROLE);
             stmt.setInt(1, role.getRole_id());
             rs = stmt.executeQuery();
-            while (rs.next()) {
-                obj = new RolePermission(
-                        rs.getInt("role_id"),
-                        rs.getInt("permission_id")
-                );
-                list.add(obj);
-            }
+            RsMapper.map(rs, list, RolePermission.class);
         } catch (Exception e){
             throw e;
         } finally {

@@ -7,6 +7,9 @@ public class UserRole {
     private String login_id;
     private int role_id;
 
+    public UserRole() {
+    }
+
     public UserRole(String login_id, int role_id) {
         this.login_id = login_id;
         this.role_id = role_id;

@@ -7,5 +7,9 @@
   "exceptionManage": "例外管理",
   "addHoliday": "新增假日",
   "addException":"新增例外",
-  "calendar": "日期"
+  "calendar": "日期",
+  "removeHoliday":"假日刪除",
+  "editHoliday":"假日編輯",
+  "removeException":"例外刪除",
+  "editException":"例外編輯"
 }

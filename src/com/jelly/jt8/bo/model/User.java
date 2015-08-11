@@ -23,23 +23,23 @@ public class User {
     private String org_id;
     private List<UserRole> userRoleList;
 
-    public User(String login_id, String password, String create_time, int permission, int concurrent, int retry, int max_retry, String active_date, int duration, String expire_date, String update_time, int is_active, String login_time, String last_login_time, String org_id) {
-        this.login_id = login_id;
-        this.password = password;
-        this.create_time = create_time;
-        this.permission = permission;
-        this.concurrent = concurrent;
-        this.retry = retry;
-        this.max_retry = max_retry;
-        this.active_date = active_date;
-        this.duration = duration;
-        this.expire_date = expire_date;
-        this.update_time = update_time;
-        this.is_active = is_active;
-        this.login_time = login_time;
-        this.last_login_time = last_login_time;
-        this.org_id = org_id;
-    }
+//    public User(String login_id, String password, String create_time, int permission, int concurrent, int retry, int max_retry, String active_date, int duration, String expire_date, String update_time, int is_active, String login_time, String last_login_time, String org_id) {
+//        this.login_id = login_id;
+//        this.password = password;
+//        this.create_time = create_time;
+//        this.permission = permission;
+//        this.concurrent = concurrent;
+//        this.retry = retry;
+//        this.max_retry = max_retry;
+//        this.active_date = active_date;
+//        this.duration = duration;
+//        this.expire_date = expire_date;
+//        this.update_time = update_time;
+//        this.is_active = is_active;
+//        this.login_time = login_time;
+//        this.last_login_time = last_login_time;
+//        this.org_id = org_id;
+//    }
 
     public String getLogin_id() {
         return login_id;

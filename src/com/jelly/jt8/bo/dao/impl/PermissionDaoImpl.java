@@ -2,6 +2,7 @@ package com.jelly.jt8.bo.dao.impl;
 
 import com.jelly.jt8.bo.dao.PermissionDao;
 import com.jelly.jt8.bo.model.Permission;
+import com.jelly.jt8.bo.util.RsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -32,22 +33,12 @@ public class PermissionDaoImpl implements PermissionDao {
         ResultSet rs = null;
         Connection conn = null;
 
-        List<Permission> list = new LinkedList<Permission>();
-        Permission obj = null;
+        List<Permission> list =  new LinkedList<Permission>();
         try {
             conn = jt8Ds.getConnection();
             stmt = conn.prepareStatement(QUERY);
             rs = stmt.executeQuery();
-            while (rs.next()) {
-                obj = new Permission(
-                        rs.getInt("permission_id"),
-                        rs.getString("permission_code"),
-                        rs.getInt("parent_permission_id"),
-                        rs.getInt("sequence"),
-                        rs.getString("path")
-                );
-                list.add(obj);
-            }
+            RsMapper.map(rs, list, Permission.class);
         } catch (Exception e){
             throw e;
         } finally {
@@ -76,7 +67,6 @@ public class PermissionDaoImpl implements PermissionDao {
         Connection conn = null;
 
         List<Permission> list = new LinkedList<Permission>();
-        Permission obj = null;
         try {
             conn = jt8Ds.getConnection();
             stmt = conn.prepareStatement(QUERY + WHERE_PARENT);
@@ -87,16 +77,7 @@ public class PermissionDaoImpl implements PermissionDao {
             }
 
             rs = stmt.executeQuery();
-            while (rs.next()) {
-                obj = new Permission(
-                        rs.getInt("permission_id"),
-                        rs.getString("permission_code"),
-                        rs.getInt("parent_permission_id"),
-                        rs.getInt("sequence"),
-                        rs.getString("path")
-                );
-                list.add(obj);
-            }
+            RsMapper.map(rs, list, Permission.class);
         } catch (Exception e){
             throw e;
         } finally {

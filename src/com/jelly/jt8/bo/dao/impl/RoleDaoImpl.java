@@ -3,6 +3,7 @@ package com.jelly.jt8.bo.dao.impl;
 import com.jelly.jt8.bo.dao.RoleDao;
 import com.jelly.jt8.bo.model.Role;
 import com.jelly.jt8.bo.util.ErrorMsg;
+import com.jelly.jt8.bo.util.RsMapper;
 import com.jelly.jt8.common.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,22 +35,22 @@ public class RoleDaoImpl implements RoleDao{
         Connection conn = null;
 
         List<Role> list = new LinkedList<Role>();
-        Role obj = null;
         try {
             conn = jt8Ds.getConnection();
             stmt = conn.prepareStatement(QUERY);
             rs = stmt.executeQuery();
-            while (rs.next()) {
-                obj = new Role(
-                        rs.getInt("role_id"),
-                        rs.getInt("parent_role_id"),
-                        rs.getString("role_code"),
-                        rs.getString("role_name"),
-                        rs.getString("update_time"),
-                        rs.getBytes("rv")
-                );
-                list.add(obj);
-            }
+            RsMapper.map(rs, list, Role.class);
+//            while (rs.next()) {
+//                obj = new Role(
+//                        rs.getInt("role_id"),
+//                        rs.getInt("parent_role_id"),
+//                        rs.getString("role_code"),
+//                        rs.getString("role_name"),
+//                        rs.getString("update_time"),
+//                        rs.getBytes("rv")
+//                );
+//                list.add(obj);
+//            }
         } catch (Exception e){
             throw e;
         } finally {

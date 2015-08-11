@@ -2,7 +2,15 @@
   "query":"查询",
   "save":"存档",
   "cancel":"取消",
+  "operate":"操作",
+  "add":"新增",
+  "delete":"删除",
   "error":{
     "dirtyData":"资料已被异动过,请重新查询后再操作"
+  },
+  "datePicker":{
+    "currentText":"今天",
+    "clearText":"清除",
+    "closeText":"完成"
   }
 }

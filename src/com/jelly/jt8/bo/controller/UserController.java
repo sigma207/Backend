@@ -26,7 +26,7 @@ public class UserController extends BaseController{
     @Qualifier("userService")
     private UserService userService;
 
-    @RequestMapping(value = "/selectUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/select", method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<String> selectUser() {
         System.out.println("selectUser");
@@ -45,7 +45,7 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/selectUserRole", method = RequestMethod.POST)
+    @RequestMapping(value = "/select/userRoleList", method = RequestMethod.POST)
     public @ResponseBody
     ResponseEntity<String> selectUserRole(@RequestBody User user) {
         System.out.println("selectUserRole");
@@ -64,7 +64,7 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/insertUser",method = RequestMethod.POST)
+    @RequestMapping(value="/insert",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addRole(@RequestBody User user){
         System.out.println("insertUser");
 
@@ -81,7 +81,7 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/deleteUser",method = RequestMethod.POST)
+    @RequestMapping(value="/delete",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> deleteRole(@RequestBody User user){
 
         String payload = "";

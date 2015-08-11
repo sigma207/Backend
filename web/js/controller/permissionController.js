@@ -21,7 +21,7 @@ function PermissionController($scope, $modal, request, locale) {
 
     request.http({
         method: "GET",
-        url: "/permission/query/list"
+        url: "/permission/select"
     }).success(function (data, status, headers, config) {
         $scope.permissionList = data;
         console.log($scope.permissionList);
@@ -265,7 +265,7 @@ backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $l
         switch (currentAction) {
             case Action.NewNode:
             case Action.NewChildNode:
-                request.json("/permission/add", $scope.editPermission).
+                request.json("/permission/insert", $scope.editPermission).
                     success(function (data, status, headers, config) {
                         $modalInstance.close(data);
                     }

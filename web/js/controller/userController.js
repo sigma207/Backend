@@ -22,7 +22,7 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.getUserList = function () {
         request.http({
             method: "GET",
-            url: "/user/selectUser"
+            url: "/user/select"
         }).success(function (data, status, headers, config) {
             $scope.rowCollection = data;
             $scope.getRoleList();
@@ -32,7 +32,7 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.getRoleList = function () {
         request.http({
             method: "GET",
-            url: "/role/query/list"
+            url: "/role/select"
         }).success(function (data, status, headers, config) {
             $scope.roleList = data;
         });
@@ -43,7 +43,7 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.removeUserClick = function (row) {
-        request.json("/user/deleteUser", row).
+        request.json("/user/delete", row).
             success(function (data, status, headers, config) {
                 var index = $scope.rowCollection.indexOf(row);
                 $scope.rowCollection.splice(index, 1);
@@ -60,9 +60,10 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
 
     $scope.allocateRoleClick = function (row) {
         $scope.editUser = angular.copy(row);
-        request.json("/user/selectUserRole", row).
+        request.json("/user/select/userRoleList", row).
             success(function (data, status, headers, config) {
                 $scope.userRoleList = data;
+                $scope.modalTitle = $scope.editUser.login_id+":"+$translate.instant("allocateRole");
                 $scope.openAllocateRole();
             }
         );
@@ -112,7 +113,6 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.openAllocateRole = function () {
-        $scope.modalTitle = $translate.instant("allocateRole");
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: 'allocateRole.html',
@@ -153,14 +153,14 @@ backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, re
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
-                request.json("/user/insertUser", $scope.editObj).
+                request.json("/user/insert", $scope.editObj).
                     success(function (data, status, headers, config) {
                         $modalInstance.close(data);
                     }
                 );
                 break;
             case Action.Edit:
-                request.json("/user/updateUser", $scope.editObj).
+                request.json("/user/update", $scope.editObj).
                     success(function (data, status, headers, config) {
                         $modalInstance.close(data);
                     }

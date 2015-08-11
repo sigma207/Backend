@@ -15,14 +15,6 @@ public class Permission {
     private Map<String,String> permissionNameMap;
     private List<Permission> children;
 
-    public Permission(int permission_id, String permission_code, int parent_permission_id, int sequence, String path) {
-        this.permission_id = permission_id;
-        this.permission_code = permission_code;
-        this.parent_permission_id = parent_permission_id;
-        this.sequence = sequence;
-        this.path = path;
-    }
-
     public int getPermission_id() {
         return permission_id;
     }

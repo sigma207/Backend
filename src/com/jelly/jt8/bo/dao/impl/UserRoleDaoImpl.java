@@ -4,6 +4,7 @@ import com.jelly.jt8.bo.dao.UserRoleDao;
 import com.jelly.jt8.bo.model.RolePermission;
 import com.jelly.jt8.bo.model.User;
 import com.jelly.jt8.bo.model.UserRole;
+import com.jelly.jt8.bo.util.RsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -40,13 +41,7 @@ public class UserRoleDaoImpl implements UserRoleDao {
             stmt = conn.prepareStatement(QUERY + WHERE_ROLE);
             stmt.setString(1, user.getLogin_id());
             rs = stmt.executeQuery();
-            while (rs.next()) {
-                obj = new UserRole(
-                        rs.getString("login_id"),
-                        rs.getInt("role_id")
-                );
-                list.add(obj);
-            }
+            RsMapper.map(rs, list, UserRole.class);
         } catch (Exception e){
             throw e;
         } finally {

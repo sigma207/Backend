@@ -72,7 +72,7 @@ angular.module("localeFactory", []).
             convertBaseLineToDash: function (obj) {
                 for (var key in obj) {
                     var value = obj[key];
-                    delete obj[key];
+                    //delete obj[key];//angular form validation 會偵測到,所以mark掉
                     key = key.replace("_", "-");
                     obj[key] = value;
                 }

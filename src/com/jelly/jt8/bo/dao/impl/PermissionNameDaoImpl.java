@@ -2,6 +2,7 @@ package com.jelly.jt8.bo.dao.impl;
 
 import com.jelly.jt8.bo.dao.PermissionNameDao;
 import com.jelly.jt8.bo.model.PermissionName;
+import com.jelly.jt8.bo.util.RsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -31,19 +32,11 @@ public class PermissionNameDaoImpl implements PermissionNameDao {
         ResultSet rs = null;
         Connection conn = null;
         List<PermissionName> list = new LinkedList<PermissionName>();
-        PermissionName obj = null;
         try {
             conn = jt8Ds.getConnection();
             stmt = conn.prepareStatement(QUERY);
             rs = stmt.executeQuery();
-            while (rs.next()) {
-                obj = new PermissionName(
-                        rs.getInt("permission_id"),
-                        rs.getString("language"),
-                        rs.getString("name")
-                );
-                list.add(obj);
-            }
+            RsMapper.map(rs, list, PermissionName.class);
         } catch (Exception e) {
             throw e;
         } finally {

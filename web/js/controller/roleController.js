@@ -6,24 +6,11 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     $translatePartialLoader.addPart("role");
     $translate.refresh();
     $log.info("RoleController");
-    //$scope.gridOptions = {};
-    //$scope.gridOptions.enableHorizontalScrollbar = 0;
-    //$scope.gridOptions.columnDefs = [
-    //    {field: 'role_code', displayName: 'roleCode', headerCellFilter: 'translate'},
-    //    {field: 'role_name', displayName: 'roleName', headerCellFilter: 'translate'},
-    //    {
-    //        name: 'edit', displayName: 'roleManage', headerCellFilter: 'translate',
-    //        cellTemplate: '' +
-    //        '<button type="button" class="btn-xs btn-primary" translate="removeRole" ng-click="grid.appScope.removeRoleClick(row)" ></button>' +
-    //        '<button type="button" class="btn-xs btn-primary" translate="editRole" ng-click="grid.appScope.editRoleClick(row)" ></button>' +
-    //        '<button type="button" class="btn-xs btn-primary" translate="allocatePermission" ng-click="grid.appScope.allocatePermissionClick(row)" ></button>'
-    //    }
-    //];
 
     $scope.getRoleList = function () {
         request.http({
             method: "GET",
-            url: "/role/query/list"
+            url: "/role/select"
         }).success(function (data, status, headers, config) {
             $scope.rowCollection = data;
             //$scope.gridOptions.data = data;
@@ -34,7 +21,7 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.getPermissionList = function () {
         request.http({
             method: "GET",
-            url: "/permission/query/list"
+            url: "/permission/select"
         }).success(function (data, status, headers, config) {
             $scope.permissionList = data;
             locale.formatPermissionList($scope.permissionList);
@@ -46,7 +33,7 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.removeRoleClick = function (row) {
-        request.json("/role/deleteRole", row).
+        request.json("/role/delete", row).
             success(function (data, status, headers, config) {
                 var index = $scope.rowCollection.indexOf(row);
                 $scope.rowCollection.splice(index, 1);
@@ -62,9 +49,10 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.allocatePermissionClick = function (row) {
-        request.json("/role/query/rolePermissionList", row).
+        request.json("/role/select/rolePermissionList", row).
             success(function (data, status, headers, config) {
                 $scope.editRole = data;
+                $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
                 $scope.openAllocatePermission();
             }
         );
@@ -152,14 +140,14 @@ backendApp.controller('roleEditCtrl', function ($scope, $modalInstance, $log, re
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
-                request.json("/role/addRole", $scope.editObj).
+                request.json("/role/insert", $scope.editObj).
                     success(function (data, status, headers, config) {
                         $modalInstance.close(data);
                     }
                 );
                 break;
             case Action.Edit:
-                request.json("/role/updateRole", $scope.editObj).
+                request.json("/role/update", $scope.editObj).
                     success(function (data, status, headers, config) {
                         $log.info("success");
                         $modalInstance.close(data);

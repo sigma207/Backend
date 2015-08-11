@@ -14,15 +14,6 @@ public class Role {
     private byte[] rv;
     private List<RolePermission> permissionList;
 
-    public Role(int role_id, int parent_role_id, String role_code, String role_name, String update_time, byte[] rv) {
-        this.role_id = role_id;
-        this.parent_role_id = parent_role_id;
-        this.role_code = role_code;
-        this.role_name = role_name;
-        this.update_time = update_time;
-        this.rv = rv;
-    }
-
     public int getRole_id() {
         return role_id;
     }

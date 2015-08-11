@@ -1,7 +1,7 @@
 /**
  * Created by user on 2015/8/5.
  */
-var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ui.grid", "ui.grid.selection", "ui.grid.edit", "ngRoute", "requestFactory", "localeFactory"]);
+var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ngRoute", "requestFactory", "localeFactory"]);
 backendApp.constant("HostUrl", "http://localhost:8080/Backend");
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
@@ -73,8 +73,27 @@ backendApp.directive("rowCheckbox", function () {
         }
     }
 });
+// Common directive for Focus
+backendApp.directive('focus',
+    function($timeout) {
+        return {
+            scope : {
+                trigger : '@focus'
+            },
+            link : function(scope, element) {
+                scope.$watch('trigger', function(value) {
+                    if (value === "true") {
+                        $timeout(function() {
+                            element[0].focus();
+                        });
+                    }
+                });
+            }
+        };
+    }
+);
 backendApp.controller("BackendController", BackendController);
-function BackendController($scope, $translate, $location, HostUrl, request, locale) {
+function BackendController($scope, $translate, $location, HostUrl, request, locale, datepickerPopupConfig) {
     console.log("BackendController!!");
     request.changeHostUrl(HostUrl);
     locale.changeLang(locale.zh_TW);
@@ -95,7 +114,7 @@ function BackendController($scope, $translate, $location, HostUrl, request, loca
 
     request.http({
         method: "GET",
-        url: "/permission/query/list"
+        url: "/permission/select"
     }).success(function (data, status, headers, config) {
         $scope.menuList = data;
         //console.log($scope.menuList);
@@ -112,6 +131,10 @@ function BackendController($scope, $translate, $location, HostUrl, request, loca
 
     $scope.changeLanguage = function (langKey) {
         $translate.use(langKey);
+        // TRANSLATION
+        datepickerPopupConfig.currentText = $translate.instant("datePicker.currentText");
+        datepickerPopupConfig.clearText = $translate.instant("datePicker.clearText");
+        datepickerPopupConfig.closeText = $translate.instant("datePicker.closeText");
     };
 }
 

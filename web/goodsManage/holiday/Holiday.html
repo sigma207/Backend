@@ -14,15 +14,61 @@
             ng-options="main_symbol for main_symbol in selectedExchange.main_symbol">
     </select>
     <button type="button" class="btn-xs btn-primary" translate="addHoliday" ng-click="batchAddHolidayClick()"></button>
-    <div ui-grid="holidayGridOptions" class="grid"></div>
-    <div ui-grid="exceptionGridOptions" class="grid"></div>
+    <table st-table="holidayCollection" class="table table-striped table-condensed">
+        <thead>
+        <tr>
+            <th>{{'exchangeId'|translate}}</th>
+            <th>{{'mainSymbolId'|translate}}</th>
+            <th>{{'beginDate'|translate}}</th>
+            <th>{{'endDate'|translate}}</th>
+            <th>{{'memo'|translate}}</th>
+            <th>{{'holidayManage'|translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in holidayCollection">
+            <td>{{row.exchange_id}}</td>
+            <td>{{row.main_symbol_id}}</td>
+            <td>{{row.begin_date}}</td>
+            <td>{{row.end_date}}</td>
+            <td>{{row.memo}}</td>
+            <td>
+                <button type="button" class="btn-xs btn-primary" translate="removeHoliday" ng-click="removeHolidayClick(row)" ></button>
+                <button type="button" class="btn-xs btn-primary" translate="editHoliday" ng-click="editHolidayClick(row)" ></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table st-table="exceptionCollection" class="table table-striped table-condensed">
+        <thead>
+        <tr>
+            <th>{{'exchangeId'|translate}}</th>
+            <th>{{'mainSymbolId'|translate}}</th>
+            <th>{{'calendar'|translate}}</th>
+            <th>{{'memo'|translate}}</th>
+            <th>{{'exceptionManage'|translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in exceptionCollection">
+            <td>{{row.exchange_id}}</td>
+            <td>{{row.main_symbol_id}}</td>
+            <td>{{row.calendar}}</td>
+            <td>{{row.memo}}</td>
+            <td>
+                <button type="button" class="btn-xs btn-primary" translate="removeException" ng-click="removeExceptionClick(row)" ></button>
+                <button type="button" class="btn-xs btn-primary" translate="editException" ng-click="editExceptionClick(row)" ></button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 <script type="text/ng-template" id="batchHoliday.html">
     <div class="modal-header">
         <h3 class="modal-title">{{title}}</h3>
     </div>
     <div class="modal-body" ng-init="init()">
-        <table st-table="rowCollection" class="table table-striped">
+        <table st-table="rowCollection" class="table table-striped table-condensed">
             <thead>
             <tr>
                 <th>{{'beginDate'|translate}}</th>
@@ -31,14 +77,14 @@
                 <th>{{'operate'|translate}}</th>
             </tr>
             </thead>
-            <tbody>
-            <tr ng-repeat="row in rowCollection">
+            <tbody ng-form="holidayForm">
+            <tr ng-repeat="row in rowCollection" >
                 <td>
-                    <input type="text" ng-model="row.begin_date" max-date="row.endDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.beginDateOpened" size="10"/>
+                    <input type="text" ng-model="row.begin_date" max-date="row.endDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.beginDateOpened" size="10" required/>
                     <button type="button" class="btn-xs btn-default" ng-click="beginDateButtonClick(row)"><i class="glyphicon glyphicon-calendar"></i></button>
                 </td>
                 <td>
-                    <input type="text" ng-model="row.endDate" min-date="row.begin_date" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.endDateOpened" size="10"/>
+                    <input type="text" ng-model="row.endDate" min-date="row.begin_date" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.endDateOpened" size="10" required/>
                     <button type="button" class="btn-xs btn-default" ng-click="endDateButtonClick(row)"><i class="glyphicon glyphicon-calendar"></i></button>
                 </td>
                 <td><input type="text" ng-model="row.memo"/></td>
@@ -52,7 +98,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
-        <button class="btn btn-primary" ng-click="save()" translate="save"></button>
+        <button class="btn btn-primary" ng-disabled="holidayForm.$invalid" ng-click="save()" translate="save"></button>
     </div>
 </script>
 <!--<div>

@@ -5,21 +5,7 @@ backendApp.controller("HolidayController", HolidayController);
 function HolidayController($scope, $translatePartialLoader, $translate, $log, $modal, request) {
     $translatePartialLoader.addPart("holiday");
     $translate.refresh();
-    $scope.testDate = new Date();
-    $scope.status = {
-        opened: false
-    };
-    $scope.dateOptions = {
-        formatYear: 'yy',
-        startingDay: 1
-    };
 
-    $scope.open = function ($event) {
-        $log.info("open");
-        $scope.status.opened = true;
-    };
-    $scope.formats = ['yyyyMMdd', 'dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-    $scope.format = $scope.formats[0];
     $scope.fakeGoods = [
         {
             exchange_id: "1GCC",
@@ -34,41 +20,33 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
     $scope.selectedExchange = undefined;
     $scope.selectedMainSymbol = undefined;
 
-    $scope.holidayGridOptions = {};
-    $scope.holidayGridOptions.enableHorizontalScrollbar = 0;
-    $scope.holidayGridOptions.columnDefs = [
-        {field: 'exchange_id', displayName: 'exchangeId', headerCellFilter: 'translate'},
-        {field: 'main_symbol_id', displayName: 'mainSymbolId', headerCellFilter: 'translate'},
-        {field: 'begin_date', displayName: 'beginDate', headerCellFilter: 'translate'},
-        {field: 'end_date', displayName: 'endDate', headerCellFilter: 'translate'},
-        {field: 'memo', displayName: 'memo', headerCellFilter: 'translate'}
-    ];
-
-    $scope.exceptionGridOptions = {};
-    $scope.exceptionGridOptions.enableHorizontalScrollbar = 0;
-    $scope.exceptionGridOptions.columnDefs = [
-        {field: 'exchange_id', displayName: 'exchangeId', headerCellFilter: 'translate'},
-        {field: 'main_symbol_id', displayName: 'mainSymbolId', headerCellFilter: 'translate'},
-        {field: 'calendar', displayName: 'calendar', headerCellFilter: 'translate'},
-        {field: 'memo', displayName: 'memo', headerCellFilter: 'translate'}
-    ];
-
-
     $scope.exchangeChange = function () {
         $scope.selectedMainSymbol = $scope.selectedExchange.main_symbol[0];
+        $scope.mainSymbolChange();
     };
 
     $scope.mainSymbolChange = function () {
-        HolidayPage.getHoliday();
-        HolidayPage.getException();
+        $scope.getHoliday();
+        $scope.getException();
     };
 
     $scope.getHoliday = function () {
-
+        $scope.holidayCollection = [{
+            exchange_id:"A",
+            main_symbol_id:"A1",
+            begin_date:new Date(),
+            end_date:new Date(),
+            memo:"ABC"
+        }];
     };
 
     $scope.getException = function () {
-
+        $scope.exceptionCollection = [{
+            exchange_id:"A",
+            main_symbol_id:"A1",
+            calendar:new Date(),
+            memo:"DEF"
+        }];
     };
 
     $scope.batchAddHolidayClick = function () {

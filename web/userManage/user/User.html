@@ -9,7 +9,7 @@
     <button type="button" class="btn-xs btn-primary" translate="query" ng-click="queryClick()"></button>
     <button type="button" class="btn-xs btn-primary" translate="addUser" ng-click="addUserClick()"></button>
     <!--<div ui-grid="gridOptions" class="grid"></div>-->
-    <table st-table="rowCollection" class="table table-striped">
+    <table st-table="rowCollection" class="table table-striped table-condensed">
         <thead>
         <tr>
             <th>{{'loginId'|translate}}</th>
@@ -31,30 +31,30 @@
             <h3 class="modal-title">{{title}}</h3>
         </div>
         <div class="modal-body">
-            <form class="form-horizontal" role="form">
+            <form name="editForm" class="form-horizontal" role="form">
                 <div class="form-group">
                     <label for="login_id" class="col-md-2 control-label" translate="loginId"></label>
                     <div class="col-md-10">
-                        <input id="login_id" type="text" ng-model="editObj.login_id" class="input-sm form-control"/>
+                        <input id="login_id" type="text" ng-model="editObj.login_id" class="input-sm form-control" focus="true" required/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="password" class="col-md-2 control-label" translate="userPassword"></label>
                     <div class="col-md-10">
-                        <input id="password" type="password" ng-model="editObj.password" class="input-sm form-control"/>
+                        <input id="password" type="password" ng-model="editObj.password" class="input-sm form-control" required/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputAgain" class="col-md-2 control-label" translate="inputAgain"></label>
                     <div class="col-md-10">
-                        <input id="inputAgain" type="password" ng-model="editObj.inputAgain" class="input-sm form-control"/>
+                        <input id="inputAgain" type="password" ng-model="editObj.inputAgain" class="input-sm form-control" required/>
                     </div>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
-            <button class="btn btn-primary" ng-click="save()" translate="save"></button>
+            <button class="btn btn-primary" ng-disabled="editForm.$invalid" ng-click="save()" translate="save"></button>
         </div>
     </script>
 
@@ -63,7 +63,7 @@
             <h3 class="modal-title">{{title}}</h3>
         </div>
         <div class="modal-body" ng-init="init()">
-            <table st-table="rowCollection" class="table table-striped" table-checkbox selected-Items="selectedRoleList">
+            <table st-table="rowCollection" class="table table-striped table-condensed" table-checkbox selected-Items="selectedRoleList">
                 <thead>
                 <tr>
                     <th>&nbsp;</th>

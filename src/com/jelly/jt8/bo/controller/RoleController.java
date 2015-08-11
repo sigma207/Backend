@@ -30,7 +30,7 @@ public class RoleController extends BaseController {
     @Qualifier("roleService")
     private RoleService roleService;
 
-    @RequestMapping(value = "/query/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/select", method = RequestMethod.GET)
     public
     @ResponseBody
     ResponseEntity<String> getRoleList() {
@@ -49,7 +49,7 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/query/rolePermissionList", method = RequestMethod.POST)
+    @RequestMapping(value = "/select/rolePermissionList", method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity<String> getRolePermissionList(@RequestBody Role role) {
@@ -67,7 +67,7 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/addRole", method = RequestMethod.POST)
+    @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity<String> addRole(@RequestBody Role role) {
@@ -84,7 +84,7 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/updateRole", method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity<String> updateRole(@RequestBody Role role) {
@@ -100,7 +100,7 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/deleteRole", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity<String> deleteRole(@RequestBody Role role) {

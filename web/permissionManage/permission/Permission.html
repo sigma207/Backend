@@ -13,42 +13,42 @@
             <h3 class="modal-title">{{title}}</h3>
         </div>
         <div class="modal-body">
-            <form class="form-horizontal" role="form">
+            <form name="editForm" class="form-horizontal" role="form">
                 <div class="form-group">
                     <label for="permission_code" class="col-md-2 control-label">代碼</label>
                     <div class="col-md-10">
-                        <input id="permission_code" type="text" ng-model="editPermission.permission_code" class="input-sm form-control" required/>
+                        <input id="permission_code"  type="text" ng-model="editPermission.permission_code" class="input-sm form-control" focus="true" required/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="zh-TW" class="col-md-2 control-label">繁</label>
                     <div class="col-md-10">
-                        <input id="zh-TW" type="text" ng-model="editPermission.permissionNameMap.zh_TW" class="input-sm form-control"/>
+                        <input id="zh-TW"  type="text" ng-model="editPermission.permissionNameMap.zh_TW" class="input-sm form-control" required/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="zh-CN" class="col-md-2 control-label">簡</label>
                     <div class="col-md-10">
-                        <input id="zh-CN" type="text" ng-model="editPermission.permissionNameMap.zh_CN" class="input-sm form-control"/>
+                        <input id="zh-CN"  type="text" ng-model="editPermission.permissionNameMap.zh_CN" class="input-sm form-control" required/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="en-US" class="col-md-2 control-label">英</label>
                     <div class="col-md-10">
-                        <input id="en-US" type="text" ng-model="editPermission.permissionNameMap.en_US" class="input-sm form-control"/>
+                        <input id="en-US"  type="text" ng-model="editPermission.permissionNameMap.en_US" class="input-sm form-control" required/>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="path" class="col-md-2 control-label">路徑</label>
                     <div class="col-md-10">
-                        <input id="path" type="text" size="30" ng-model="editPermission.path" class="input-sm form-control"/>
+                        <input id="path"  type="text" size="30" ng-model="editPermission.path" class="input-sm form-control"/>
                     </div>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-warning" ng-click="cancel()"><span class="glyphicon glyphicon-remove"></span>Cancel</button>
-            <button class="btn btn-primary" ng-click="ok()"><span class="glyphicon glyphicon-ok"></span>OK</button>
+            <button class="btn btn-primary" ng-disabled="editForm.$invalid" ng-click="ok()"><span class="glyphicon glyphicon-ok"></span>OK</button>
         </div>
     </script>
 </div>

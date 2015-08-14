@@ -5,4 +5,5 @@ package com.jelly.jt8.bo.util;
  */
 public class ErrorMsg {
     public static String DIRTY_DATA = "dirtyData";
+    public static String BALANCE_NOT_ENOUGH = "balanceNotEnough";
 }

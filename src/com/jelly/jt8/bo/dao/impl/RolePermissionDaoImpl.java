@@ -17,11 +17,11 @@ import java.util.List;
  * Created by user on 2015/7/28.
  */
 @Repository("RolePermissionDao")
-public class RolePermissionDaoImpl implements RolePermissionDao {
-    private final static String QUERY = "SELECT role_id, permission_id FROM role_permission ";
+public class RolePermissionDaoImpl extends BaseDao implements RolePermissionDao {
+    private final static String QUERY = "SELECT role_id, permission_id FROM bo_role_permission ";
     private final static String WHERE_ROLE = "WHERE role_id = ? ";
-    private final static String INSERT = "INSERT INTO role_permission (role_id, permission_id) VALUES (?, ?);";
-    private final static String DELETE = "DELETE role_permission WHERE role_id = ? ";
+    private final static String INSERT = "INSERT INTO bo_role_permission (role_id, permission_id) VALUES (?, ?);";
+    private final static String DELETE = "DELETE bo_role_permission WHERE role_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")

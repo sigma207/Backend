@@ -1,16 +1,13 @@
 package com.jelly.jt8.bo.model;
 
-import java.util.Date;
-
 /**
- * Created by user on 2015/8/11.
+ * Created by user on 2015/8/12.
  */
-public class Holiday {
+public class HolidayException {
     private int holiday_id;
     private String exchange_id;
     private String main_symbol_id;
-    private String begin_date;
-    private String end_date;
+    private String calendar;
     private String update_time;
     private String memo;
     private byte[] rv;
@@ -39,20 +36,12 @@ public class Holiday {
         this.main_symbol_id = main_symbol_id;
     }
 
-    public String getBegin_date() {
-        return begin_date;
+    public String getCalendar() {
+        return calendar;
     }
 
-    public void setBegin_date(String begin_date) {
-        this.begin_date = begin_date;
-    }
-
-    public String getEnd_date() {
-        return end_date;
-    }
-
-    public void setEnd_date(String end_date) {
-        this.end_date = end_date;
+    public void setCalendar(String calendar) {
+        this.calendar = calendar;
     }
 
     public String getUpdate_time() {

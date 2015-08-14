@@ -1,6 +1,7 @@
 package com.jelly.jt8.bo.dao.impl;
 
 import com.jelly.jt8.bo.dao.PermissionNameDao;
+import com.jelly.jt8.bo.model.Holiday;
 import com.jelly.jt8.bo.model.PermissionName;
 import com.jelly.jt8.bo.util.RsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,11 @@ import java.util.List;
  * Created by user on 2015/7/27.
  */
 @Repository("PermissionNameDao")
-public class PermissionNameDaoImpl implements PermissionNameDao {
-    private final static String QUERY = "SELECT permission_id, language, name FROM permission_name ";
-    private final static String INSERT = "INSERT INTO permission_name (permission_id, language, name) VALUES (?, ?, ?);";
-    private final static String DELETE = "DELETE permission_name WHERE permission_id = ? ";
-    private final static String UPDATE = "UPDATE permission_name SET name = ? WHERE permission_id = ? AND language = ? ";
+public class PermissionNameDaoImpl extends BaseDao implements PermissionNameDao {
+    private final static String QUERY = "SELECT permission_id, language, name FROM bo_permission_name ";
+    private final static String INSERT = "INSERT INTO bo_permission_name (permission_id, language, name) VALUES (?, ?, ?);";
+    private final static String DELETE = "DELETE bo_permission_name WHERE permission_id = ? ";
+    private final static String UPDATE = "UPDATE bo_permission_name SET name = ? WHERE permission_id = ? AND language = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -28,32 +29,8 @@ public class PermissionNameDaoImpl implements PermissionNameDao {
 
     @Override
     public List<PermissionName> selectPermissionName() throws Exception {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
         List<PermissionName> list = new LinkedList<PermissionName>();
-        try {
-            conn = jt8Ds.getConnection();
-            stmt = conn.prepareStatement(QUERY);
-            rs = stmt.executeQuery();
-            RsMapper.map(rs, list, PermissionName.class);
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        execute(jt8Ds.getConnection(),QUERY,list,PermissionName.class);
         return list;
     }
 

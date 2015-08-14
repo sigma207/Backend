@@ -8,7 +8,7 @@
   "calendar": "日期",
   "function": {
     "save":"存檔",
-    "addHoliday": "新增假日",
+    "addRow": "新增假日",
     "addException":"新增例外"
   }
 }

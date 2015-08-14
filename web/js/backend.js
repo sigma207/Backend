@@ -28,70 +28,15 @@ backendApp.config(function ($translateProvider, $translatePartialLoaderProvider)
     $translateProvider.preferredLanguage("zh-TW");
 });
 
-backendApp.directive("tableCheckbox", function () {
-    return {
-        scope: {
-            selectedItems: '='
-        },
-        controller: function ($scope, $compile) {
-            //console.log("tableCheckbox controller");
-            //console.log($scope);
-            var ctrl = this;
-            this.itemSelect = function (item,selected) {
-                if(selected){
-                    if(!ctrl.itemHasBeenSelected(item)){
-                        $scope.selectedItems.push(item);
-                    }
-                } else {
-                    var index = $scope.selectedItems.indexOf(item);
-                    $scope.selectedItems.splice(index,1);
-                }
-            };
-            this.itemHasBeenSelected = function (item) {
-                return ($scope.selectedItems.indexOf(item)!=-1);
-            }
-        }
-    }
-});
+backendApp.directive("tableCheckbox", TableCheckbox);
 
-backendApp.directive("rowCheckbox", function () {
-    return {
-        template: "<input ng-model='selected' type='checkbox'/>",
-        require: "^tableCheckbox",
-        scope: {
-            row:"=",
-            index:"="
-        },
-        link: function (scope, element, attr, tableCheckboxCtrl) {
-            scope.selected = false;
-            if(tableCheckboxCtrl.itemHasBeenSelected(scope.row)){
-                scope.selected = true;
-            }
-            element.on('change', function (event) {
-                tableCheckboxCtrl.itemSelect(scope.row,scope.selected);
-            });
-        }
-    }
-});
+backendApp.directive("rowCheckbox", RowCheckbox);
 // Common directive for Focus
-backendApp.directive('focus',
-    function($timeout) {
-        return {
-            scope : {
-                trigger : '@focus'
-            },
-            link : function(scope, element) {
-                scope.$watch('trigger', function(value) {
-                    if (value === "true") {
-                        $timeout(function() {
-                            element[0].focus();
-                        });
-                    }
-                });
-            }
-        };
-    }
-);
+backendApp.directive('focus',Focus);
+backendApp.directive('datePickerOpen',DatePickerOpen);
+//backendApp.directive('dateLowerThan',DateLowerThan);
+//backendApp.directive('dateGreaterThan', DateGreaterThan);
+
 backendApp.controller("BackendController", BackendController);
 function BackendController($scope, $translate, $location, HostUrl, request, locale, datepickerPopupConfig) {
     console.log("BackendController!!");

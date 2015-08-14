@@ -18,11 +18,11 @@ import java.util.List;
  * Created by user on 2015/7/28.
  */
 @Repository("RoleDao")
-public class RoleDaoImpl implements RoleDao{
-    private final static String QUERY = "SELECT role_id, parent_role_id, role_code, role_name, update_time, rv FROM role ";
-    private final static String INSERT = "INSERT INTO role (parent_role_id, role_code, role_name, update_time) VALUES (?, ?, ?, ?);";
-    private final static String UPDATE = "UPDATE role SET role_code = ?,role_name = ?,update_time = ? WHERE role_id = ? AND rv = ? ";
-    private final static String DELETE = "DELETE role WHERE role_id = ? AND rv = ? ";
+public class RoleDaoImpl extends BaseDao implements RoleDao{
+    private final static String QUERY = "SELECT role_id, parent_role_id, role_code, role_name, update_time, rv FROM bo_role ";
+    private final static String INSERT = "INSERT INTO bo_role (parent_role_id, role_code, role_name, update_time) VALUES (?, ?, ?, ?);";
+    private final static String UPDATE = "UPDATE bo_role SET role_code = ?,role_name = ?,update_time = ? WHERE role_id = ? AND rv = ? ";
+    private final static String DELETE = "DELETE bo_role WHERE role_id = ? AND rv = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -30,44 +30,8 @@ public class RoleDaoImpl implements RoleDao{
 
     @Override
     public List<Role> selectRole() throws Exception {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
-
         List<Role> list = new LinkedList<Role>();
-        try {
-            conn = jt8Ds.getConnection();
-            stmt = conn.prepareStatement(QUERY);
-            rs = stmt.executeQuery();
-            RsMapper.map(rs, list, Role.class);
-//            while (rs.next()) {
-//                obj = new Role(
-//                        rs.getInt("role_id"),
-//                        rs.getInt("parent_role_id"),
-//                        rs.getString("role_code"),
-//                        rs.getString("role_name"),
-//                        rs.getString("update_time"),
-//                        rs.getBytes("rv")
-//                );
-//                list.add(obj);
-//            }
-        } catch (Exception e){
-            throw e;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        execute(jt8Ds.getConnection(),QUERY,list,Role.class);
         return list;
     }
 

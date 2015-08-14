@@ -1,6 +1,7 @@
 package com.jelly.jt8.bo.dao.impl;
 
 import com.jelly.jt8.bo.dao.PermissionDao;
+import com.jelly.jt8.bo.model.Holiday;
 import com.jelly.jt8.bo.model.Permission;
 import com.jelly.jt8.bo.util.RsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,12 @@ import java.util.List;
  * Created by user on 2015/7/24.
  */
 @Repository("PermissionDao")
-public class PermissionDaoImpl implements PermissionDao {
-    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence, path FROM permission ORDER BY parent_permission_id,sequence";
+public class PermissionDaoImpl extends BaseDao implements PermissionDao {
+    private final static String QUERY = "SELECT permission_id, permission_code, parent_permission_id, sequence, path FROM bo_permission ORDER BY parent_permission_id,sequence";
     private final static String WHERE_PARENT = "WHERE parent_permission_id = ? ";
-    private final static String INSERT = "INSERT INTO permission (permission_code, parent_permission_id, sequence, path) VALUES (?, ?, ?, ?);";
-    private final static String DELETE = "DELETE permission WHERE permission_id = ? ";
-    private final static String UPDATE = "UPDATE permission SET permission_code = ?,sequence = ?, path = ? WHERE permission_id = ? ";
+    private final static String INSERT = "INSERT INTO bo_permission (permission_code, parent_permission_id, sequence, path) VALUES (?, ?, ?, ?);";
+    private final static String DELETE = "DELETE bo_permission WHERE permission_id = ? ";
+    private final static String UPDATE = "UPDATE bo_permission SET permission_code = ?,sequence = ?, path = ? WHERE permission_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -29,33 +30,38 @@ public class PermissionDaoImpl implements PermissionDao {
 
     @Override
     public List<Permission> selectPermission() throws Exception {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        Connection conn = null;
+//        PreparedStatement stmt = null;
+//        ResultSet rs = null;
+//        Connection conn = null;
+//
+//        List<Permission> list =  new LinkedList<Permission>();
+//        try {
+//            conn = jt8Ds.getConnection();
+//            stmt = conn.prepareStatement(QUERY);
+//            rs = stmt.executeQuery();
+//            RsMapper.map(rs, list, Permission.class);
+//        } catch (Exception e){
+//            throw e;
+//        } finally {
+//            try {
+//                if (rs != null) {
+//                    rs.close();
+//                }
+//                if (stmt != null) {
+//                    stmt.close();
+//                }
+//                if (conn != null) {
+//                    conn.close();
+//                }
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return list;
+
 
         List<Permission> list =  new LinkedList<Permission>();
-        try {
-            conn = jt8Ds.getConnection();
-            stmt = conn.prepareStatement(QUERY);
-            rs = stmt.executeQuery();
-            RsMapper.map(rs, list, Permission.class);
-        } catch (Exception e){
-            throw e;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        execute(jt8Ds.getConnection(),QUERY,list,Permission.class);
         return list;
     }
 

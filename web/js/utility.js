@@ -147,6 +147,27 @@ var WebSocketManager = {
     }
 };
 
+var DateTool = {
+    yyyyMMddToDate: function (obj, from, to) {
+        if (obj && obj[from] && obj[from].length == 8) {
+            obj[to] = new Date(obj[from]);
+            obj[to].setYear(obj[from].substr(0,4));
+            obj[to].setMonth(parseInt(obj[from].substr(4,2))-1);
+            obj[to].setDate(obj[from].substr(6,2));
+        }
+    },
+    dateToYyyyMMdd: function (obj, from, to) {
+        if (obj && obj[from] ) {
+            //obj[to] = new Date(obj[from]);
+            //obj[to] = obj[from].format("yyyyMMdd");
+            obj[to] = obj[from].getFullYear().toString();
+            obj[to] += (obj[from].getMonth()+1).toString();
+            obj[to] += obj[from].getDate().toString();
+            console.log(obj[to]);
+        }
+    }
+};
+
 var JsonTool = {
     copy: function (a, b) {
         for (var k in a) {

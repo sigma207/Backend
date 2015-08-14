@@ -2,8 +2,8 @@
  * Created by user on 2015/8/6.
  */
 backendApp.controller("PermissionController", PermissionController);
-function PermissionController($scope, $modal, request, locale) {
-    console.log("PermissionController!!");
+function PermissionController($scope, $modal, $log, request, locale) {
+    $log.info("PermissionController!!");
     $scope.editSize = undefined;
     $scope.editTitle = "新增節點";
     $scope.permissionTreeSetting = {
@@ -24,7 +24,7 @@ function PermissionController($scope, $modal, request, locale) {
         url: "/permission/select"
     }).success(function (data, status, headers, config) {
         $scope.permissionList = data;
-        console.log($scope.permissionList);
+        $log.info($scope.permissionList);
         locale.formatPermissionList($scope.permissionList);
         $scope.initPermissionTree();
     });
@@ -53,7 +53,7 @@ function PermissionController($scope, $modal, request, locale) {
                 menu[Action.NewNode] = {
                     name: "新增節點",
                     callback: function () {
-                        console.log(Action.NewNode);
+                        $log.info(Action.NewNode);
                         $scope.currentAction = Action.NewNode;
                         if (currentNode.level == 0) {
                             $scope.editNewPermission();
@@ -67,7 +67,7 @@ function PermissionController($scope, $modal, request, locale) {
                 menu[Action.NewChildNode] = {
                     name: "新增子節點",
                     callback: function () {
-                        console.log(Action.NewChildNode);
+                        $log.info(Action.NewChildNode);
                         $scope.currentAction = Action.NewChildNode;
                         $scope.editNewPermission(currentNode);
                         $scope.editTitle = currentNode[locale.zh_TW] + ":新增子節點";
@@ -228,7 +228,7 @@ function PermissionController($scope, $modal, request, locale) {
             var selectedNode = undefined;
             $scope.editPermission = editPermission;
             locale.node($scope.editPermission, $scope.editPermission);
-            console.log(editPermission);
+            $log.info(editPermission);
             switch ($scope.currentAction) {
                 case Action.NewNode:
                     if ($scope.editPermission.parent_permission_id) {

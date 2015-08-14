@@ -8,20 +8,18 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
 
     $scope.fakeGoods = [
         {
-            exchange_id: "1GCC",
-            main_symbol: ["*"]
+            exchange_id: "1CC",
+            mainSymbolList: [{exchange_id:"1CC",main_symbol_id:"*"}]
         },
         {
             exchange_id: "2GCC",
-            main_symbol: ["ABC", "DEF"]
+            mainSymbolList: [{exchange_id:"2GCC",main_symbol_id:"ABC"},{exchange_id:"2GCC",main_symbol_id:"DEF"}]
         }
     ];
     $scope.exchangeList = $scope.fakeGoods;
-    $scope.selectedExchange = undefined;
-    $scope.selectedMainSymbol = undefined;
 
     $scope.exchangeChange = function () {
-        $scope.selectedMainSymbol = $scope.selectedExchange.main_symbol[0];
+        $scope.selectedMainSymbol = $scope.selectedExchange.mainSymbolList[0];
         $scope.mainSymbolChange();
     };
 
@@ -31,22 +29,82 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
     };
 
     $scope.getHoliday = function () {
-        $scope.holidayCollection = [{
-            exchange_id:"A",
-            main_symbol_id:"A1",
-            begin_date:new Date(),
-            end_date:new Date(),
-            memo:"ABC"
-        }];
+        request.json("/holiday/select", $scope.selectedMainSymbol).
+            success(function (data, status, headers, config) {
+                for(var i= 0,count=data.length;i<count;i++){
+                    DateTool.yyyyMMddToDate(data[i],"begin_date","beginDate");
+                    DateTool.yyyyMMddToDate(data[i],"end_date","endDate");
+                }
+                $scope.holidayCollection = data;
+                $log.info($scope.holidayCollection);
+            }
+        );
     };
 
     $scope.getException = function () {
-        $scope.exceptionCollection = [{
-            exchange_id:"A",
-            main_symbol_id:"A1",
-            calendar:new Date(),
-            memo:"DEF"
-        }];
+        request.json("/holidayException/select", $scope.selectedMainSymbol).
+            success(function (data, status, headers, config) {
+                for(var i= 0,count=data.length;i<count;i++){
+                    DateTool.yyyyMMddToDate(data[i],"calendar","calendarDate");
+                }
+                $scope.exceptionCollection = data;
+                $log.info($scope.exceptionCollection);
+            }
+        );
+    };
+
+    $scope.editHolidayClick = function (row) {
+        $scope.modalTitle = $translate.instant("editHoliday");
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: 'holidayEdit.html',
+            controller: 'holidayEditCtrl',
+            size: $scope.editSize,
+            resolve: {
+                title: function () {
+                    return $scope.modalTitle;
+                },
+                editObj: function () {
+                    return row;
+                }
+            }
+        });
+
+        modalInstance.result.then(
+            function () {
+                $scope.getHoliday();
+            },
+            function () {
+                //$log.info('Modal dismissed at: ' + new Date());
+            }
+        )
+    };
+
+    $scope.editExceptionClick = function (row) {
+        $scope.modalTitle = $translate.instant("editException");
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: 'exceptionEdit.html',
+            controller: 'exceptionEditCtrl',
+            size: $scope.editSize,
+            resolve: {
+                title: function () {
+                    return $scope.modalTitle;
+                },
+                editObj: function () {
+                    return row;
+                }
+            }
+        });
+
+        modalInstance.result.then(
+            function () {
+                $scope.getException();
+            },
+            function () {
+                //$log.info('Modal dismissed at: ' + new Date());
+            }
+        )
     };
 
     $scope.batchAddHolidayClick = function () {
@@ -60,67 +118,180 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
             resolve: {
                 title: function () {
                     return $scope.modalTitle;
+                },
+                mainSymbol: function () {
+                    return $scope.selectedMainSymbol;
                 }
             }
         });
 
         modalInstance.result.then(
             function () {
-                //$scope.getUserList();
+                $scope.getHoliday();
             },
             function () {
                 //$log.info('Modal dismissed at: ' + new Date());
             }
         )
     };
+
+    $scope.batchAddExceptionClick = function () {
+        $scope.modalTitle = $translate.instant("addException");
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: 'batchException.html',
+            controller: 'batchExceptionCtrl',
+            size: $scope.editSize,
+            resolve: {
+                title: function () {
+                    return $scope.modalTitle;
+                },
+                mainSymbol: function () {
+                    return $scope.selectedMainSymbol;
+                }
+            }
+        });
+
+        modalInstance.result.then(
+            function () {
+                $scope.getException();
+            },
+            function () {
+                //$log.info('Modal dismissed at: ' + new Date());
+            }
+        )
+    };
+
+    $scope.selectedExchange = $scope.exchangeList[0];
+    $scope.exchangeChange();
 }
 
-backendApp.controller('batchHolidayCtrl', function ($scope, $modalInstance, $log, $timeout, request, title) {
+backendApp.controller("holidayEditCtrl", function ($scope, $modalInstance, $log, request, title, editObj) {
+    $scope.title = title;
+    $scope.editObj = editObj;
+    $log.info(editObj);
+    $scope.save = function () {
+        DateTool.dateToYyyyMMdd($scope.editObj,"beginDate","begin_date");
+        DateTool.dateToYyyyMMdd($scope.editObj,"endDate","end_date");
+        $log.info(editObj);
+        request.json("/holiday/update", $scope.editObj).
+            success(function (data, status, headers, config) {
+                $modalInstance.close(data);
+            }
+        );
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
+
+backendApp.controller("exceptionEditCtrl", function ($scope, $modalInstance, $log, request, title, editObj) {
+    $scope.title = title;
+    $scope.editObj = editObj;
+    $log.info($scope.editObj);
+    $scope.save = function () {
+        DateTool.dateToYyyyMMdd($scope.editObj,"calendarDate","calendar");
+        request.json("/holidayException/update", $scope.editObj).
+            success(function (data, status, headers, config) {
+                $modalInstance.close(data);
+            }
+        );
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
+
+backendApp.controller('batchHolidayCtrl', function ($scope, $modalInstance, $log, request, title, mainSymbol) {
     $scope.title = title;
 
     $scope.init = function () {
         $scope.rowCollection = [];
-        $scope.addHoliday();
+        $scope.addRow();
     };
 
-    $scope.getHoliday = function () {
-        return {begin_date: new Date(), end_date: new Date(), memo: "abc"};
-    };
-
-    $scope.beginDateButtonClick = function (row) {
-        row.beginDateOpened = true;
-    };
-    $scope.endDateButtonClick = function (row) {
-        row.endDateOpened = true;
+    $scope.getNewRow = function () {
+        return {
+            exchange_id:mainSymbol.exchange_id,
+            main_symbol_id:mainSymbol.main_symbol_id
+        };
     };
 
     $scope.addClick = function (index,row) {
-        $scope.addHoliday();
+        $scope.addRow();
     };
 
     $scope.deleteClick = function (index,row) {
         $scope.rowCollection.splice(index, 1);
         if($scope.rowCollection.length==0){
-            $scope.addHoliday();
+            $scope.addRow();
         }
     };
 
-    $scope.addHoliday = function () {
-        $scope.rowCollection.push($scope.getHoliday());
+    $scope.addRow = function () {
+        $scope.rowCollection.push($scope.getNewRow());
     };
 
     $scope.save = function () {
+        for(var i= 0,count = $scope.rowCollection.length;i<count;i++){
+            DateTool.dateToYyyyMMdd($scope.rowCollection[i],"beginDate","begin_date");
+            DateTool.dateToYyyyMMdd($scope.rowCollection[i],"endDate","end_date");
+        }
+        $log.info("save");
         $log.info($scope.rowCollection);
-        //var list = $scope.gridApi.selection.getSelectedRows();
-        //$scope.editObj.userRoleList = [];
-        //for(var i= 0,count=list.length;i<count;i++){
-        //    $scope.editObj.userRoleList.push({login_id: $scope.editObj.login_id, role_id: list[i].role_id});
-        //}
-        //request.json("/user/allocateUserRole", $scope.editObj).
-        //    success(function (data, status, headers, config) {
-        //        $modalInstance.close(data);
-        //    }
-        //);
+        request.json("/holiday/insert", $scope.rowCollection).
+            success(function (data, status, headers, config) {
+                $modalInstance.close(data);
+            }
+        );
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});
+
+backendApp.controller('batchExceptionCtrl', function ($scope, $modalInstance, $log, request, title, mainSymbol) {
+    $scope.title = title;
+
+    $scope.init = function () {
+        $scope.rowCollection = [];
+        $scope.addRow();
+    };
+
+    $scope.getNewRow = function () {
+        return {
+            exchange_id:mainSymbol.exchange_id,
+            main_symbol_id:mainSymbol.main_symbol_id
+        };
+    };
+
+    $scope.addClick = function (index,row) {
+        $scope.addRow();
+    };
+
+    $scope.deleteClick = function (index,row) {
+        $scope.rowCollection.splice(index, 1);
+        if($scope.rowCollection.length==0){
+            $scope.addRow();
+        }
+    };
+
+    $scope.addRow = function () {
+        $scope.rowCollection.push($scope.getNewRow());
+    };
+
+    $scope.save = function () {
+        for(var i= 0,count = $scope.rowCollection.length;i<count;i++){
+            DateTool.dateToYyyyMMdd($scope.rowCollection[i],"calendarDate","calendar");
+        }
+        request.json("/holidayException/insert", $scope.rowCollection).
+            success(function (data, status, headers, config) {
+                $modalInstance.close(data);
+            }
+        );
     };
 
     $scope.cancel = function () {

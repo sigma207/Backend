@@ -4,6 +4,7 @@ import com.jelly.jt8.bo.dao.HolidayDao;
 import com.jelly.jt8.bo.model.Holiday;
 import com.jelly.jt8.bo.model.MainSymbol;
 import com.jelly.jt8.bo.model.Permission;
+import com.jelly.jt8.bo.util.ErrorMsg;
 import com.jelly.jt8.bo.util.RsMapper;
 import com.jelly.jt8.common.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import java.util.List;
 public class HolidayDaoImpl extends BaseDao implements HolidayDao{
     private final static String QUERY = "SELECT holiday_id, exchange_id, main_symbol_id, begin_date, end_date, update_time, memo, rv FROM symbol_holiday ";
     private final static String WHERE_MAIN_SYMBOL = "WHERE exchange_id = ? AND main_symbol_id = ? ";
+    private final static String INSERT = "INSERT INTO symbol_holiday (exchange_id, main_symbol_id, begin_date, end_date,update_time, memo) VALUES (?, ?, ?, ?, ?, ?);";
+    private final static String DELETE = "DELETE symbol_holiday WHERE holiday_id = ? AND rv = ? ";
+    private final static String UPDATE = "UPDATE symbol_holiday SET begin_date = ?,end_date = ?, update_time = ?, memo = ? WHERE holiday_id = ? AND rv = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -65,19 +69,45 @@ public class HolidayDaoImpl extends BaseDao implements HolidayDao{
     @Override
     public void insert(Connection conn, Holiday holiday) throws Exception {
         PreparedStatement stmt = null;
-        int lastKey = -1;
         try {
 
-            stmt = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            stmt.setNull(1, Types.INTEGER);
-            stmt.setString(2, role.getRole_code());
-            stmt.setString(3, role.getRole_name());
-            stmt.setString(4, Utils.updateTime());
+            stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, holiday.getExchange_id());
+            stmt.setString(2, holiday.getMain_symbol_id());
+            stmt.setString(3, holiday.getBegin_date());
+            stmt.setString(4, holiday.getEnd_date());
+            stmt.setString(5, Utils.updateTime());
+            stmt.setString(6, holiday.getMemo());
             stmt.executeUpdate();
-            ResultSet keys = stmt.getGeneratedKeys();
+        } catch (Exception e){
+            throw e;
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-            if (keys.next()) {
-                lastKey = keys.getInt(1);
+
+    @Override
+    public void update(Connection conn, Holiday holiday) throws Exception {
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(UPDATE);
+
+            stmt.setString(1, holiday.getBegin_date());
+            stmt.setString(2, holiday.getEnd_date());
+            stmt.setString(3, Utils.updateTime());
+            stmt.setString(4, holiday.getMemo());
+            stmt.setInt(5, holiday.getHoliday_id());
+            stmt.setBytes(6, holiday.getRv());
+            int updateCount =stmt.executeUpdate();
+            if(updateCount==0){
+                throw new Exception(ErrorMsg.DIRTY_DATA);
             }
         } catch (Exception e){
             throw e;
@@ -90,94 +120,27 @@ public class HolidayDaoImpl extends BaseDao implements HolidayDao{
                 e.printStackTrace();
             }
         }
-        CallableStatement cs = null;
-        Connection conn = null;
-
-        try {
-            conn = jt8Ds.getConnection();
-            cs = conn.prepareCall("{call symbol_holiday_add(?,?,?,?)}");
-
-            cs.setString(1, holidayList);
-            cs.setString(2, "''");
-            cs.registerOutParameter(3, Types.INTEGER);
-            cs.registerOutParameter(4, Types.VARCHAR);
-
-            cs.execute();
-            parseError(cs.getInt(3), cs.getString(4));
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            try {
-                if (cs != null) {
-                    cs.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    @Override
-    public void update(Connection conn, Holiday holiday) throws Exception {
-        CallableStatement cs = null;
-        Connection conn = null;
-
-        try {
-            conn = jt8Ds.getConnection();
-            cs = conn.prepareCall("{call symbol_holiday_update(?,?,?,?)}");
-
-            cs.setString(1, holiday);
-            cs.setString(2, "''");
-            cs.registerOutParameter(3, Types.INTEGER);
-            cs.registerOutParameter(4, Types.VARCHAR);
-
-            cs.execute();
-            parseError(cs.getInt(3), cs.getString(4));
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            try {
-                if (cs != null) {
-                    cs.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
     public void delete(Connection conn, Holiday holiday) throws Exception {
-        CallableStatement cs = null;
-        Connection conn = null;
-
+        PreparedStatement stmt = null;
+        int updateCount = 0;
         try {
-            conn = jt8Ds.getConnection();
-            cs = conn.prepareCall("{call symbol_holiday_delete(?,?,?,?)}");
+            stmt = conn.prepareStatement(DELETE);
 
-            cs.setInt(1, holiday_id);
-            cs.setInt(2, 0);
-            cs.registerOutParameter(3, Types.INTEGER);
-            cs.registerOutParameter(4, Types.VARCHAR);
-
-            cs.execute();
-            parseError(cs.getInt(3), cs.getString(4));
-        } catch (Exception e) {
+            stmt.setInt(1, holiday.getHoliday_id());
+            stmt.setBytes(2, holiday.getRv());
+            updateCount =stmt.executeUpdate();
+            if(updateCount==0){
+                throw new Exception(ErrorMsg.DIRTY_DATA);
+            }
+        } catch (Exception e){
             throw e;
         } finally {
             try {
-                if (cs != null) {
-                    cs.close();
-                }
-                if (conn != null) {
-                    conn.close();
+                if (stmt != null) {
+                    stmt.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

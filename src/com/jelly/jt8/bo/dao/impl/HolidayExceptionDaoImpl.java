@@ -3,7 +3,9 @@ package com.jelly.jt8.bo.dao.impl;
 import com.jelly.jt8.bo.dao.HolidayExceptionDao;
 import com.jelly.jt8.bo.model.HolidayException;
 import com.jelly.jt8.bo.model.MainSymbol;
+import com.jelly.jt8.bo.util.ErrorMsg;
 import com.jelly.jt8.bo.util.RsMapper;
+import com.jelly.jt8.common.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,9 @@ import java.util.List;
 public class HolidayExceptionDaoImpl extends BaseDao implements HolidayExceptionDao {
     private final static String QUERY = "SELECT holiday_id, exchange_id, main_symbol_id, calendar, update_time, memo, rv FROM symbol_holiday_exception ";
     private final static String WHERE_MAIN_SYMBOL = "WHERE exchange_id = ? AND main_symbol_id = ? ";
+    private final static String INSERT = "INSERT INTO symbol_holiday_exception (exchange_id, main_symbol_id, calendar, update_time, memo) VALUES (?, ?, ?, ?, ?);";
+    private final static String DELETE = "DELETE symbol_holiday_exception WHERE holiday_id = ? AND rv = ? ";
+    private final static String UPDATE = "UPDATE symbol_holiday_exception SET calendar = ?,update_time = ?, memo = ? WHERE holiday_id = ? AND rv = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -61,30 +66,22 @@ public class HolidayExceptionDaoImpl extends BaseDao implements HolidayException
     }
 
     @Override
-    public void insert(Connection connection,HolidayException holidayException) throws Exception {
-        CallableStatement cs = null;
-        Connection conn = null;
-
+    public void insert(Connection conn,HolidayException holidayException) throws Exception {
+        PreparedStatement stmt = null;
         try {
-            conn = jt8Ds.getConnection();
-            cs = conn.prepareCall("{call symbol_holiday_add(?,?,?,?)}");
-
-            cs.setString(1, "''");
-            cs.setString(2, exceptionList);
-            cs.registerOutParameter(3, Types.INTEGER);
-            cs.registerOutParameter(4, Types.VARCHAR);
-
-            cs.execute();
-            parseError(cs.getInt(3), cs.getString(4));
-        } catch (Exception e) {
+            stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, holidayException.getExchange_id());
+            stmt.setString(2, holidayException.getMain_symbol_id());
+            stmt.setString(3, holidayException.getCalendar());
+            stmt.setString(4, Utils.updateTime());
+            stmt.setString(5, holidayException.getMemo());
+            stmt.executeUpdate();
+        } catch (Exception e){
             throw e;
         } finally {
             try {
-                if (cs != null) {
-                    cs.close();
-                }
-                if (conn != null) {
-                    conn.close();
+                if (stmt != null) {
+                    stmt.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -93,30 +90,26 @@ public class HolidayExceptionDaoImpl extends BaseDao implements HolidayException
     }
 
     @Override
-    public void update(Connection connection,HolidayException holidayException) throws Exception {
-        CallableStatement cs = null;
-        Connection conn = null;
-
+    public void update(Connection conn,HolidayException holidayException) throws Exception {
+        PreparedStatement stmt = null;
         try {
-            conn = jt8Ds.getConnection();
-            cs = conn.prepareCall("{call symbol_holiday_update(?,?,?,?)}");
+            stmt = conn.prepareStatement(UPDATE);
 
-            cs.setString(1, "''");
-            cs.setString(2, holidayException);
-            cs.registerOutParameter(3, Types.INTEGER);
-            cs.registerOutParameter(4, Types.VARCHAR);
-
-            cs.execute();
-            parseError(cs.getInt(3), cs.getString(4));
-        } catch (Exception e) {
+            stmt.setString(1, holidayException.getCalendar());
+            stmt.setString(2, Utils.updateTime());
+            stmt.setString(3, holidayException.getMemo());
+            stmt.setInt(4, holidayException.getHoliday_id());
+            stmt.setBytes(5, holidayException.getRv());
+            int updateCount =stmt.executeUpdate();
+            if(updateCount==0){
+                throw new Exception(ErrorMsg.DIRTY_DATA);
+            }
+        } catch (Exception e){
             throw e;
         } finally {
             try {
-                if (cs != null) {
-                    cs.close();
-                }
-                if (conn != null) {
-                    conn.close();
+                if (stmt != null) {
+                    stmt.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -125,30 +118,24 @@ public class HolidayExceptionDaoImpl extends BaseDao implements HolidayException
     }
 
     @Override
-    public void delete(Connection connection,HolidayException holidayException) throws Exception {
-        CallableStatement cs = null;
-        Connection conn = null;
-
+    public void delete(Connection conn,HolidayException holidayException) throws Exception {
+        PreparedStatement stmt = null;
+        int updateCount = 0;
         try {
-            conn = jt8Ds.getConnection();
-            cs = conn.prepareCall("{call symbol_holiday_delete(?,?,?,?)}");
+            stmt = conn.prepareStatement(DELETE);
 
-            cs.setInt(1, 0);
-            cs.setInt(2, holiday_id);
-            cs.registerOutParameter(3, Types.INTEGER);
-            cs.registerOutParameter(4, Types.VARCHAR);
-
-            cs.execute();
-            parseError(cs.getInt(3), cs.getString(4));
-        } catch (Exception e) {
+            stmt.setInt(1, holidayException.getHoliday_id());
+            stmt.setBytes(2, holidayException.getRv());
+            updateCount =stmt.executeUpdate();
+            if(updateCount==0){
+                throw new Exception(ErrorMsg.DIRTY_DATA);
+            }
+        } catch (Exception e){
             throw e;
         } finally {
             try {
-                if (cs != null) {
-                    cs.close();
-                }
-                if (conn != null) {
-                    conn.close();
+                if (stmt != null) {
+                    stmt.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

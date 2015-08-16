@@ -160,9 +160,12 @@ var DateTool = {
         if (obj && obj[from] ) {
             //obj[to] = new Date(obj[from]);
             //obj[to] = obj[from].format("yyyyMMdd");
-            obj[to] = obj[from].getFullYear().toString();
-            obj[to] += (obj[from].getMonth()+1).toString();
-            obj[to] += obj[from].getDate().toString();
+            var year = obj[from].getFullYear().toString();
+            var month = obj[from].getMonth()+1;
+            var date = obj[from].getDate();
+            if(month<10) month = "0"+month;
+            if(date<10) date = "0"+date;
+            obj[to] = year+month+date;
             console.log(obj[to]);
         }
     }

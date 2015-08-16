@@ -30,8 +30,8 @@
         <tr ng-repeat="row in holidayCollection">
             <td>{{row.exchange_id}}</td>
             <td>{{row.main_symbol_id}}</td>
-            <td>{{row.beginDate | date:'yyyyMMdd'}}</td>
-            <td>{{row.endDate | date:'yyyyMMdd'}}</td>
+            <td>{{row.beginDate | date:dateDisplayFormat}}</td>
+            <td>{{row.endDate | date:dateDisplayFormat}}</td>
             <td>{{row.memo}}</td>
             <td>
                 <button type="button" class="btn-xs btn-primary" translate="removeHoliday" ng-click="removeHolidayClick(row)" ></button>
@@ -54,7 +54,7 @@
         <tr ng-repeat="row in exceptionCollection">
             <td>{{row.exchange_id}}</td>
             <td>{{row.main_symbol_id}}</td>
-            <td>{{row.calendarDate | date:'yyyyMMdd'}}</td>
+            <td>{{row.calendarDate | date:dateDisplayFormat}}</td>
             <td>{{row.memo}}</td>
             <td>
                 <button type="button" class="btn-xs btn-primary" translate="removeException" ng-click="removeExceptionClick(row)" ></button>
@@ -81,11 +81,11 @@
             <tbody ng-form="holidayForm">
             <tr ng-repeat="row in rowCollection" >
                 <td>
-                    <input type="text" ng-model="row.beginDate" max-date="row.endDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.beginDateOpened" size="10" date-lower-than="{{row.end_date}}" required/>
+                    <input type="text" ng-model="row.beginDate" max-date="row.endDate" datepicker-popup="{{dateInputFormat}}" is-open="row.beginDateOpened" size="10" date-lower-than="{{row.end_date}}" required/>
                     <button type="button" class="btn-xs btn-default" date-picker-open open-status="row.beginDateOpened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </td>
                 <td>
-                    <input type="text" ng-model="row.endDate" min-date="row.beginDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.endDateOpened" size="10" date-greater-than="{{row.begin_date}}"  required/>
+                    <input type="text" ng-model="row.endDate" min-date="row.beginDate" datepicker-popup="{{dateInputFormat}}" is-open="row.endDateOpened" size="10" date-greater-than="{{row.begin_date}}"  required/>
                     <button type="button" class="btn-xs btn-default" date-picker-open open-status="row.endDateOpened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </td>
                 <td><input type="text" ng-model="row.memo"/></td>
@@ -119,7 +119,7 @@
             <tbody ng-form="exceptionForm">
             <tr ng-repeat="row in rowCollection" >
                 <td>
-                    <input type="text" ng-model="row.calendarDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="row.opened" size="10" required/>
+                    <input type="text" ng-model="row.calendarDate" datepicker-popup="{{dateInputFormat}}" is-open="row.opened" size="10" required/>
                     <button type="button" class="btn-xs btn-default" date-picker-open open-status="row.opened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </td>
                 <td><input type="text" ng-model="row.memo"/></td>
@@ -147,14 +147,14 @@
                 <label for="begin_date" class="col-md-2 control-label" translate="beginDate"></label>
 
                 <div class="col-md-10">
-                    <input id="begin_date" type="text" ng-model="editObj.beginDate" max-date="editObj.endDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="editObj.beginDateOpened" size="10" date-lower-than="{{editObj.end_date}}" required/>
+                    <input id="begin_date" type="text" ng-model="editObj.beginDate" max-date="editObj.endDate" datepicker-popup="{{dateInputFormat}}" is-open="editObj.beginDateOpened" size="10" date-lower-than="{{editObj.end_date}}" required/>
                     <button type="button" class="btn-xs btn-default" date-picker-open open-status="editObj.beginDateOpened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </div>
             </div>
             <div class="form-group">
                 <label for="end_date" class="col-md-2 control-label" translate="endDate"></label>
                 <div class="col-md-10">
-                    <input id="end_date" type="text" ng-model="editObj.endDate" min-date="editObj.beginDate" datepicker-popup="{{'yyyyMMdd'}}" is-open="editObj.endDateOpened" size="10" date-greater-than="{{editObj.begin_date}}"  required/>
+                    <input id="end_date" type="text" ng-model="editObj.endDate" min-date="editObj.beginDate" datepicker-popup="{{dateInputFormat}}" is-open="editObj.endDateOpened" size="10" date-greater-than="{{editObj.begin_date}}"  required/>
                     <button type="button" class="btn-xs btn-default" date-picker-open open-status="editObj.endDateOpened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </div>
             </div>
@@ -183,7 +183,7 @@
             <div class="form-group">
                 <label for="calendar" class="col-md-2 control-label" translate="calendar"></label>
                 <div class="col-md-10">
-                    <input id="calendar" type="text" ng-model="editObj.calendarDate"  datepicker-popup="{{'yyyyMMdd'}}" is-open="editObj.opened" size="10" required/>
+                    <input id="calendar" type="text" ng-model="editObj.calendarDate"  datepicker-popup="{{dateInputFormat}}" is-open="editObj.opened" size="10" required/>
                     <button type="button" class="btn-xs btn-default" date-picker-open open-status="editObj.opened"><i class="glyphicon glyphicon-calendar"></i></button>
                 </div>
             </div>

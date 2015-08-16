@@ -2,6 +2,7 @@ package com.jelly.jt8.bo.service.impl;
 
 import com.jelly.jt8.bo.dao.HolidayDao;
 import com.jelly.jt8.bo.dao.HolidayExceptionDao;
+import com.jelly.jt8.bo.dao.MainSymbolDao;
 import com.jelly.jt8.bo.model.Holiday;
 import com.jelly.jt8.bo.model.HolidayException;
 import com.jelly.jt8.bo.model.MainSymbol;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -27,6 +30,8 @@ public class HolidayExceptionServiceImpl implements HolidayExceptionService {
     @Autowired
     @Qualifier("HolidayExceptionDao")
     private HolidayExceptionDao holidayExceptionDao;
+
+
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -48,47 +53,91 @@ public class HolidayExceptionServiceImpl implements HolidayExceptionService {
 
     @Override
     public void insertHoliday(List<Holiday> holidayList) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        SqlTool.appendStart(sb);
-        for (Holiday holiday : holidayList) {
-            SqlTool.append(sb,
-                    null,
-                    holiday.getExchange_id(),
-                    holiday.getMain_symbol_id(),
-                    holiday.getBegin_date(),
-                    holiday.getEnd_date(),
-                    Utils.updateTime(),
-                    holiday.getMemo(),
-                    null
-            );
+        Connection conn = null;
+        try {
+            conn = jt8Ds.getConnection();
+            conn.setAutoCommit(false);
+            for (Holiday holiday : holidayList) {
+                holidayDao.insert(conn,holiday);
+                StringBuffer sb = new StringBuffer();
+                SqlTool.appendStart(sb);
+                SqlTool.append(sb, holiday.getExchange_id(), holiday.getMain_symbol_id());
+                SqlTool.appendEnd(sb);
+                System.out.println(sb.toString());
+            }
+            conn.commit();
+        }catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                }catch (SQLException se){
+                    se.printStackTrace();
+                }
+            }
         }
-        SqlTool.appendEnd(sb);
-        System.out.println(sb.toString());
-        holidayDao.insert(sb.toString());
     }
 
     @Override
     public void updateHoliday(Holiday holiday) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        SqlTool.appendStart(sb);
-        SqlTool.append(sb,
-                String.valueOf(holiday.getHoliday_id()),
-                holiday.getExchange_id(),
-                holiday.getMain_symbol_id(),
-                holiday.getBegin_date(),
-                holiday.getEnd_date(),
-                Utils.updateTime(),
-                holiday.getMemo(),
-                String.valueOf(holiday.getRv())
-        );
-        SqlTool.appendEnd(sb);
-        System.out.println(sb.toString());
-        holidayDao.update(sb.toString());
+        Connection conn = null;
+        try {
+            conn = jt8Ds.getConnection();
+            conn.setAutoCommit(false);
+            holidayDao.update(conn, holiday);
+            StringBuffer sb = new StringBuffer();
+            SqlTool.appendStart(sb);
+            SqlTool.append(sb, holiday.getExchange_id(), holiday.getMain_symbol_id());
+            SqlTool.appendEnd(sb);
+            System.out.println(sb.toString());
+            conn.commit();
+        }catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                }catch (SQLException se){
+                    se.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
     public void deleteHoliday(Holiday holiday) throws Exception {
-        holidayDao.delete(holiday.getHoliday_id());
+        Connection conn = null;
+        try {
+            conn = jt8Ds.getConnection();
+            conn.setAutoCommit(false);
+            holidayDao.delete(conn, holiday);
+            StringBuffer sb = new StringBuffer();
+            SqlTool.appendStart(sb);
+            SqlTool.append(sb, holiday.getExchange_id(), holiday.getMain_symbol_id());
+            SqlTool.appendEnd(sb);
+            System.out.println(sb.toString());
+            conn.commit();
+        }catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                }catch (SQLException se){
+                    se.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -106,28 +155,90 @@ public class HolidayExceptionServiceImpl implements HolidayExceptionService {
 
     @Override
     public void insertHolidayException(List<HolidayException> holidayExceptionList) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        SqlTool.appendStart(sb);
-        for (HolidayException holidayException : holidayExceptionList) {
-            SqlTool.append(sb, holidayException.getExchange_id(), holidayException.getMain_symbol_id(), holidayException.getCalendar(),  holidayException.getMemo());
+        Connection conn = null;
+        try {
+            conn = jt8Ds.getConnection();
+            conn.setAutoCommit(false);
+            for (HolidayException holidayException : holidayExceptionList) {
+                holidayExceptionDao.insert(conn,holidayException);
+                StringBuffer sb = new StringBuffer();
+                SqlTool.appendStart(sb);
+                SqlTool.append(sb, holidayException.getExchange_id(), holidayException.getMain_symbol_id());
+                SqlTool.appendEnd(sb);
+                System.out.println(sb.toString());
+            }
+            conn.commit();
+        }catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                }catch (SQLException se){
+                    se.printStackTrace();
+                }
+            }
         }
-        SqlTool.appendEnd(sb);
-        System.out.println(sb.toString());
-        holidayExceptionDao.insert(sb.toString());
     }
 
     @Override
     public void updateHolidayException(HolidayException holidayException) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        SqlTool.appendStart(sb);
-        SqlTool.append(sb, String.valueOf(holidayException.getHoliday_id()), holidayException.getExchange_id(), holidayException.getMain_symbol_id(), holidayException.getCalendar(), holidayException.getMemo());
-        SqlTool.appendEnd(sb);
-        System.out.println(sb.toString());
-        holidayExceptionDao.update(sb.toString());
+        Connection conn = null;
+        try {
+            conn = jt8Ds.getConnection();
+            conn.setAutoCommit(false);
+            holidayExceptionDao.update(conn, holidayException);
+            StringBuffer sb = new StringBuffer();
+            SqlTool.appendStart(sb);
+            SqlTool.append(sb, holidayException.getExchange_id(), holidayException.getMain_symbol_id());
+            SqlTool.appendEnd(sb);
+            System.out.println(sb.toString());
+            conn.commit();
+        }catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                }catch (SQLException se){
+                    se.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
     public void deleteHolidayException(HolidayException holidayException) throws Exception {
-        holidayExceptionDao.delete(holidayException.getHoliday_id());
+        Connection conn = null;
+        try {
+            conn = jt8Ds.getConnection();
+            conn.setAutoCommit(false);
+            holidayExceptionDao.delete(conn, holidayException);
+            StringBuffer sb = new StringBuffer();
+            SqlTool.appendStart(sb);
+            SqlTool.append(sb, holidayException.getExchange_id(), holidayException.getMain_symbol_id());
+            SqlTool.appendEnd(sb);
+            System.out.println(sb.toString());
+            conn.commit();
+        }catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                }catch (SQLException se){
+                    se.printStackTrace();
+                }
+            }
+        }
     }
 }

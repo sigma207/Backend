@@ -1,16 +1,24 @@
 {
-  "query":"查詢",
-  "save":"存檔",
-  "cancel":"取消",
-  "operate":"操作",
-  "add":"新增",
-  "delete":"刪除",
-  "error":{
-    "dirtyData":"資料已被異動過,請重新查詢後再操作"
+  "format": {
+    "input": {
+      "date": "yyyyMMdd"
+    },
+    "display": {
+      "date": "yyyy-MM-dd"
+    }
   },
-  "datePicker":{
-      "currentText":"今天",
-      "clearText":"清除",
-      "closeText":"完成"
+  "query": "查詢",
+  "save": "存檔",
+  "cancel": "取消",
+  "operate": "操作",
+  "add": "新增",
+  "delete": "刪除",
+  "error": {
+    "dirtyData": "資料已被異動過,請重新查詢後再操作"
+  },
+  "datePicker": {
+    "currentText": "今天",
+    "clearText": "清除",
+    "closeText": "完成"
   }
 }

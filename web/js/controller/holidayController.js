@@ -6,18 +6,6 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
     $translatePartialLoader.addPart("holiday");
     $translate.refresh();
 
-    $scope.fakeGoods = [
-        {
-            exchange_id: "1CC",
-            mainSymbolList: [{exchange_id:"1CC",main_symbol_id:"*"}]
-        },
-        {
-            exchange_id: "2GCC",
-            mainSymbolList: [{exchange_id:"2GCC",main_symbol_id:"ABC"},{exchange_id:"2GCC",main_symbol_id:"DEF"}]
-        }
-    ];
-    $scope.exchangeList = $scope.fakeGoods;
-
     $scope.exchangeChange = function () {
         $scope.selectedMainSymbol = $scope.selectedExchange.mainSymbolList[0];
         $scope.mainSymbolChange();
@@ -26,6 +14,17 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
     $scope.mainSymbolChange = function () {
         $scope.getHoliday();
         $scope.getException();
+    };
+
+    $scope.getExchangeList = function () {
+        request.http({
+            method: "GET",
+            url: "/mainSymbol/select"
+        }).success(function (data, status, headers, config) {
+            $scope.exchangeList = data;
+            $scope.selectedExchange = $scope.exchangeList[0];
+            $scope.exchangeChange();
+        });
     };
 
     $scope.getHoliday = function () {
@@ -53,6 +52,22 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
         );
     };
 
+    $scope.removeHolidayClick = function (row) {
+        request.json("/holiday/delete", row).
+            success(function (data, status, headers, config) {
+                $scope.getHoliday();
+            }
+        );
+    };
+
+    $scope.removeExceptionClick = function (row) {
+        request.json("/holidayException/delete", row).
+            success(function (data, status, headers, config) {
+                $scope.getException();
+            }
+        );
+    };
+
     $scope.editHolidayClick = function (row) {
         $scope.modalTitle = $translate.instant("editHoliday");
         var modalInstance = $modal.open({
@@ -65,7 +80,7 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
                     return $scope.modalTitle;
                 },
                 editObj: function () {
-                    return row;
+                    return angular.copy(row);
                 }
             }
         });
@@ -92,7 +107,7 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
                     return $scope.modalTitle;
                 },
                 editObj: function () {
-                    return row;
+                    return angular.copy(row);
                 }
             }
         });
@@ -162,8 +177,7 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
         )
     };
 
-    $scope.selectedExchange = $scope.exchangeList[0];
-    $scope.exchangeChange();
+    $scope.getExchangeList();
 }
 
 backendApp.controller("holidayEditCtrl", function ($scope, $modalInstance, $log, request, title, editObj) {

@@ -27,7 +27,13 @@ backendApp.config(function ($translateProvider, $translatePartialLoaderProvider)
     });
     $translateProvider.preferredLanguage("zh-TW");
 });
-
+backendApp.run(function ($rootScope, $translate, $log) {
+    $rootScope.$on('$translatePartialLoaderStructureChanged', function () {
+        $rootScope.dateDisplayFormat = $translate.instant("format.display.date");
+        $rootScope.dateInputFormat = $translate.instant("format.input.date");
+        $translate.refresh();
+    });
+});
 backendApp.directive("tableCheckbox", TableCheckbox);
 
 backendApp.directive("rowCheckbox", RowCheckbox);
@@ -36,12 +42,20 @@ backendApp.directive('focus',Focus);
 backendApp.directive('datePickerOpen',DatePickerOpen);
 //backendApp.directive('dateLowerThan',DateLowerThan);
 //backendApp.directive('dateGreaterThan', DateGreaterThan);
-
+//backendApp.factory('PermissionService', ['$resource', function($resource) {
+//    return $resource('/usr/:userId/card/:cardId',
+//        {userId: 123, cardId: '@id'},
+//        {charge: {method: 'POST'}, params: {charge: true}, isArray: false}
+//    );
+//}]);
 backendApp.controller("BackendController", BackendController);
-function BackendController($scope, $translate, $location, HostUrl, request, locale, datepickerPopupConfig) {
-    console.log("BackendController!!");
+function BackendController($scope, $translate, $location, $log, HostUrl, request, locale, datepickerPopupConfig) {
+    $log.info("BackendController!!");
     request.changeHostUrl(HostUrl);
     locale.changeLang(locale.zh_TW);
+    //$scope.dateFormat = $translate.instant("format.date");
+    //$scope.dateFormat = "yyyy-MM-dd";
+    //$log.info("dateFormat=%s",$scope.dateFormat);
     $scope.menuTreeSetting = {
         data: {
             simpleData: {

@@ -21,7 +21,7 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.getPermissionList = function () {
         request.http({
             method: "GET",
-            url: "/permission/select"
+            url: "/permission"
         }).success(function (data, status, headers, config) {
             $scope.permissionList = data;
             locale.formatPermissionList($scope.permissionList);

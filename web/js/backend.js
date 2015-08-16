@@ -1,7 +1,13 @@
 /**
  * Created by user on 2015/8/5.
  */
-var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ngRoute", "requestFactory", "localeFactory"]);
+var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ngRoute", "ngResource", "requestFactory", "localeFactory"]);
+backendApp.factory('PermissionService', ['$resource', function ($resource) {
+    return $resource('api/permission/:permissionId',
+        {},
+        {charge: {method: 'POST'}, params: {charge: true}, isArray: false}
+    );
+}]);
 backendApp.constant("HostUrl", "http://localhost:8080/Backend/api");
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
@@ -27,6 +33,8 @@ backendApp.config(function ($translateProvider, $translatePartialLoaderProvider)
     });
     $translateProvider.preferredLanguage("zh-TW");
 });
+
+
 backendApp.run(function ($rootScope, $translate, $log) {
     $rootScope.$on('$translatePartialLoaderStructureChanged', function () {
         $rootScope.dateDisplayFormat = $translate.instant("format.display.date");
@@ -38,18 +46,13 @@ backendApp.directive("tableCheckbox", TableCheckbox);
 
 backendApp.directive("rowCheckbox", RowCheckbox);
 // Common directive for Focus
-backendApp.directive('focus',Focus);
-backendApp.directive('datePickerOpen',DatePickerOpen);
+backendApp.directive('focus', Focus);
+backendApp.directive('datePickerOpen', DatePickerOpen);
 //backendApp.directive('dateLowerThan',DateLowerThan);
 //backendApp.directive('dateGreaterThan', DateGreaterThan);
-//backendApp.factory('PermissionService', ['$resource', function($resource) {
-//    return $resource('/usr/:userId/card/:cardId',
-//        {userId: 123, cardId: '@id'},
-//        {charge: {method: 'POST'}, params: {charge: true}, isArray: false}
-//    );
-//}]);
+
 backendApp.controller("BackendController", BackendController);
-function BackendController($scope, $translate, $location, $log, HostUrl, request, locale, datepickerPopupConfig) {
+function BackendController($scope, $translate, $location, $log, PermissionService, HostUrl, request, locale, datepickerPopupConfig) {
     $log.info("BackendController!!");
     request.changeHostUrl(HostUrl);
     locale.changeLang(locale.zh_TW);
@@ -71,15 +74,21 @@ function BackendController($scope, $translate, $location, $log, HostUrl, request
         }
     };
 
-    request.http({
-        method: "GET",
-        url: "/permission/select"
-    }).success(function (data, status, headers, config) {
+    PermissionService.query(function (data) {
         $scope.menuList = data;
-        //console.log($scope.menuList);
         locale.formatPermissionList($scope.menuList);
         $scope.initMenuTree();
     });
+
+    //request.http({
+    //    method: "GET",
+    //    url: "/permission"
+    //}).success(function (data, status, headers, config) {
+    //    $scope.menuList = data;
+    //    //console.log($scope.menuList);
+    //    locale.formatPermissionList($scope.menuList);
+    //    $scope.initMenuTree();
+    //});
 
     $scope.initMenuTree = function () {
         $scope.menuTree = $("#menuTree");

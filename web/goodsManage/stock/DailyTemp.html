@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div ng-controller="DailyTempController">
+    <select ng-model="selectedExchange" ng-change="exchangeChange();"
+            ng-options="exchange.exchange_id for exchange in exchangeList">
+    </select>
+    <select ng-model="selectedMainSymbol" ng-change="mainSymbolChange();"
+            ng-options="main_symbol.main_symbol_id for main_symbol in selectedExchange.mainSymbolList">
+</div>
+</body>
+</html>

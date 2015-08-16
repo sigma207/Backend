@@ -12,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.sql.SQLException;
@@ -31,7 +28,7 @@ public class PermissionController extends BaseController{
     @Qualifier("permissionService")
     private PermissionService permissionService;
 
-    @RequestMapping(value="/select",method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<String> getPermissionList(){
         System.out.println("getPermissionList");
 
@@ -55,13 +52,30 @@ public class PermissionController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/insert",method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addPermission(@RequestBody Permission permission){
-        System.out.println("addPermission");
+        System.out.println("permission post");
 
         String payload = "";
         try {
             permissionService.addPermission(permission);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        Gson gson = new Gson();
+        payload = gson.toJson(permission);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value="/{permissionId}",method = RequestMethod.DELETE)
+    public @ResponseBody ResponseEntity<String> removePermission(@PathVariable("permissionId") int permissionId ,@RequestBody Permission permission){
+        System.out.println("deletePermission");
+
+        String payload = "";
+        try {
+            permissionService.deletePermission(permission);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
@@ -79,6 +93,23 @@ public class PermissionController extends BaseController{
         String payload = "";
         try {
             permissionService.deletePermission(permission);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        Gson gson = new Gson();
+        payload = gson.toJson(permission);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value="/{permissionId}",method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> updatePermission(@PathVariable("permissionId") int permissionId ,@RequestBody Permission permission){
+        System.out.println("updatePermissionById"+permissionId);
+
+        String payload = "";
+        try {
+            permissionService.updatePermission(permission);
         } catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);

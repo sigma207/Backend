@@ -2,7 +2,7 @@
  * Created by user on 2015/8/5.
  */
 var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ngRoute", "requestFactory", "localeFactory"]);
-backendApp.constant("HostUrl", "http://localhost:8080/Backend");
+backendApp.constant("HostUrl", "http://localhost:8080/Backend/api");
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
         when("/A1", {

@@ -66,16 +66,23 @@ public class HolidayExceptionDaoImpl extends BaseDao implements HolidayException
     }
 
     @Override
-    public void insert(Connection conn,HolidayException holidayException) throws Exception {
+    public void insert(Connection conn,List<HolidayException> holidayExceptionList) throws Exception {
         PreparedStatement stmt = null;
         try {
+            int count = 0;
             stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, holidayException.getExchange_id());
-            stmt.setString(2, holidayException.getMain_symbol_id());
-            stmt.setString(3, holidayException.getCalendar());
-            stmt.setString(4, Utils.updateTime());
-            stmt.setString(5, holidayException.getMemo());
-            stmt.executeUpdate();
+            for (HolidayException holidayException : holidayExceptionList) {
+                stmt.setString(1, holidayException.getExchange_id());
+                stmt.setString(2, holidayException.getMain_symbol_id());
+                stmt.setString(3, holidayException.getCalendar());
+                stmt.setString(4, Utils.updateTime());
+                stmt.setString(5, holidayException.getMemo());
+                stmt.addBatch();
+                if(++count % batchSize == 0) {
+                    stmt.executeBatch();
+                }
+            }
+            stmt.executeBatch();
         } catch (Exception e){
             throw e;
         } finally {

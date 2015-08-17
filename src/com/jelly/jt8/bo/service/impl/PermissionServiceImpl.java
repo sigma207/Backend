@@ -110,12 +110,12 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission updatePermission(Permission permission) throws Exception {
+    public Permission updatePermission(int id,Permission permission) throws Exception {
         Connection conn = null;
         try {
             conn = jt8Ds.getConnection();
             conn.setAutoCommit(false);
-            permissionDao.updatePermission(conn, permission);
+            permissionDao.updatePermission(conn, id,permission);
 
             Map<String, String> permissionNameMap = permission.getPermissionNameMap();
             Set<String> keys = permissionNameMap.keySet();
@@ -174,7 +174,7 @@ public class PermissionServiceImpl implements PermissionService {
             }
         }
         permissionNameDao.deletePermissionNameByPermissionId(conn, permission.getPermission_id());
-        permissionDao.deletePermission(conn, permission);
+        permissionDao.deletePermission(conn, permission.getPermission_id());
     }
 
     @Override
@@ -213,9 +213,9 @@ public class PermissionServiceImpl implements PermissionService {
             conn.setAutoCommit(false);
 
             for(Permission permission:moveNodes){
-                System.out.println(permission.getPermission_code()+":"+sequence);
+//                System.out.println(permission.getPermission_code()+":"+sequence);
                 permission.setSequence( sequence++);
-                permissionDao.updatePermission(conn, permission);
+                permissionDao.updatePermission(conn, permission.getPermission_id(),permission);
             }
             conn.commit();
         }catch (Exception e) {

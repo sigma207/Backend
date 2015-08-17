@@ -2,7 +2,7 @@
  * Created by user on 2015/8/6.
  */
 backendApp.controller("PermissionController", PermissionController);
-function PermissionController($scope, $modal, $log, PermissionService, request, locale) {
+function PermissionController($scope, $modal, $log, PermissionService, locale) {
     $log.info("PermissionController!!");
     $scope.editSize = undefined;
     $scope.editTitle = "新增節點";
@@ -24,14 +24,6 @@ function PermissionController($scope, $modal, $log, PermissionService, request, 
         locale.formatPermissionList($scope.permissionList);
         $scope.initPermissionTree();
     });
-    //request.http({
-    //    method: "GET",
-    //    url: "/permission"
-    //}).success(function (data, status, headers, config) {
-    //    $scope.permissionList = data;
-    //    locale.formatPermissionList($scope.permissionList);
-    //    $scope.initPermissionTree();
-    //});
 
     $scope.initPermissionTree = function () {
         $scope.permissionTree = $("#permissionTree");
@@ -87,7 +79,7 @@ function PermissionController($scope, $modal, $log, PermissionService, request, 
                         $scope.nodeMoveSetting.moveType = "prev";
                         $scope.nodeMoveSetting.moveAction = Action.MoveFirst;
 
-                        request.json("/permission/move", $scope.nodeMoveSetting).success($scope.onPermissionMove);
+                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu[Action.MoveUp] = {
@@ -100,7 +92,7 @@ function PermissionController($scope, $modal, $log, PermissionService, request, 
                         $scope.nodeMoveSetting.moveType = "prev";
                         $scope.nodeMoveSetting.moveAction = Action.MoveUp;
 
-                        request.json("/permission/move", $scope.nodeMoveSetting).success($scope.onPermissionMove);
+                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu[Action.MoveDown] = {
@@ -113,7 +105,7 @@ function PermissionController($scope, $modal, $log, PermissionService, request, 
                         $scope.nodeMoveSetting.moveType = "next";
                         $scope.nodeMoveSetting.moveAction = Action.MoveDown;
 
-                        request.json("/permission/move", $scope.nodeMoveSetting).success($scope.onPermissionMove);
+                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu[Action.MoveLast] = {
@@ -125,7 +117,7 @@ function PermissionController($scope, $modal, $log, PermissionService, request, 
                         $scope.nodeMoveSetting.moveType = "next";
                         $scope.nodeMoveSetting.moveAction = Action.MoveLast;
 
-                        request.json("/permission/move", $scope.nodeMoveSetting).success($scope.onPermissionMove);
+                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu['sep2'] = '';
@@ -142,17 +134,15 @@ function PermissionController($scope, $modal, $log, PermissionService, request, 
                 menu[Action.Remove] = {
                     name: "移除",
                     callback: function () {
-                        PermissionService.remove({permission_id:currentNode.permission_id}, function (data) {
-                            $log.info("remove");
+                        //PermissionService.remove({permissionId:currentNode.permission_id},{}, function (data) {
+                        //    $log.info("remove");
+                        //    var selectedNode = $scope.permissionZTreeObj.getSelectedNodes()[0];
+                        //    $scope.permissionZTreeObj.removeNode(selectedNode);
+                        //});
+                        PermissionService.deletePermission({},currentNode, function (data) {
                             var selectedNode = $scope.permissionZTreeObj.getSelectedNodes()[0];
                             $scope.permissionZTreeObj.removeNode(selectedNode);
                         });
-                        //request.json("/permission/delete", currentNode).
-                        //    success(function (data, status, headers, config) {
-                        //        var selectedNode = $scope.permissionZTreeObj.getSelectedNodes()[0];
-                        //        $scope.permissionZTreeObj.removeNode(selectedNode);
-                        //    }
-                        //);
                     }
                 };
                 return {
@@ -186,7 +176,7 @@ function PermissionController($scope, $modal, $log, PermissionService, request, 
         }
     };
 
-    $scope.onPermissionMove = function (data, status, headers, config) {
+    $scope.onPermissionMove = function (data) {
         for (var i = 0; i < data.length; i++) {
             var node = $scope.permissionZTreeObj.getNodeByParam("permission_id", data[i].permission_id);
             node.sequence = data[i].sequence;
@@ -279,11 +269,6 @@ backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $l
                     delete data.$resolved;
                     $modalInstance.close(data);
                 });
-                //request.json("/permission", $scope.editPermission).
-                //    success(function (data, status, headers, config) {
-                //        $modalInstance.close(data);
-                //    }
-                //);
                 break;
             case Action.Edit:
                 PermissionService.save({permissionId:$scope.editPermission.permission_id}, $scope.editPermission, function (data) {
@@ -291,11 +276,6 @@ backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $l
                     delete data.$resolved;
                     $modalInstance.close(data);
                 });
-                //request.json("/permission/update", $scope.editPermission).
-                //    success(function (data, status, headers, config) {
-                //        $modalInstance.close(data);
-                //    }
-                //);
                 break;
         }
     };

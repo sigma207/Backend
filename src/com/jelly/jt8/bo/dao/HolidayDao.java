@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface HolidayDao {
     public List<Holiday> select(MainSymbol mainSymbol) throws Exception;
-    public void insert(Connection connection,Holiday holiday) throws Exception;
+    public void insert(Connection connection,List<Holiday> holidayList) throws Exception;
     public void update(Connection connection,Holiday holiday) throws Exception;
     public void delete(Connection connection,Holiday holiday) throws Exception;
 }

@@ -16,7 +16,7 @@ public interface PermissionDao {
 
     public int insertPermission(Connection connection,Permission permission) throws Exception;
 
-    public void deletePermission(Connection connection,Permission permission) throws Exception;
+    public void deletePermission(Connection connection,int id) throws Exception;
 
-    public void updatePermission(Connection connection,Permission permission) throws Exception;
+    public void updatePermission(Connection connection,int id, Permission permission) throws Exception;
 }

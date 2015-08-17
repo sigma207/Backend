@@ -13,6 +13,6 @@ public interface PermissionService {
     public List<Permission> getPermissionList() throws Exception;
     public Permission addPermission(Permission permission) throws Exception;
     public void deletePermission(Permission permission) throws Exception;
-    public Permission updatePermission(Permission permission) throws Exception;
+    public Permission updatePermission(int id,Permission permission) throws Exception;
     public void movePermission(PermissionMoveSetting permissionMoveSetting) throws Exception;
 }

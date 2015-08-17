@@ -9,8 +9,40 @@
     <select ng-model="selectedExchange" ng-change="exchangeChange();"
             ng-options="exchange.exchange_id for exchange in exchangeList">
     </select>
-    <select ng-model="selectedMainSymbol" ng-change="mainSymbolChange();"
+    <select ng-model="selectedMainSymbol" ng-change="mainSymbolChange();" style="display: none;"
             ng-options="main_symbol.main_symbol_id for main_symbol in selectedExchange.mainSymbolList">
+    </select>
+
+    <table st-table="displayedCollection" st-safe-src="rowCollection" class="table table-striped table-condensed">
+        <thead>
+        <tr>
+            <th><input st-search="exchange_id" class="input-sm form-control" type="search"/></th>
+            <th><input st-search="symbol_id" class="input-sm form-control" type="search"/></th>
+            <th><input st-search="stock_name" class="input-sm form-control" type="search"/></th>
+            <th><input st-search="last" class="input-sm form-control" type="search"/></th>
+            <th><input st-search="total_volume" class="input-sm form-control" type="search"/></th>
+            <th><input st-search="updown_per" class="input-sm form-control" type="search"/></th>
+        </tr>
+        <tr>
+            <th>{{'exchangeId'|translate}}</th>
+            <th>{{'symbolId'|translate}}</th>
+            <th>{{'stock_name'|translate}}</th>
+            <th>{{'last'|translate}}</th>
+            <th>{{'total_volume'|translate}}</th>
+            <th>{{'updown_per'|translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in displayedCollection">
+            <td>{{row.exchange_id}}</td>
+            <td>{{row.symbol_id}}</td>
+            <td>{{row.stock_name}}</td>
+            <td>{{row.last}}</td>
+            <td>{{row.total_volume}}</td>
+            <td>{{row.updown_per}}</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

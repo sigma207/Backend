@@ -5,7 +5,19 @@ var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.boo
 backendApp.factory('PermissionService', ['$resource', function ($resource) {
     return $resource('api/permission/:permissionId',
         {},
-        {charge: {method: 'POST'}, params: {charge: true}, isArray: false}
+        {
+            deletePermission: {method: 'POST', url: 'api/permission/delete'},
+            move: {method: 'POST', url: 'api/permission/move', isArray: true}
+        }
+        //{charge: {method: 'POST'}, params: {charge: true}, isArray: false}
+    );
+}]);
+backendApp.factory('SymbolTradableDailyService', ['$resource', function ($resource) {
+    return $resource('api/symbolTradableDailyTemp/exchange/:exchange_id/mainSymbol/:main_symbol_id',
+        {},
+        {
+            queryByMainSymbol: {method:'POST',isArray:true}
+        }
     );
 }]);
 backendApp.constant("HostUrl", "http://localhost:8080/Backend/api");
@@ -19,6 +31,9 @@ backendApp.config(["$routeProvider", function ($routeProvider) {
         }).
         when("/B2", {
             templateUrl: "goodsManage/holiday/Holiday.html"
+        }).
+        when("/B4", {
+            templateUrl: "goodsManage/stock/DailyTemp.html"
         }).
         when("/C1", {
             templateUrl: "userManage/user/User.html"
@@ -79,16 +94,6 @@ function BackendController($scope, $translate, $location, $log, PermissionServic
         locale.formatPermissionList($scope.menuList);
         $scope.initMenuTree();
     });
-
-    //request.http({
-    //    method: "GET",
-    //    url: "/permission"
-    //}).success(function (data, status, headers, config) {
-    //    $scope.menuList = data;
-    //    //console.log($scope.menuList);
-    //    locale.formatPermissionList($scope.menuList);
-    //    $scope.initMenuTree();
-    //});
 
     $scope.initMenuTree = function () {
         $scope.menuTree = $("#menuTree");

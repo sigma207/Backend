@@ -16,7 +16,7 @@ import java.util.List;
 
 public class BaseDao {
     Class tableClass;
-
+    final int batchSize = 1000;
     public void execute(Connection conn, String sql, List list, Class c) throws Exception {
         PreparedStatement stmt = null;
         ResultSet rs = null;

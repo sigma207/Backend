@@ -140,12 +140,12 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
     }
 
     @Override
-    public void deletePermission(Connection connection, Permission permission) throws Exception {
+    public void deletePermission(Connection connection, int id) throws Exception {
         PreparedStatement stmt = null;
         try {
             stmt = connection.prepareStatement(DELETE);
 
-            stmt.setInt(1, permission.getPermission_id());
+            stmt.setInt(1, id);
             stmt.executeUpdate();
         } catch (Exception e){
             throw e;
@@ -161,7 +161,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
     }
 
     @Override
-    public void updatePermission(Connection connection, Permission permission) throws Exception {
+    public void updatePermission(Connection connection, int id, Permission permission) throws Exception {
         PreparedStatement stmt = null;
         try {
             stmt = connection.prepareStatement(UPDATE);
@@ -169,7 +169,7 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
             stmt.setString(1, permission.getPermission_code());
             stmt.setInt(2,permission.getSequence());
             stmt.setString(3, permission.getPath());
-            stmt.setInt(4, permission.getPermission_id());
+            stmt.setInt(4, id);
 
             stmt.executeUpdate();
         } catch (Exception e){

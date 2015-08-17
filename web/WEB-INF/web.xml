@@ -14,6 +14,15 @@
     <!--<listener>-->
         <!--<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>-->
     <!--</listener>-->
+    <filter>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <servlet-name>bo</servlet-name>
+    </filter-mapping>
 
     <display-name>backOffice</display-name>
     <servlet>
@@ -40,14 +49,6 @@
 
 
 
-    <filter>
-        <filter-name>HiddenHttpMethodFilter</filter-name>
-        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
-    </filter>
 
-    <filter-mapping>
-        <filter-name>HiddenHttpMethodFilter</filter-name>
-        <servlet-name>bo</servlet-name>
-    </filter-mapping>
 
 </web-app>

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface HolidayExceptionDao {
     public List<HolidayException> select(MainSymbol mainSymbol) throws Exception;
-    public void insert(Connection connection,HolidayException holidayException) throws Exception;
+    public void insert(Connection connection,List<HolidayException> holidayExceptionList) throws Exception;
     public void update(Connection connection,HolidayException holidayException) throws Exception;
     public void delete(Connection connection,HolidayException holidayException) throws Exception;
 }

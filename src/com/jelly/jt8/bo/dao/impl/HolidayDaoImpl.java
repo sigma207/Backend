@@ -67,18 +67,25 @@ public class HolidayDaoImpl extends BaseDao implements HolidayDao{
     }
 
     @Override
-    public void insert(Connection conn, Holiday holiday) throws Exception {
+    public void insert(Connection conn, List<Holiday> holidayList) throws Exception {
         PreparedStatement stmt = null;
         try {
-
+            int count = 0;
             stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, holiday.getExchange_id());
-            stmt.setString(2, holiday.getMain_symbol_id());
-            stmt.setString(3, holiday.getBegin_date());
-            stmt.setString(4, holiday.getEnd_date());
-            stmt.setString(5, Utils.updateTime());
-            stmt.setString(6, holiday.getMemo());
-            stmt.executeUpdate();
+            for (Holiday holiday : holidayList) {
+                stmt.setString(1, holiday.getExchange_id());
+                stmt.setString(2, holiday.getMain_symbol_id());
+                stmt.setString(3, holiday.getBegin_date());
+                stmt.setString(4, holiday.getEnd_date());
+                stmt.setString(5, Utils.updateTime());
+                stmt.setString(6, holiday.getMemo());
+                stmt.addBatch();
+                if(++count % batchSize == 0) {
+                    stmt.executeBatch();
+                }
+            }
+            stmt.executeBatch();
+//            stmt.executeUpdate();
         } catch (Exception e){
             throw e;
         } finally {

@@ -50,11 +50,12 @@ function RowSelectCheckbox(){
 function HeadCheckbox(){
     return {
         restrict: 'E',
+        require: '^stTable',
         template: "<input ng-model='selected' type='checkbox'/>",
         scope:{
             collection:"=collection"
         },
-        link: function (scope, element, attr) {
+        link: function (scope, element, attr, ctrl) {
             var field = attr.field;
             scope.selected = false;
             element.on('change', function (event) {
@@ -64,6 +65,13 @@ function HeadCheckbox(){
                     }
                 });
             });
+
+            //scope.$watch(function () {
+            //    console.log("HeadCheckbox scope.$watch ctrl.tableState().pagination");
+            //    return ctrl.tableState().pagination;
+            //}, function () {
+            //
+            //}, true);
         }
     }
 }

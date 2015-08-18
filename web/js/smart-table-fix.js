@@ -7,9 +7,11 @@
 
     ng.module('smart-table', []).run(['$templateCache', function ($templateCache) {
         $templateCache.put('template/smart-table/pagination.html',
-            '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination">' +
-            '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
-            '</ul></nav>');
+            //'<nav ng-if="nuPages && pages.length >= 2"><ul class="pagination">' +
+            //'<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+            //'</ul></nav>' +
+            '<div ng-if="numPages && pages.length >= 2"><pagination total-items="totalItemCount" ng-model="currentPage" max-size="10" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" ng-change="selectPage(currentPage)"></pagination>' +
+            '<pre>Page: {{currentPage}} / {{numPages}}</pre></div>');
     }]);
 
 
@@ -132,20 +134,12 @@
             this.search = function search (input, predicate) {
                 var predicateObject = tableState.search.predicateObject || {};
                 var prop = predicate ? predicate : '$';
-                console.log("input");
-                console.log(input);
-                //if(angular.isObject(input)){
-                //    input = input.value;
-                //}
                 input = ng.isString(input) ? input.trim() : input;
                 $parse(prop).assign(predicateObject, input);
                 // to avoid to filter out null value
-                console.log(prop);
-                console.log(predicateObject);
                 if (!input) {
                     deepDelete(predicateObject, prop);
                 }
-                console.log(predicateObject);
                 tableState.search.predicateObject = predicateObject;
                 tableState.pagination.start = 0;
                 return this.pipe();
@@ -281,15 +275,16 @@
                     scope.$watch(function () {
                         return ctrl.tableState().search;
                     }, function (newValue, oldValue) {
-                        if (newValue.predicateObject){
-                            if(angular.isObject(newValue.predicateObject)){
-                                newValue.predicateObject = newValue.predicateObject.value;
+                        var value = newValue.predicateObject;
+                        if (value){
+                            if(angular.isObject(value)){
+                                value = value.value;
                             }
                         }
 
                         var predicateExpression = attr.stSearch || '$';
-                        if (newValue.predicateObject && $parse(predicateExpression)(newValue.predicateObject) !== element[0].value) {
-                            element[0].value = $parse(predicateExpression)(newValue.predicateObject) || '';
+                        if (value && $parse(predicateExpression)(value) !== element[0].value) {
+                            element[0].value = $parse(predicateExpression)(value) || '';
                         }
                     }, true);
 

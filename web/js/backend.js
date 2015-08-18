@@ -57,11 +57,46 @@ backendApp.run(function ($rootScope, $translate, $log) {
         $translate.refresh();
     });
 });
-backendApp.directive("tableCheckbox", TableCheckbox);
+backendApp.filter("customFilter",['$filter', function ($filter) {
+    var filterFilter = $filter('filter');
+    var standardComparator = function standardComparator(obj, text) {
+        text = ('' + text).toLowerCase();
+        return ('' + obj).toLowerCase().indexOf(text) > -1;
+    };
+    var startWithComparator = function (actual, expected) {
+        var lowerStr = (actual + "").toLowerCase();
+        return lowerStr.indexOf(expected.toLowerCase()) === 0;
+    };
+    return function(array, expression){
+        //console.log(array);
+        //console.log(expression);
+        function customComparator(actual, expected) {
+            //console.log("actual=%s",actual);
+            //console.log("expected=%s",expected);
 
+            //console.log(angular.isObject(expected));
+            if(angular.isObject(expected)){
+                //console.log("expected=%s",expected.startWith);
+                if(expected.startWith&&expected.value!=""){
+                    return startWithComparator(actual, expected.value);
+                }
+                return true;
+                //console.log("expected=%s",expected);
+            }else{
+                return standardComparator(actual, expected);
+            }
+        }
+        return filterFilter(array, expression, customComparator);
+    }
+}]);
+backendApp.directive("tableSelectCheckbox", TableSelectCheckbox);
+backendApp.directive("rowSelectCheckbox", RowSelectCheckbox);
+backendApp.directive("headCheckbox", HeadCheckbox);
 backendApp.directive("rowCheckbox", RowCheckbox);
+backendApp.directive("textStartWith", TextStartWith);
 // Common directive for Focus
 backendApp.directive('focus', Focus);
+backendApp.directive('parseInt', ParseInt);
 backendApp.directive('datePickerOpen', DatePickerOpen);
 //backendApp.directive('dateLowerThan',DateLowerThan);
 //backendApp.directive('dateGreaterThan', DateGreaterThan);

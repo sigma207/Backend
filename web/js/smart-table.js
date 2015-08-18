@@ -136,9 +136,12 @@ ng.module('smart-table')
       input = ng.isString(input) ? input.trim() : input;
       $parse(prop).assign(predicateObject, input);
       // to avoid to filter out null value
+      console.log(prop);
+      console.log(predicateObject);
       if (!input) {
         deepDelete(predicateObject, prop);
       }
+      console.log(predicateObject);
       tableState.search.predicateObject = predicateObject;
       tableState.pagination.start = 0;
       return this.pipe();
@@ -151,6 +154,8 @@ ng.module('smart-table')
       var pagination = tableState.pagination;
       var output;
       filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
+      console.log("filtered");
+      console.log(filtered);
       if (tableState.sort.predicate) {
         filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
       }

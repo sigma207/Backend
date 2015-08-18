@@ -1,7 +1,7 @@
 /**
  * Created by user on 2015/8/13.
  */
-function TableCheckbox(){
+function TableSelectCheckbox(){
     return {
         scope: {
             selectedItems: '='
@@ -27,21 +27,94 @@ function TableCheckbox(){
     }
 }
 
-function RowCheckbox(){
+function RowSelectCheckbox(){
     return {
         template: "<input ng-model='selected' type='checkbox'/>",
-        require: "^tableCheckbox",
+        require: "^tableSelectCheckbox",
         scope: {
             row:"=",
             index:"="
         },
-        link: function (scope, element, attr, tableCheckboxCtrl) {
+        link: function (scope, element, attr, ctrl) {
             scope.selected = false;
-            if(tableCheckboxCtrl.itemHasBeenSelected(scope.row)){
+            if(ctrl.itemHasBeenSelected(scope.row)){
                 scope.selected = true;
             }
             element.on('change', function (event) {
-                tableCheckboxCtrl.itemSelect(scope.row,scope.selected);
+                ctrl.itemSelect(scope.row,scope.selected);
+            });
+        }
+    }
+}
+
+function HeadCheckbox(){
+    return {
+        restrict: 'E',
+        template: "<input ng-model='selected' type='checkbox'/>",
+        scope:{
+            collection:"=collection"
+        },
+        link: function (scope, element, attr) {
+            var field = attr.field;
+            scope.selected = false;
+            element.on('change', function (event) {
+                scope.$apply(function () {
+                    for(var i= 0,count=scope.collection.length;i<count;i++){
+                        scope.collection[i][field] = (scope.selected)?1:0;
+                    }
+                });
+            });
+        }
+    }
+}
+
+function RowCheckbox(){
+    return {
+        restrict: 'E',
+        template: "<input type='checkbox' ng-model='selectValue' parse-int  ng-true-value='1' ng-false-value='0' ng-checked='selectValue===1'/>",
+        scope:{
+            selectValue:"=selectValue"
+        }
+    }
+}
+
+function ParseInt(){
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elem, attrs, controller) {
+            //console.log("DEF");
+            controller.$formatters.push(function (modelValue) {
+                //console.log('model', modelValue, typeof modelValue);
+                return '' + modelValue;
+            });
+
+            controller.$parsers.push(function (viewValue) {
+                //console.log('view', viewValue, typeof viewValue);
+                return parseInt(viewValue,10);
+            });
+        }
+    }
+}
+
+function TextStartWith(stConfig, $timeout, $parse, $log){
+    return {
+        require:"^stTable",
+        link: function (scope, element, attr, ctrl) {
+            var tableCtrl = ctrl;
+            var inputs = element.find('input');
+            var input = angular.element(inputs[0]);
+            var predicateName = attr.predicate;
+            $log.info(element);
+            element.bind('change', function () {
+
+                //$log.info(element.val());
+                var query = {};
+                query.startWith = element.val();
+
+                scope.$apply(function () {
+                    ctrl.search(query, predicateName)
+                });
             });
         }
     }

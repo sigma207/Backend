@@ -17,3 +17,34 @@ input.ng-valid {
 input.ng-dirty.ng-invalid {
     background: #ffecec;
 }
+
+/*.input-sm,*/
+/*.form-group-sm .form-control {*/
+    /*height: 25px;*/
+    /*padding: 5px 10px;*/
+    /*font-size: 12px;*/
+    /*line-height: 1.5;*/
+    /*border-radius: 3px;*/
+/*}*/
+
+.input-xs,
+.form-group-xs .form-control {
+    height: 25px;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+.cc{
+    width:90%
+}
+
+.table-jt8 > thead > tr > th,
+.table-jt8 > tbody > tr > th,
+.table-jt8 > tfoot > tr > th,
+.table-jt8 > thead > tr > td,
+.table-jt8 > tbody > tr > td,
+.table-jt8 > tfoot > tr > td {
+    padding: 0px;
+}

@@ -86,6 +86,16 @@ function RowCheckbox(){
     }
 }
 
+function RowReadonlyCheckbox(){
+    return {
+        restrict: 'E',
+        template: "<input type='checkbox' ng-model='selectValue' parse-int  ng-true-value='1' ng-false-value='0' ng-checked='selectValue===1' onclick='return false;'/>",
+        scope:{
+            selectValue:"=selectValue"
+        }
+    }
+}
+
 function ParseInt(){
     return {
         restrict: 'A',
@@ -100,6 +110,28 @@ function ParseInt(){
             controller.$parsers.push(function (viewValue) {
                 //console.log('view', viewValue, typeof viewValue);
                 return parseInt(viewValue,10);
+            });
+        }
+    }
+}
+
+function CheckboxFilter(stConfig, $log){
+    return {
+        require:"^stTable",
+        restrict: 'E',
+        template: "<input type='checkbox' ng-model='selected' parse-int  ng-true-value='1' ng-false-value='0' ng-checked='selected===1'/>",
+        link: function (scope, element, attr, ctrl) {
+            scope.selected = 0;
+            var predicateName = attr.predicate;
+            element.bind('change', function () {
+                //$log.info(element.val());
+                var query = {};
+                query.selected = true;
+                query.value = scope.selected;
+                $log.info(query);
+                scope.$apply(function () {
+                    ctrl.search(query, predicateName)
+                });
             });
         }
     }

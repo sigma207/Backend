@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/zTreeStyle/zTreeStyle.css" type="text/css">
     <link rel="stylesheet" href="css/jquery.contextMenu.css">
     <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main2.css">
     <link rel="stylesheet" href="css/jt8.css">
     <!--<script type="text/javascript" src="js/angular.js"></script>-->
     <script type="text/javascript" src="js/angular.min.js"></script>
@@ -28,27 +28,38 @@
 </head>
 <body ng-controller="BackendController">
 <div class="space"></div>
-<div class="main">
-    <button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('zh-TW')">繁</button>
-    <button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('zh-CN')">簡</button>
-    <button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('en-US')">英</button>
-    <div class="header">
-        <div class="headerContainer">
-            <img src="images/header_bg.png" class="headerBackgroundImg"/>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 headerBackgroundImg">
             <img src="images/logo.png" class="logoImg"/>
         </div>
     </div>
-    <div class="middle">
-        <div class="mainMenu">
-            <ul id="menuTree" class="ztree"></ul>
-        </div><div class="content" ng-view></div>
+    <div class="row">
+        <div class="col-md-2"><ul id="menuTree" class="ztree"></ul></div>
+        <div class="col-md-10" ng-view></div>
     </div>
-    <div class="footer"></div>
 </div>
-<div class="space"></div>
+<!--<div class="space"></div>-->
+<!--<div class="main">-->
+    <!--&lt;!&ndash;<button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('zh-TW')">繁</button>&ndash;&gt;-->
+    <!--&lt;!&ndash;<button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('zh-CN')">簡</button>&ndash;&gt;-->
+    <!--&lt;!&ndash;<button type="button" class="btn-xs btn-primary" ng-click="changeLanguage('en-US')">英</button>&ndash;&gt;-->
+    <!--<div class="header">-->
+        <!--<div class="headerContainer">-->
+            <!--<img src="images/header_bg.png" class="headerBackgroundImg"/>-->
+            <!--<img src="images/logo.png" class="logoImg"/>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="middle">-->
+        <!--<div class="mainMenu">-->
+            <!--<ul id="menuTree" class="ztree"></ul>-->
+        <!--</div><div class="content" ng-view></div>-->
+    <!--</div>-->
+    <!--<div class="footer"></div>-->
+<!--</div>-->
+<!--<div class="space"></div>-->
 <script type="text/javascript" src="js/directives/directive.js"></script>
 <script type="text/javascript" src="js/backend.js"></script>
-
 <script type="text/javascript" src="js/filters/customFilter.js"></script>
 <script type="text/javascript" src="js/backendModule.js"></script>
 <script type="text/javascript" src="js/controller/permissionController.js"></script>
@@ -56,5 +67,6 @@
 <script type="text/javascript" src="js/controller/userController.js"></script>
 <script type="text/javascript" src="js/controller/holidayController.js"></script>
 <script type="text/javascript" src="js/controller/dailyTempController.js"></script>
+<script type="text/javascript" src="js/controller/dailyController.js"></script>
 </body>
 </html>

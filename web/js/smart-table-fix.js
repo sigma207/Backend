@@ -7,11 +7,13 @@
 
     ng.module('smart-table', []).run(['$templateCache', function ($templateCache) {
         $templateCache.put('template/smart-table/pagination.html',
-            //'<nav ng-if="nuPages && pages.length >= 2"><ul class="pagination">' +
-            //'<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
-            //'</ul></nav>' +
-            '<div ng-if="numPages && pages.length >= 2"><pagination total-items="totalItemCount" ng-model="currentPage" max-size="10" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" ng-change="selectPage(currentPage)"></pagination>' +
-            '<pre>Page: {{currentPage}} / {{numPages}}</pre></div>');
+            '<nav ng-if="numPages && pages.length >= 2"><ul class="pagination">' +
+            '<li><a ng-click="selectPage(1)">&lt;&lt;</a></li><li><a ng-click="selectPage(currentPage - 1)">&lt;</a></li>'+
+            '<li ng-repeat="page in pages" ng-class="{active: page==currentPage}"><a ng-click="selectPage(page)">{{page}}</a></li>' +
+            '<li><a ng-click="selectPage(currentPage + 1)">&gt;</a></li><li><a ng-click="selectPage(numPages)">&gt;&gt;</a></li>'+
+            '</ul><pre>Page: {{currentPage}} / {{numPages}} </pre></div></nav>');
+            //'<div ng-if="numPages && pages.length >= 2"><pagination total-items="totalItemCount" item-per-page="stItemsByPage" ng-model="currentPage" max-size="stDisplayedPages"  class="pagination-sm" boundary-links="true" rotate="false" ng-change="selectPage(currentPage)"></pagination>' +
+            //'<pre>Page: {{currentPage}} / {{numPages}} / {{totalItemCount}}</pre></div>');
     }]);
 
 
@@ -133,6 +135,7 @@
              */
             this.search = function search (input, predicate) {
                 var predicateObject = tableState.search.predicateObject || {};
+                console.log(predicateObject);
                 var prop = predicate ? predicate : '$';
                 input = ng.isString(input) ? input.trim() : input;
                 $parse(prop).assign(predicateObject, input);
@@ -152,8 +155,6 @@
                 var pagination = tableState.pagination;
                 var output;
                 filtered = tableState.search.predicateObject ? filter(safeCopy, tableState.search.predicateObject) : safeCopy;
-                console.log("filtered");
-                console.log(filtered);
                 if (tableState.sort.predicate) {
                     filtered = orderBy(filtered, tableState.sort.predicate, tableState.sort.reverse);
                 }
@@ -451,6 +452,7 @@
 
                         scope.pages = [];
                         scope.numPages = paginationState.numberOfPages;
+                        console.log(" scope.numPages =%s", scope.numPages );
 
                         for (i = start; i < end; i++) {
                             scope.pages.push(i);

@@ -2,7 +2,7 @@
  * Created by user on 2015/8/9.
  */
 backendApp.controller("HolidayController", HolidayController);
-function HolidayController($scope, $translatePartialLoader, $translate, $log, $modal, request) {
+function HolidayController($scope, $translatePartialLoader, $translate, $log, $modal, ExchangeService, request) {
     $translatePartialLoader.addPart("holiday");
     $translate.refresh();
 
@@ -17,10 +17,7 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
     };
 
     $scope.getExchangeList = function () {
-        request.http({
-            method: "GET",
-            url: "/mainSymbol/select"
-        }).success(function (data, status, headers, config) {
+        ExchangeService.query({},{}, function (data) {
             $scope.exchangeList = data;
             $scope.selectedExchange = $scope.exchangeList[0];
             $scope.exchangeChange();

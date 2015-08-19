@@ -1,8 +1,8 @@
 /**
- * Created by user on 2015/8/17.
+ * Created by user on 2015/8/19.
  */
-backendApp.controller("DailyTempController", DailyTempController);
-function DailyTempController($scope, $translatePartialLoader, $translate, $log, $filter, SymbolTradableDailyTempService, ExchangeService) {
+backendApp.controller("DailyController", DailyController);
+function DailyController($scope, $translatePartialLoader, $translate, $log, SymbolTradableDailyService, ExchangeService) {
     $translatePartialLoader.addPart("daily");
     $translate.refresh();
 
@@ -20,7 +20,7 @@ function DailyTempController($scope, $translatePartialLoader, $translate, $log, 
             exchange_id: $scope.selectedMainSymbol.exchange_id,
             main_symbol_id: $scope.selectedMainSymbol.main_symbol_id
         };
-        SymbolTradableDailyTempService.query(params, {}, function (data) {
+        SymbolTradableDailyService.query(params, {}, function (data) {
             $scope.rowCollection = data;
             $scope.displayedCollection = [].concat($scope.rowCollection);
         });
@@ -32,20 +32,6 @@ function DailyTempController($scope, $translatePartialLoader, $translate, $log, 
             $scope.selectedExchange = $scope.exchangeList[0];
             $scope.exchangeChange();
         });
-    };
-
-    $scope.saveClick = function () {
-        var list = $filter('filter')($scope.rowCollection, function (item) {
-            return item.tradable === 1;
-        });
-        var params = {
-            exchange_id: $scope.selectedMainSymbol.exchange_id,
-            main_symbol_id: $scope.selectedMainSymbol.main_symbol_id
-        };
-        SymbolTradableDailyTempService.save(params, list, function (data) {
-                $scope.getList();
-            }
-        );
     };
 
     $scope.getExchangeList();

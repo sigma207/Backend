@@ -42,10 +42,10 @@ public class SymbolTradableDailyTempController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/exchange/{exchange_id}/mainSymbol/{main_symbol_id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/exchange/{exchange_id}/mainSymbol/{main_symbol_id}", method = RequestMethod.GET)
     public
     @ResponseBody
-    ResponseEntity<String> getListByMainSymbol(@PathVariable("exchange_id") String exchange_id, @PathVariable("main_symbol_id") String main_symbol_id) {
+    ResponseEntity<String> getList(@PathVariable("exchange_id") String exchange_id, @PathVariable("main_symbol_id") String main_symbol_id) {
         System.out.println("getListByMainSymbol");
         Gson gson = new Gson();
         List<SymbolTradableDaily> list = null;
@@ -60,6 +60,27 @@ public class SymbolTradableDailyTempController extends BaseController {
         }
 
         payload = gson.toJson(list);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value = "/exchange/{exchange_id}/mainSymbol/{main_symbol_id}", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResponseEntity<String> insertList(@PathVariable("exchange_id") String exchange_id, @PathVariable("main_symbol_id") String main_symbol_id, @RequestBody List<SymbolTradableDaily> list) {
+        System.out.println("insertList");
+        Gson gson = new Gson();
+        String payload = "";
+        MainSymbol mainSymbol = new MainSymbol();
+        try {
+
+            mainSymbol.setExchange_id(exchange_id);
+            mainSymbol.setMain_symbol_id(main_symbol_id);
+            service.insertSymbolTradableDailyTemp(mainSymbol, list);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        payload = gson.toJson(mainSymbol);
         return getResponseEntity(payload);
     }
 

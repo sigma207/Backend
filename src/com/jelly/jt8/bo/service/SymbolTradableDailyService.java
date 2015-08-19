@@ -11,4 +11,6 @@ import java.util.List;
 public interface SymbolTradableDailyService {
     List<SymbolTradableDaily> selectSymbolTradableDailyTemp() throws Exception;
     List<SymbolTradableDaily> selectSymbolTradableDailyTemp(MainSymbol mainSymbol) throws Exception;
+    void insertSymbolTradableDailyTemp(MainSymbol mainSymbol,List<SymbolTradableDaily> list) throws Exception;
+    List<SymbolTradableDaily> selectSymbolTradableDaily(MainSymbol mainSymbol) throws Exception;
 }

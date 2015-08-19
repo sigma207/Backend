@@ -12,13 +12,14 @@ backendApp.factory('PermissionService', ['$resource', function ($resource) {
         //{charge: {method: 'POST'}, params: {charge: true}, isArray: false}
     );
 }]);
+backendApp.factory('SymbolTradableDailyTempService', ['$resource', function ($resource) {
+    return $resource('api/symbolTradableDailyTemp/exchange/:exchange_id/mainSymbol/:main_symbol_id');
+}]);
 backendApp.factory('SymbolTradableDailyService', ['$resource', function ($resource) {
-    return $resource('api/symbolTradableDailyTemp/exchange/:exchange_id/mainSymbol/:main_symbol_id',
-        {},
-        {
-            queryByMainSymbol: {method:'POST',isArray:true}
-        }
-    );
+    return $resource('api/symbolTradableDaily/exchange/:exchange_id/mainSymbol/:main_symbol_id');
+}]);
+backendApp.factory('ExchangeService', ['$resource', function ($resource) {
+    return $resource('api/exchange');
 }]);
 backendApp.constant("HostUrl", "http://localhost:8080/Backend/api");
 backendApp.config(["$routeProvider", function ($routeProvider) {
@@ -34,6 +35,9 @@ backendApp.config(["$routeProvider", function ($routeProvider) {
         }).
         when("/B4", {
             templateUrl: "goodsManage/stock/DailyTemp.html"
+        }).
+        when("/B5", {
+            templateUrl: "goodsManage/stock/Daily.html"
         }).
         when("/C1", {
             templateUrl: "userManage/user/User.html"
@@ -67,21 +71,27 @@ backendApp.filter("customFilter",['$filter', function ($filter) {
         var lowerStr = (actual + "").toLowerCase();
         return lowerStr.indexOf(expected.toLowerCase()) === 0;
     };
+    var selectedComparator = function (actual, expected) {
+        if(expected===1){//匹配有勾的
+            return (actual===expected);
+        }else{
+            return true;//不匹配
+        }
+    };
     return function(array, expression){
         //console.log(array);
-        //console.log(expression);
+        console.log(expression);
         function customComparator(actual, expected) {
             //console.log("actual=%s",actual);
             //console.log("expected=%s",expected);
-
-            //console.log(angular.isObject(expected));
             if(angular.isObject(expected)){
                 //console.log("expected=%s",expected.startWith);
                 if(expected.startWith&&expected.value!=""){
                     return startWithComparator(actual, expected.value);
+                } else if(expected.selected){
+                    return selectedComparator(actual, expected.value);
                 }
                 return true;
-                //console.log("expected=%s",expected);
             }else{
                 return standardComparator(actual, expected);
             }
@@ -93,6 +103,8 @@ backendApp.directive("tableSelectCheckbox", TableSelectCheckbox);
 backendApp.directive("rowSelectCheckbox", RowSelectCheckbox);
 backendApp.directive("headCheckbox", HeadCheckbox);
 backendApp.directive("rowCheckbox", RowCheckbox);
+backendApp.directive("rowReadonlyCheckbox", RowReadonlyCheckbox);
+backendApp.directive("checkboxFilter", CheckboxFilter);
 backendApp.directive("textStartWith", TextStartWith);
 // Common directive for Focus
 backendApp.directive('focus', Focus);

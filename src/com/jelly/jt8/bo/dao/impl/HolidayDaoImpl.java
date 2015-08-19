@@ -71,7 +71,7 @@ public class HolidayDaoImpl extends BaseDao implements HolidayDao{
         PreparedStatement stmt = null;
         try {
             int count = 0;
-            stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            stmt = conn.prepareStatement(INSERT);
             for (Holiday holiday : holidayList) {
                 stmt.setString(1, holiday.getExchange_id());
                 stmt.setString(2, holiday.getMain_symbol_id());
@@ -85,7 +85,6 @@ public class HolidayDaoImpl extends BaseDao implements HolidayDao{
                 }
             }
             stmt.executeBatch();
-//            stmt.executeUpdate();
         } catch (Exception e){
             throw e;
         } finally {

@@ -2,18 +2,15 @@
  * Created by user on 2015/8/6.
  */
 backendApp.controller("RoleController", RoleController);
-function RoleController($scope, $translatePartialLoader, $translate, $log, $modal, request, locale) {
+function RoleController($scope, $translatePartialLoader, $translate, $log, $modal, Restangular, RoleRestangular, RoleService, request, locale) {
     $translatePartialLoader.addPart("role");
     $translate.refresh();
-    $log.info("RoleController");
+    $log.info("RoleController!!");
+    //var roles = RoleRestangular.all("role");
 
     $scope.getRoleList = function () {
-        request.http({
-            method: "GET",
-            url: "/role/select"
-        }).success(function (data, status, headers, config) {
+        RoleService.getList().then(function (data) {
             $scope.rowCollection = data;
-            //$scope.gridOptions.data = data;
             $scope.getPermissionList();
         });
     };
@@ -33,29 +30,33 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.removeRoleClick = function (row) {
-        request.json("/role/delete", row).
-            success(function (data, status, headers, config) {
-                var index = $scope.rowCollection.indexOf(row);
-                $scope.rowCollection.splice(index, 1);
-            }
-        );
+        row.remove().then(function () {
+            var index = $scope.rowCollection.indexOf(row);
+            $scope.rowCollection.splice(index, 1);
+        });
     };
 
     $scope.editRoleClick = function (row) {
         $scope.currentAction = Action.Edit;
-        $scope.editRole = angular.copy(row);
+        $scope.editRole = row.clone();
         $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("editRole");
         $scope.openEditRole();
     };
 
     $scope.allocatePermissionClick = function (row) {
-        request.json("/role/select/rolePermissionList", row).
-            success(function (data, status, headers, config) {
-                $scope.editRole = data;
-                $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
-                $scope.openAllocatePermission();
-            }
-        );
+        //setRestangularFields
+        row.getList("permission").then(function (data) {
+            $scope.editRole = data;
+            $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
+            $scope.openAllocatePermission();
+        });
+        //request.json("/role/select/rolePermissionList", row).
+        //    success(function (data, status, headers, config) {
+        //        $scope.editRole = data;
+        //        $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
+        //        $scope.openAllocatePermission();
+        //    }
+        //);
     };
 
     $scope.addRoleClick = function () {
@@ -134,25 +135,20 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.getRoleList();
 }
 
-backendApp.controller('roleEditCtrl', function ($scope, $modalInstance, $log, request, locale, title, editObj, currentAction) {
+backendApp.controller('roleEditCtrl', function ($scope, $modalInstance, $log, RoleService, request, locale, title, editObj, currentAction) {
     $scope.title = title;
     $scope.editObj = editObj;
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
-                request.json("/role/insert", $scope.editObj).
-                    success(function (data, status, headers, config) {
-                        $modalInstance.close(data);
-                    }
-                );
+                RoleService.post( $scope.editObj).then(function () {
+                    $modalInstance.close($scope.editObj);
+                });
                 break;
             case Action.Edit:
-                request.json("/role/update", $scope.editObj).
-                    success(function (data, status, headers, config) {
-                        $log.info("success");
-                        $modalInstance.close(data);
-                    }
-                );
+                $scope.editObj.put().then(function () {
+                    $modalInstance.close();
+                });
                 break;
         }
     };

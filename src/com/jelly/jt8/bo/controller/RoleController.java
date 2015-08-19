@@ -30,7 +30,7 @@ public class RoleController extends BaseController {
     @Qualifier("roleService")
     private RoleService roleService;
 
-    @RequestMapping(value = "/select", method = RequestMethod.GET)
+    @RequestMapping( method = RequestMethod.GET)
     public
     @ResponseBody
     ResponseEntity<String> getRoleList() {
@@ -49,7 +49,57 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/select/rolePermissionList", method = RequestMethod.POST)
+    @RequestMapping( method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResponseEntity<String> addRole(@RequestBody Role role) {
+        System.out.println("addRole");
+        Gson gson = new Gson();
+        String payload = "";
+        try {
+            roleService.addRole(role);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        payload = gson.toJson(role);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping( method = RequestMethod.PUT)
+    public
+    @ResponseBody
+    ResponseEntity<String> updateRole(@RequestBody Role role) {
+        System.out.println("updateRole");
+        Gson gson = new Gson();
+        String payload = "";
+        try {
+            roleService.updateRole(role);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        payload = gson.toJson(role);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping( method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    ResponseEntity<String> deleteRole(@RequestBody Role role) {
+        Gson gson = new Gson();
+        String payload = "";
+        try {
+            roleService.deleteRole(role);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        payload = gson.toJson(role);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value = "/permission", method = RequestMethod.GET)
     public
     @ResponseBody
     ResponseEntity<String> getRolePermissionList(@RequestBody Role role) {
@@ -67,54 +117,6 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/insert", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    ResponseEntity<String> addRole(@RequestBody Role role) {
-        System.out.println("addRole");
-        Gson gson = new Gson();
-        String payload = "";
-        try {
-            roleService.addRole(role);
-        } catch (Exception e) {
-            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
-        }
-
-        payload = gson.toJson(role);
-        return getResponseEntity(payload);
-    }
-
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    ResponseEntity<String> updateRole(@RequestBody Role role) {
-        Gson gson = new Gson();
-        String payload = "";
-        try {
-            roleService.updateRole(role);
-        } catch (Exception e) {
-            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
-        }
-
-        payload = gson.toJson(role);
-        return getResponseEntity(payload);
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    ResponseEntity<String> deleteRole(@RequestBody Role role) {
-        Gson gson = new Gson();
-        String payload = "";
-        try {
-            roleService.deleteRole(role);
-        } catch (Exception e) {
-            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
-        }
-
-        payload = gson.toJson(role);
-        return getResponseEntity(payload);
-    }
 
     @RequestMapping(value = "/allocatePermission", method = RequestMethod.POST)
     public

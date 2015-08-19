@@ -1,7 +1,7 @@
 /**
  * Created by user on 2015/8/5.
  */
-var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ngRoute", "ngResource", "requestFactory", "localeFactory"]);
+var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ngRoute", "ngResource", "restangular", "requestFactory", "localeFactory"]);
 backendApp.factory('PermissionService', ['$resource', function ($resource) {
     return $resource('api/permission/:permissionId',
         {},
@@ -22,6 +22,19 @@ backendApp.factory('ExchangeService', ['$resource', function ($resource) {
     return $resource('api/exchange');
 }]);
 backendApp.constant("HostUrl", "http://localhost:8080/Backend/api");
+backendApp.config(function (RestangularProvider) {
+   RestangularProvider.setBaseUrl("/Backend/api");
+    RestangularProvider.setDefaultHeaders({'Content-Type': 'application/json'});
+});
+backendApp.factory('RoleRestangular', function(Restangular) {
+    return Restangular.withConfig(function(RestangularConfigurer) {
+        RestangularConfigurer.setBaseUrl('/Backend/api');
+    });
+});
+backendApp.factory('RoleService', function(Restangular) {
+    return Restangular.service('role');
+});
+
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
         when("/A1", {

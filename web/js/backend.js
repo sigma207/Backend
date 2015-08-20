@@ -18,30 +18,21 @@ backendApp.factory('SymbolTradableDailyTempService', ['$resource', function ($re
 backendApp.factory('SymbolTradableDailyService', ['$resource', function ($resource) {
     return $resource('api/symbolTradableDaily/exchange/:exchange_id/mainSymbol/:main_symbol_id');
 }]);
-backendApp.factory('ExchangeService', ['$resource', function ($resource) {
-    return $resource('api/exchange');
-}]);
+
 backendApp.constant("HostUrl", "http://localhost:8080/Backend/api");
 backendApp.config(function (RestangularProvider) {
    RestangularProvider.setBaseUrl("/Backend/api");
     RestangularProvider.setDefaultHeaders({'Content-Type': 'application/json'});
 });
-backendApp.factory('RoleRestangular', function(Restangular) {
-    //return Restangular.withConfig(function(RestangularConfigurer) {
-    //    RestangularConfigurer.setBaseUrl('/Backend/api/role');
-    //});
 
-    var restAngular = Restangular.withConfig(function(Configurer) {
-        Configurer.setBaseUrl('/Backend/api');
-    });
-    var service = restAngular.all('role');
-    return service;
-    //return {
-    //    getMessages: function() {
-    //        return service.getList();
-    //    }
-    //};
+backendApp.factory('ExchangeService', function(Restangular) {
+    return Restangular.service('exchange');
 });
+
+backendApp.factory('UserService', function(Restangular) {
+    return Restangular.service('users');
+});
+
 backendApp.factory('RoleService', function(Restangular) {
     return Restangular.service('role');
 });
@@ -49,6 +40,7 @@ backendApp.factory('RoleService', function(Restangular) {
 backendApp.factory('PermissionService', function(Restangular) {
     return Restangular.service('permission');
 });
+
 backendApp.factory('PermissionMoveService', function(Restangular) {
     return Restangular.service('permission/move');
 });

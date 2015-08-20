@@ -4,23 +4,23 @@ package com.jelly.jt8.bo.model;
  * Created by user on 2015/7/30.
  */
 public class UserRole {
-    private String login_id;
+    private int user_id;
     private int role_id;
 
     public UserRole() {
     }
 
-    public UserRole(String login_id, int role_id) {
-        this.login_id = login_id;
+    public UserRole(int user_id, int role_id) {
+        this.user_id = user_id;
         this.role_id = role_id;
     }
 
-    public String getLogin_id() {
-        return login_id;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setLogin_id(String login_id) {
-        this.login_id = login_id;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public int getRole_id() {

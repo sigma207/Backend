@@ -20,11 +20,11 @@ import java.util.List;
  */
 @Repository("UserDao")
 public class UserDaoImpl extends BaseDao implements UserDao {
-    private final static String QUERY = "SELECT login_id, password, create_time, permission, concurrent, retry, max_retry, active_date, duration, expire_date, update_time," +
+    private final static String QUERY = "SELECT user_id, login_id, password, create_time, permission, concurrent, retry, max_retry, active_date, duration, expire_date, update_time," +
             " is_active, login_time, last_login_time, org_id FROM bo_user ";
     private final static String INSERT = "INSERT INTO bo_user (login_id, password, create_time, permission, concurrent, retry, max_retry, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-    private final static String UPDATE = "UPDATE bo_user SET update_time = ? WHERE login_id = ? ";
-    private final static String DELETE = "DELETE bo_user WHERE login_id = ? ";
+    private final static String UPDATE = "UPDATE bo_user SET update_time = ? WHERE user_id = ? ";
+    private final static String DELETE = "DELETE bo_user WHERE user_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -71,7 +71,7 @@ public class UserDaoImpl extends BaseDao implements UserDao {
         try {
             stmt = connection.prepareStatement(DELETE);
 
-            stmt.setString(1, user.getLogin_id());
+            stmt.setInt(1, user.getUser_id());
             stmt.executeUpdate();
         } catch (Exception e){
             throw e;
@@ -93,7 +93,7 @@ public class UserDaoImpl extends BaseDao implements UserDao {
             stmt = connection.prepareStatement(UPDATE);
 
             stmt.setString(1, Utils.updateTime());
-            stmt.setString(2, user.getLogin_id());
+            stmt.setInt(2, user.getUser_id());
         } catch (Exception e){
             throw e;
         } finally {

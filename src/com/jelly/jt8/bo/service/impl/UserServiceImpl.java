@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserRole> selectUserRole(User user) throws Exception {
-        return userRoleDao.selectUserRole(user);
+    public List<UserRole> selectUserRole(int user_id) throws Exception {
+        return userRoleDao.selectUserRole(user_id);
     }
 
     @Override

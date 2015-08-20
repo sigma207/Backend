@@ -20,7 +20,6 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
     };
 
     PermissionService.getList().then(function (data) {
-        $log.info(data);
         $scope.permissionList = data;
         locale.formatPermissionList($scope.permissionList);
         $scope.initPermissionTree();
@@ -266,7 +265,7 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
     };
 }
 
-backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $log, PermissionService, request, locale, title, editPermission, currentAction) {
+backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $log, PermissionService, locale, title, editPermission, currentAction) {
     $scope.title = title;
     $scope.editPermission = editPermission;
     $scope.ok = function () {
@@ -278,21 +277,11 @@ backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $l
                 PermissionService.post( $scope.editPermission).then(function (data) {
                     $modalInstance.close(data);
                 });
-                //PermissionService.save({}, $scope.editPermission, function (data) {
-                //    delete data.$promise;
-                //    delete data.$resolved;
-                //    $modalInstance.close(data);
-                //});
                 break;
             case Action.Edit:
                 $scope.editPermission.put().then(function (data) {
                     $modalInstance.close(data);
                 });
-                //PermissionService.save({permissionId:$scope.editPermission.permission_id}, $scope.editPermission, function (data) {
-                //    delete data.$promise;
-                //    delete data.$resolved;
-                //    $modalInstance.close(data);
-                //});
                 break;
         }
     };

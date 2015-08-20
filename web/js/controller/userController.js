@@ -2,28 +2,12 @@
  * Created by user on 2015/8/7.
  */
 backendApp.controller("UserController", UserController);
-function UserController($scope, $translatePartialLoader, $translate, $log, $modal, RoleService, request) {
+function UserController($scope, $translatePartialLoader, $translate, $log, $modal, UserService, RoleService) {
     $translatePartialLoader.addPart("user");
     $translate.refresh();
 
-    $scope.gridOptions = {};
-    $scope.gridOptions.enableHorizontalScrollbar = 0;
-    $scope.gridOptions.columnDefs = [
-        {field: 'login_id', displayName: 'loginId', headerCellFilter: 'translate'},
-        {
-            name: 'edit', displayName: 'userManage', headerCellFilter: 'translate',
-            cellTemplate: '' +
-            '<button type="button" class="btn-xs btn-primary" translate="removeUser" ng-click="grid.appScope.removeUserClick(row)" ></button>' +
-            //'<button type="button" class="btn-xs btn-primary" translate="editUser" ng-click="grid.appScope.editUserClick(row)" ></button>' +
-            '<button type="button" class="btn-xs btn-primary" translate="allocateRole" ng-click="grid.appScope.allocateRoleClick(row)" ></button>'
-        }
-    ];
-
     $scope.getUserList = function () {
-        request.http({
-            method: "GET",
-            url: "/user/select"
-        }).success(function (data, status, headers, config) {
+        UserService.getList().then(function (data) {
             $scope.rowCollection = data;
             $scope.getRoleList();
         });
@@ -33,12 +17,6 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
         RoleService.getList().then(function (data) {
             $scope.roleList = data;
         });
-        //request.http({
-        //    method: "GET",
-        //    url: "/role/select"
-        //}).success(function (data, status, headers, config) {
-        //    $scope.roleList = data;
-        //});
     };
 
     $scope.queryClick = function () {
@@ -46,12 +24,10 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.removeUserClick = function (row) {
-        request.json("/user/delete", row).
-            success(function (data, status, headers, config) {
-                var index = $scope.rowCollection.indexOf(row);
-                $scope.rowCollection.splice(index, 1);
-            }
-        );
+        row.remove().then(function () {
+            var index = $scope.rowCollection.indexOf(row);
+            $scope.rowCollection.splice(index, 1);
+        });
     };
 
     $scope.editUserClick = function (row) {
@@ -62,14 +38,12 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.allocateRoleClick = function (row) {
-        $scope.editUser = angular.copy(row);
-        request.json("/user/select/userRoleList", row).
-            success(function (data, status, headers, config) {
-                $scope.userRoleList = data;
-                $scope.modalTitle = $scope.editUser.login_id+":"+$translate.instant("allocateRole");
-                $scope.openAllocateRole();
-            }
-        );
+        $scope.editUser = row;
+        row.getList("userRoles").then(function (data) {
+            $scope.userRoleList = data;
+            $scope.modalTitle = $scope.editUser.login_id+":"+$translate.instant("allocateRole");
+            $scope.openAllocateRole();
+        });
     };
 
     $scope.addUserClick = function () {
@@ -150,24 +124,20 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.getUserList();
 }
 
-backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, request, locale, title, editObj, currentAction) {
+backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, UserService, locale, title, editObj, currentAction) {
     $scope.title = title;
     $scope.editObj = editObj;
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
-                request.json("/user/insert", $scope.editObj).
-                    success(function (data, status, headers, config) {
-                        $modalInstance.close(data);
-                    }
-                );
+                UserService.post( $scope.editObj).then(function (data) {
+                    $modalInstance.close(data);
+                });
                 break;
             case Action.Edit:
-                request.json("/user/update", $scope.editObj).
-                    success(function (data, status, headers, config) {
-                        $modalInstance.close(data);
-                    }
-                );
+                $scope.editObj.put().then(function (data) {
+                    $modalInstance.close();
+                });
                 break;
         }
     };
@@ -177,7 +147,7 @@ backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, re
     };
 });
 
-backendApp.controller('allocateRoleCtrl', function ($scope, $modalInstance, $log, $timeout, request, title, editObj, userRoleList, roleList) {
+backendApp.controller('allocateRoleCtrl', function ($scope, $modalInstance, $log, $timeout, title, editObj, userRoleList, roleList) {
     $scope.title = title;
     $scope.editObj = editObj;
     $scope.userRoleList = userRoleList;
@@ -199,17 +169,14 @@ backendApp.controller('allocateRoleCtrl', function ($scope, $modalInstance, $log
     };
 
     $scope.save = function () {
-        $log.info($scope.selectedRoleList );
         var list = $scope.selectedRoleList;
         $scope.editObj.userRoleList = [];
         for(var i= 0,count=list.length;i<count;i++){
-            $scope.editObj.userRoleList.push({login_id: $scope.editObj.login_id, role_id: list[i].role_id});
+            $scope.editObj.userRoleList.push({user_id: $scope.editObj.user_id, role_id: list[i].role_id});
         }
-        request.json("/user/allocateUserRole", $scope.editObj).
-            success(function (data, status, headers, config) {
-                $modalInstance.close(data);
-            }
-        );
+        $scope.editObj.post("userRoles").then(function (data) {
+            $modalInstance.close(data);
+        });
     };
 
     $scope.cancel = function () {

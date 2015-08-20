@@ -19,17 +19,17 @@ import java.util.List;
  */
 @Repository("UserRoleDao")
 public class UserRoleDaoImpl extends BaseDao implements UserRoleDao {
-    private final static String QUERY = "SELECT login_id, role_id FROM bo_user_role ";
-    private final static String WHERE_ROLE = "WHERE login_id = ? ";
-    private final static String INSERT = "INSERT INTO bo_user_role (login_id, role_id) VALUES (?, ?);";
-    private final static String DELETE = "DELETE bo_user_role WHERE login_id = ? ";
+    private final static String QUERY = "SELECT user_id, role_id FROM bo_user_role ";
+    private final static String WHERE_ROLE = "WHERE user_id = ? ";
+    private final static String INSERT = "INSERT INTO bo_user_role (user_id, role_id) VALUES (?, ?);";
+    private final static String DELETE = "DELETE bo_user_role WHERE user_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
     private DataSource jt8Ds;
 
     @Override
-    public List<UserRole> selectUserRole(User user) throws Exception {
+    public List<UserRole> selectUserRole(int user_id) throws Exception {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Connection conn = null;
@@ -39,7 +39,7 @@ public class UserRoleDaoImpl extends BaseDao implements UserRoleDao {
         try {
             conn = jt8Ds.getConnection();
             stmt = conn.prepareStatement(QUERY + WHERE_ROLE);
-            stmt.setString(1, user.getLogin_id());
+            stmt.setInt(1, user_id);
             rs = stmt.executeQuery();
             RsMapper.map(rs, list, UserRole.class);
         } catch (Exception e){
@@ -67,7 +67,7 @@ public class UserRoleDaoImpl extends BaseDao implements UserRoleDao {
         PreparedStatement stmt = null;
         try {
             stmt = connection.prepareStatement(INSERT);
-            stmt.setString(1, userRole.getLogin_id());
+            stmt.setInt(1, userRole.getUser_id());
             stmt.setInt(2, userRole.getRole_id());
             stmt.executeUpdate();
         } catch (Exception e){
@@ -89,7 +89,7 @@ public class UserRoleDaoImpl extends BaseDao implements UserRoleDao {
         try {
             stmt = connection.prepareStatement(DELETE);
 
-            stmt.setString(1, user.getLogin_id());
+            stmt.setInt(1, user.getUser_id());
             stmt.executeUpdate();
         } catch (Exception e){
             throw e;

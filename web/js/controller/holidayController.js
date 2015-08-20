@@ -17,7 +17,7 @@ function HolidayController($scope, $translatePartialLoader, $translate, $log, $m
     };
 
     $scope.getExchangeList = function () {
-        ExchangeService.query({},{}, function (data) {
+        ExchangeService.getList().then(function (data) {
             $scope.exchangeList = data;
             $scope.selectedExchange = $scope.exchangeList[0];
             $scope.exchangeChange();

@@ -2,7 +2,7 @@
  * Created by user on 2015/8/6.
  */
 backendApp.controller("RoleController", RoleController);
-function RoleController($scope, $translatePartialLoader, $translate, $log, $modal, Restangular, RoleService, request, locale) {
+function RoleController($scope, $translatePartialLoader, $translate, $log, $modal, Restangular, RoleService, PermissionService, locale) {
     $translatePartialLoader.addPart("role");
     $translate.refresh();
     $log.info("RoleController!!");
@@ -16,10 +16,7 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.getPermissionList = function () {
-        request.http({
-            method: "GET",
-            url: "/permission"
-        }).success(function (data, status, headers, config) {
+        PermissionService.getList().then(function (data) {
             $scope.permissionList = data;
             locale.formatPermissionList($scope.permissionList);
         });
@@ -44,20 +41,12 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.allocatePermissionClick = function (row) {
-        //setRestangularFields
         row.getList("permission").then(function (data) {
             row.permissionList = data;
             $scope.editRole = row;
             $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
             $scope.openAllocatePermission();
         });
-        //request.json("/role/permission", row).
-        //    success(function (data, status, headers, config) {
-        //        $scope.editRole = data;
-        //        $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
-        //        $scope.openAllocatePermission();
-        //    }
-        //);
     };
 
     $scope.addRoleClick = function () {
@@ -194,11 +183,6 @@ backendApp.controller('allocatePermissionCtrl', function ($scope, $modalInstance
         $scope.editObj.post("permission").then(function () {
             $modalInstance.close();
         });
-        //request.json("/role/allocatePermission", $scope.editObj).
-        //    success(function (data, status, headers, config) {
-        //        $modalInstance.close(data);
-        //    }
-        //);
     };
 
     $scope.cancel = function () {

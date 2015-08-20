@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,17 +17,15 @@ import java.util.List;
  * Created by user on 2015/7/30.
  */
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController extends BaseController{
     @Autowired
     @Qualifier("userService")
     private UserService userService;
 
-    @RequestMapping(value = "/select", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<String> selectUser() {
-        System.out.println("selectUser");
-
         List<User> list = null;
         String payload = "";
         try {
@@ -45,15 +40,13 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/select/userRoleList", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/userRoles", method = RequestMethod.GET)
     public @ResponseBody
-    ResponseEntity<String> selectUserRole(@RequestBody User user) {
-        System.out.println("selectUserRole");
-
+    ResponseEntity<String> selectUserRole(@PathVariable("id") int id) {
         List<UserRole> list = null;
         String payload = "";
         try {
-            list = userService.selectUserRole(user);
+            list = userService.selectUserRole(id);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
@@ -64,10 +57,8 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/insert",method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> addRole(@RequestBody User user){
-        System.out.println("insertUser");
-
         String payload = "";
         try {
             userService.insertUser(user);
@@ -81,9 +72,8 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/delete",method = RequestMethod.POST)
+    @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
     public @ResponseBody ResponseEntity<String> deleteRole(@RequestBody User user){
-
         String payload = "";
         try {
             userService.deleteUser(user);
@@ -97,10 +87,8 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/allocateUserRole",method = RequestMethod.POST)
+    @RequestMapping(value="{id}/userRoles",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> allocateUserRole(@RequestBody User user){
-        System.out.println("allocateUserRole");
-
         String payload = "";
         try {
             userService.allocateUserRole(user);

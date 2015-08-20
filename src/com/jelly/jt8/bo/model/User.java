@@ -1,11 +1,14 @@
 package com.jelly.jt8.bo.model;
 
+import javax.persistence.Id;
 import java.util.List;
 
 /**
  * Created by user on 2015/7/30.
  */
-public class User {
+public class User extends BaseModel{
+    @Id
+    private int user_id;
     private String login_id;
     private String password;
     private String create_time;
@@ -40,6 +43,15 @@ public class User {
 //        this.last_login_time = last_login_time;
 //        this.org_id = org_id;
 //    }
+
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
 
     public String getLogin_id() {
         return login_id;

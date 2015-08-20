@@ -12,7 +12,7 @@ import java.util.List;
  * Created by user on 2015/7/30.
  */
 public interface UserRoleDao {
-    public List<UserRole> selectUserRole(User user) throws Exception;
+    public List<UserRole> selectUserRole(int user_id) throws Exception;
     public void insertUserRole(Connection connection, UserRole userRole) throws Exception;
     public void deleteUserRole(Connection connection, User user) throws Exception;
 }

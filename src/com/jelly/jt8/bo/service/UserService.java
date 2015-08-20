@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserService {
     public List<User> selectUser() throws Exception;
 
-    public List<UserRole> selectUserRole(User user) throws Exception;
+    public List<UserRole> selectUserRole(int user_id) throws Exception;
 
     public void insertUser(User user) throws Exception;
 

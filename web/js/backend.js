@@ -2,16 +2,16 @@
  * Created by user on 2015/8/5.
  */
 var backendApp = angular.module("backendApp", ["pascalprecht.translate", "ui.bootstrap", "smart-table", "ngRoute", "ngResource", "restangular", "requestFactory", "localeFactory"]);
-backendApp.factory('PermissionService', ['$resource', function ($resource) {
-    return $resource('api/permission/:permissionId',
-        {},
-        {
-            deletePermission: {method: 'POST', url: 'api/permission/delete'},
-            move: {method: 'POST', url: 'api/permission/move', isArray: true}
-        }
-        //{charge: {method: 'POST'}, params: {charge: true}, isArray: false}
-    );
-}]);
+//backendApp.factory('PermissionService', ['$resource', function ($resource) {
+//    return $resource('api/permission/:permissionId',
+//        {},
+//        {
+//            deletePermission: {method: 'POST', url: 'api/permission/delete'},
+//            move: {method: 'POST', url: 'api/permission/move', isArray: true}
+//        }
+//        //{charge: {method: 'POST'}, params: {charge: true}, isArray: false}
+//    );
+//}]);
 backendApp.factory('SymbolTradableDailyTempService', ['$resource', function ($resource) {
     return $resource('api/symbolTradableDailyTemp/exchange/:exchange_id/mainSymbol/:main_symbol_id');
 }]);
@@ -27,12 +27,30 @@ backendApp.config(function (RestangularProvider) {
     RestangularProvider.setDefaultHeaders({'Content-Type': 'application/json'});
 });
 backendApp.factory('RoleRestangular', function(Restangular) {
-    return Restangular.withConfig(function(RestangularConfigurer) {
-        RestangularConfigurer.setBaseUrl('/Backend/api');
+    //return Restangular.withConfig(function(RestangularConfigurer) {
+    //    RestangularConfigurer.setBaseUrl('/Backend/api/role');
+    //});
+
+    var restAngular = Restangular.withConfig(function(Configurer) {
+        Configurer.setBaseUrl('/Backend/api');
     });
+    var service = restAngular.all('role');
+    return service;
+    //return {
+    //    getMessages: function() {
+    //        return service.getList();
+    //    }
+    //};
 });
 backendApp.factory('RoleService', function(Restangular) {
     return Restangular.service('role');
+});
+
+backendApp.factory('PermissionService', function(Restangular) {
+    return Restangular.service('permission');
+});
+backendApp.factory('PermissionMoveService', function(Restangular) {
+    return Restangular.service('permission/move');
 });
 
 backendApp.config(["$routeProvider", function ($routeProvider) {
@@ -149,7 +167,7 @@ function BackendController($scope, $translate, $location, $log, PermissionServic
         }
     };
 
-    PermissionService.query(function (data) {
+    PermissionService.getList().then(function (data) {
         $scope.menuList = data;
         locale.formatPermissionList($scope.menuList);
         $scope.initMenuTree();

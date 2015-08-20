@@ -1,11 +1,13 @@
 package com.jelly.jt8.bo.model;
 
+import javax.persistence.Id;
 import java.util.List;
 
 /**
  * Created by user on 2015/7/28.
  */
-public class Role {
+public class Role extends BaseModel{
+    @Id
     private int role_id;
     private int parent_role_id;
     private String role_code;

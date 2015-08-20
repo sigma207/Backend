@@ -2,7 +2,7 @@
  * Created by user on 2015/8/6.
  */
 backendApp.controller("PermissionController", PermissionController);
-function PermissionController($scope, $modal, $log, PermissionService, locale) {
+function PermissionController($scope, $modal, $log, Restangular, PermissionService, PermissionMoveService, locale) {
     $log.info("PermissionController!!");
     $scope.editSize = undefined;
     $scope.editTitle = "新增節點";
@@ -19,7 +19,8 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
         moveType: undefined
     };
 
-    PermissionService.query(function (data) {
+    PermissionService.getList().then(function (data) {
+        $log.info(data);
         $scope.permissionList = data;
         locale.formatPermissionList($scope.permissionList);
         $scope.initPermissionTree();
@@ -79,7 +80,8 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
                         $scope.nodeMoveSetting.moveType = "prev";
                         $scope.nodeMoveSetting.moveAction = Action.MoveFirst;
 
-                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
+                        PermissionMoveService.post($scope.nodeMoveSetting).then($scope.onPermissionMove);
+                        //PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu[Action.MoveUp] = {
@@ -91,8 +93,14 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
                         $scope.nodeMoveSetting.treeNode = currentNode;
                         $scope.nodeMoveSetting.moveType = "prev";
                         $scope.nodeMoveSetting.moveAction = Action.MoveUp;
-
-                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
+                        //$log.info(currentNode);
+                        //Restangular.all("permission").all("move").post($scope.nodeMoveSetting).then($scope.onPermissionMove);
+                        PermissionMoveService.post($scope.nodeMoveSetting).then($scope.onPermissionMove);
+                        //Restangular.copy(currentNode).customPOST("move").then($scope.onPermissionMove);
+                        //Restangular.copy(currentNode).all("move").post($scope.onPermissionMove).then($scope.onPermissionMove);
+                        //PermissionService.post("move",currentNode).then($scope.onPermissionMove);
+                        //Restangular.copy(currentNode).post("move").then($scope.onPermissionMove);//http://localhost:8080/Backend/api/undefined/44/move
+                        //PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu[Action.MoveDown] = {
@@ -105,7 +113,8 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
                         $scope.nodeMoveSetting.moveType = "next";
                         $scope.nodeMoveSetting.moveAction = Action.MoveDown;
 
-                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
+                        PermissionMoveService.post($scope.nodeMoveSetting).then($scope.onPermissionMove);
+                        //PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu[Action.MoveLast] = {
@@ -117,7 +126,8 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
                         $scope.nodeMoveSetting.moveType = "next";
                         $scope.nodeMoveSetting.moveAction = Action.MoveLast;
 
-                        PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
+                        PermissionMoveService.post($scope.nodeMoveSetting).then($scope.onPermissionMove);
+                        //PermissionService.move({},$scope.nodeMoveSetting, $scope.onPermissionMove);
                     }
                 };
                 menu['sep2'] = '';
@@ -125,7 +135,7 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
                     name: "編輯",
                     callback: function () {
                         $scope.currentAction = Action.Edit;
-                        $scope.editPermission = currentNode;
+                        $scope.editPermission = Restangular.copy(currentNode);
                         locale.convertDashToBaseLine($scope.editPermission.permissionNameMap);
                         $scope.editTitle = currentNode.name + ":編輯";
                         $scope.open();
@@ -134,15 +144,14 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
                 menu[Action.Remove] = {
                     name: "移除",
                     callback: function () {
-                        //PermissionService.remove({permissionId:currentNode.permission_id},{}, function (data) {
-                        //    $log.info("remove");
-                        //    var selectedNode = $scope.permissionZTreeObj.getSelectedNodes()[0];
-                        //    $scope.permissionZTreeObj.removeNode(selectedNode);
-                        //});
-                        PermissionService.deletePermission({},currentNode, function (data) {
+                        currentNode.remove().then(function (data) {
                             var selectedNode = $scope.permissionZTreeObj.getSelectedNodes()[0];
                             $scope.permissionZTreeObj.removeNode(selectedNode);
                         });
+                        //PermissionService.deletePermission({},currentNode, function (data) {
+                        //    var selectedNode = $scope.permissionZTreeObj.getSelectedNodes()[0];
+                        //    $scope.permissionZTreeObj.removeNode(selectedNode);
+                        //});
                     }
                 };
                 return {
@@ -245,7 +254,9 @@ function PermissionController($scope, $modal, $log, PermissionService, locale) {
                 case Action.Edit:
                     selectedNode = $scope.permissionZTreeObj.getSelectedNodes()[0];
                     selectedNode.permission_code = $scope.editPermission.permission_code;
+                    selectedNode.permissionNameMap = $scope.editPermission.permissionNameMap;
                     locale.node(selectedNode, $scope.editPermission);
+                    $log.info(selectedNode);
                     $scope.permissionZTreeObj.updateNode(selectedNode);
                     break;
             }
@@ -260,22 +271,28 @@ backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $l
     $scope.editPermission = editPermission;
     $scope.ok = function () {
         locale.convertBaseLineToDash($scope.editPermission.permissionNameMap);
-        $log.info($scope.editPermission);
+        //$log.info($scope.editPermission);
         switch (currentAction) {
             case Action.NewNode:
             case Action.NewChildNode:
-                PermissionService.save({}, $scope.editPermission, function (data) {
-                    delete data.$promise;
-                    delete data.$resolved;
+                PermissionService.post( $scope.editPermission).then(function (data) {
                     $modalInstance.close(data);
                 });
+                //PermissionService.save({}, $scope.editPermission, function (data) {
+                //    delete data.$promise;
+                //    delete data.$resolved;
+                //    $modalInstance.close(data);
+                //});
                 break;
             case Action.Edit:
-                PermissionService.save({permissionId:$scope.editPermission.permission_id}, $scope.editPermission, function (data) {
-                    delete data.$promise;
-                    delete data.$resolved;
+                $scope.editPermission.put().then(function (data) {
                     $modalInstance.close(data);
                 });
+                //PermissionService.save({permissionId:$scope.editPermission.permission_id}, $scope.editPermission, function (data) {
+                //    delete data.$promise;
+                //    delete data.$resolved;
+                //    $modalInstance.close(data);
+                //});
                 break;
         }
     };

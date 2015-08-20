@@ -28,7 +28,7 @@ public class RolePermissionDaoImpl extends BaseDao implements RolePermissionDao 
     private DataSource jt8Ds;
 
     @Override
-    public List<RolePermission> selectRolePermissionByRole(Role role) throws Exception {
+    public List<RolePermission> selectRolePermission(int id) throws Exception {
         PreparedStatement stmt = null;
         ResultSet rs = null;
         Connection conn = null;
@@ -38,7 +38,7 @@ public class RolePermissionDaoImpl extends BaseDao implements RolePermissionDao 
         try {
             conn = jt8Ds.getConnection();
             stmt = conn.prepareStatement(QUERY + WHERE_ROLE);
-            stmt.setInt(1, role.getRole_id());
+            stmt.setInt(1, id);
             rs = stmt.executeQuery();
             RsMapper.map(rs, list, RolePermission.class);
         } catch (Exception e){

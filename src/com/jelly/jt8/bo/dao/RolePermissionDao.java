@@ -10,7 +10,7 @@ import java.util.List;
  * Created by user on 2015/7/28.
  */
 public interface RolePermissionDao {
-    public List<RolePermission> selectRolePermissionByRole(Role role) throws Exception;
+    public List<RolePermission> selectRolePermission(int id) throws Exception;
     public void insertRolePermission(Connection connection, RolePermission rolePermission) throws Exception;
     public void deleteRolePermissionByRole(Connection connection, Role role) throws Exception;
 }

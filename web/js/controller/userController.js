@@ -2,7 +2,7 @@
  * Created by user on 2015/8/7.
  */
 backendApp.controller("UserController", UserController);
-function UserController($scope, $translatePartialLoader, $translate, $log, $modal, request) {
+function UserController($scope, $translatePartialLoader, $translate, $log, $modal, RoleService, request) {
     $translatePartialLoader.addPart("user");
     $translate.refresh();
 
@@ -30,12 +30,15 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     };
 
     $scope.getRoleList = function () {
-        request.http({
-            method: "GET",
-            url: "/role/select"
-        }).success(function (data, status, headers, config) {
+        RoleService.getList().then(function (data) {
             $scope.roleList = data;
         });
+        //request.http({
+        //    method: "GET",
+        //    url: "/role/select"
+        //}).success(function (data, status, headers, config) {
+        //    $scope.roleList = data;
+        //});
     };
 
     $scope.queryClick = function () {

@@ -69,9 +69,8 @@ public class PermissionController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value="/{permissionId}",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updatePermission(@PathVariable("permissionId") int permissionId ,@RequestBody Permission permission){
-        System.out.println("updatePermissionById"+permissionId);
+    @RequestMapping(value = "{id}",method = RequestMethod.PUT)
+    public @ResponseBody ResponseEntity<String> updatePermission(@RequestBody Permission permission){
 
         String payload = "";
         try {
@@ -86,24 +85,7 @@ public class PermissionController extends BaseController{
         return getResponseEntity(payload);
     }
 
-//    @RequestMapping(value="/{permissionId}",method = RequestMethod.DELETE)
-//    public @ResponseBody ResponseEntity<String> removePermission(@PathVariable("permissionId") int permissionId){
-//        System.out.println("deletePermission");
-//
-//        String payload = "";
-//        try {
-//            permissionService.deletePermission(permission);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
-//        }
-//
-//        Gson gson = new Gson();
-//        payload = gson.toJson(permission);
-//        return getResponseEntity(payload);
-//    }
-
-    @RequestMapping(value="/delete",method = RequestMethod.POST)
+    @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
     public @ResponseBody ResponseEntity<String> removePermission(@RequestBody Permission permission){
         System.out.println("removePermission");
 
@@ -120,26 +102,7 @@ public class PermissionController extends BaseController{
         return getResponseEntity(payload);
     }
 
-
-
-    @RequestMapping(value="/update",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> updatePermission(@RequestBody Permission permission){
-        System.out.println("updatePermission");
-
-        String payload = "";
-        try {
-            permissionService.updatePermission(permission.getPermission_id(),permission);
-        } catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<String>(HttpStatus.SERVICE_UNAVAILABLE);
-        }
-
-        Gson gson = new Gson();
-        payload = gson.toJson(permission);
-        return getResponseEntity(payload);
-    }
-
-    @RequestMapping(value="/move",method = RequestMethod.POST)
+    @RequestMapping(value = "move",method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<String> movePermission(@RequestBody PermissionMoveSetting permissionMoveSetting){
         System.out.println("movePermission");
 

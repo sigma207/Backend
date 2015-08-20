@@ -40,8 +40,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void selectRolePermission(Role role) throws Exception {
-        role.setPermissionList(rolePermissionDao.selectRolePermissionByRole(role));
+    public List<RolePermission> selectRolePermission(int id) throws Exception {
+        return rolePermissionDao.selectRolePermission(id);
     }
 
     @Override

@@ -2,7 +2,7 @@
  * Created by user on 2015/8/6.
  */
 backendApp.controller("RoleController", RoleController);
-function RoleController($scope, $translatePartialLoader, $translate, $log, $modal, Restangular, RoleRestangular, RoleService, request, locale) {
+function RoleController($scope, $translatePartialLoader, $translate, $log, $modal, Restangular, RoleService, request, locale) {
     $translatePartialLoader.addPart("role");
     $translate.refresh();
     $log.info("RoleController!!");
@@ -38,7 +38,7 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
 
     $scope.editRoleClick = function (row) {
         $scope.currentAction = Action.Edit;
-        $scope.editRole = row.clone();
+        $scope.editRole = Restangular.copy(row);
         $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("editRole");
         $scope.openEditRole();
     };
@@ -46,11 +46,12 @@ function RoleController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.allocatePermissionClick = function (row) {
         //setRestangularFields
         row.getList("permission").then(function (data) {
-            $scope.editRole = data;
+            row.permissionList = data;
+            $scope.editRole = row;
             $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
             $scope.openAllocatePermission();
         });
-        //request.json("/role/select/rolePermissionList", row).
+        //request.json("/role/permission", row).
         //    success(function (data, status, headers, config) {
         //        $scope.editRole = data;
         //        $scope.modalTitle =  $scope.editRole.role_code+":"+$translate.instant("allocatePermission");
@@ -141,12 +142,13 @@ backendApp.controller('roleEditCtrl', function ($scope, $modalInstance, $log, Ro
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
-                RoleService.post( $scope.editObj).then(function () {
+                RoleService.post( $scope.editObj).then(function (data) {
                     $modalInstance.close($scope.editObj);
                 });
                 break;
             case Action.Edit:
-                $scope.editObj.put().then(function () {
+                $scope.editObj.put().then(function (data) {
+                    $log.info(data);
                     $modalInstance.close();
                 });
                 break;
@@ -189,11 +191,14 @@ backendApp.controller('allocatePermissionCtrl', function ($scope, $modalInstance
         for (var i = 0; i < count; i++) {
             $scope.editObj.permissionList.push({permission_id: checkedNodes[i].permission_id, role_id: role_id});
         }
-        request.json("/role/allocatePermission", $scope.editObj).
-            success(function (data, status, headers, config) {
-                $modalInstance.close(data);
-            }
-        );
+        $scope.editObj.post("permission").then(function () {
+            $modalInstance.close();
+        });
+        //request.json("/role/allocatePermission", $scope.editObj).
+        //    success(function (data, status, headers, config) {
+        //        $modalInstance.close(data);
+        //    }
+        //);
     };
 
     $scope.cancel = function () {

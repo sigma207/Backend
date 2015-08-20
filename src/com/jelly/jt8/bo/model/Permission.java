@@ -1,12 +1,14 @@
 package com.jelly.jt8.bo.model;
 
+import javax.persistence.Id;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by user on 2015/7/24.
  */
-public class Permission {
+public class Permission extends BaseModel{
+    @Id
     private int permission_id;
     private String permission_code;
     private int parent_permission_id;

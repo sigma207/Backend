@@ -13,6 +13,6 @@ public interface RoleService {
     public Role addRole(Role role) throws Exception;
     public void deleteRole(Role role) throws Exception;
     public void updateRole(Role role) throws Exception;
-    public void selectRolePermission(Role role) throws Exception;
+    public List<RolePermission> selectRolePermission(int id) throws Exception;
     public void allocatePermission(Role role) throws Exception;
 }

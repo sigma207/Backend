@@ -12,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -66,7 +63,7 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping( method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public
     @ResponseBody
     ResponseEntity<String> updateRole(@RequestBody Role role) {
@@ -83,7 +80,7 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping( method = RequestMethod.DELETE)
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public
     @ResponseBody
     ResponseEntity<String> deleteRole(@RequestBody Role role) {
@@ -99,26 +96,26 @@ public class RoleController extends BaseController {
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(value = "/permission", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}/permission", method = RequestMethod.GET)
     public
     @ResponseBody
-    ResponseEntity<String> getRolePermissionList(@RequestBody Role role) {
+    ResponseEntity<String> getRolePermissionList(@PathVariable("id") int id ) {
         System.out.println("selectRolePermission");
         Gson gson = new Gson();
         List<RolePermission> list = null;
         String payload = "";
+
         try {
-            roleService.selectRolePermission(role);
+            list = roleService.selectRolePermission(id);
         } catch (Exception e) {
             return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
         }
 
-        payload = gson.toJson(role);
+        payload = gson.toJson(list);
         return getResponseEntity(payload);
     }
 
-
-    @RequestMapping(value = "/allocatePermission", method = RequestMethod.POST)
+    @RequestMapping(value = "{id}/permission", method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity<String> allocatePermission(@RequestBody Role role) {

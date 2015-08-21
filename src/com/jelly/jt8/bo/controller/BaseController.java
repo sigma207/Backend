@@ -2,12 +2,14 @@ package com.jelly.jt8.bo.controller;
 
 import com.google.gson.Gson;
 import com.jelly.jt8.bo.model.ErrorJson;
+import com.jelly.jt8.bo.util.ErrorMsg;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 
 /**
  * Created by user on 2015/7/30.
@@ -23,9 +25,16 @@ public class BaseController {
     }
 
     protected ErrorJson exceptionToJson(Exception e) {
-        e.printStackTrace();
         ErrorJson errorJson = new ErrorJson();
-        errorJson.setMessage(e.getMessage());
+        e.printStackTrace();
+        if (e instanceof SQLException) {
+            SQLException se = (SQLException)e;
+            errorJson.setCode(se.getErrorCode());
+            errorJson.setMessage(ErrorMsg.DB_ERROR);
+            se.getSQLState();
+        } else{
+            errorJson.setMessage(e.getMessage());
+        }
         return errorJson;
     }
 }

@@ -21,27 +21,34 @@ backendApp.factory('SymbolTradableDailyService', ['$resource', function ($resour
 
 backendApp.constant("HostUrl", "http://localhost:8080/Backend/api");
 backendApp.config(function (RestangularProvider) {
-   RestangularProvider.setBaseUrl("/Backend/api");
+    RestangularProvider.setBaseUrl("/Backend/api");
     RestangularProvider.setDefaultHeaders({'Content-Type': 'application/json'});
+    RestangularProvider.setErrorInterceptor(function(resp) {
+        //$log.info(resp);
+        var status = resp.status;
+        var errorJson = resp.data;
+        console.log(resp);
+        return true; // 停止promise链
+    });
 });
 
-backendApp.factory('ExchangeService', function(Restangular) {
+backendApp.factory('ExchangeService', function (Restangular) {
     return Restangular.service('exchange');
 });
 
-backendApp.factory('UserService', function(Restangular) {
+backendApp.factory('UserService', function (Restangular) {
     return Restangular.service('users');
 });
 
-backendApp.factory('RoleService', function(Restangular) {
+backendApp.factory('RoleService', function (Restangular) {
     return Restangular.service('role');
 });
 
-backendApp.factory('PermissionService', function(Restangular) {
+backendApp.factory('PermissionService', function (Restangular) {
     return Restangular.service('permission');
 });
 
-backendApp.factory('PermissionMoveService', function(Restangular) {
+backendApp.factory('PermissionMoveService', function (Restangular) {
     return Restangular.service('permission/move');
 });
 
@@ -84,7 +91,7 @@ backendApp.run(function ($rootScope, $translate, $log) {
         $translate.refresh();
     });
 });
-backendApp.filter("customFilter",['$filter', function ($filter) {
+backendApp.filter("customFilter", ['$filter', function ($filter) {
     var filterFilter = $filter('filter');
     var standardComparator = function standardComparator(obj, text) {
         text = ('' + text).toLowerCase();
@@ -95,30 +102,31 @@ backendApp.filter("customFilter",['$filter', function ($filter) {
         return lowerStr.indexOf(expected.toLowerCase()) === 0;
     };
     var selectedComparator = function (actual, expected) {
-        if(expected===1){//匹配有勾的
-            return (actual===expected);
-        }else{
+        if (expected === 1) {//匹配有勾的
+            return (actual === expected);
+        } else {
             return true;//不匹配
         }
     };
-    return function(array, expression){
+    return function (array, expression) {
         //console.log(array);
         console.log(expression);
         function customComparator(actual, expected) {
             //console.log("actual=%s",actual);
             //console.log("expected=%s",expected);
-            if(angular.isObject(expected)){
+            if (angular.isObject(expected)) {
                 //console.log("expected=%s",expected.startWith);
-                if(expected.startWith&&expected.value!=""){
+                if (expected.startWith && expected.value != "") {
                     return startWithComparator(actual, expected.value);
-                } else if(expected.selected){
+                } else if (expected.selected) {
                     return selectedComparator(actual, expected.value);
                 }
                 return true;
-            }else{
+            } else {
                 return standardComparator(actual, expected);
             }
         }
+
         return filterFilter(array, expression, customComparator);
     }
 }]);

@@ -1,0 +1,10 @@
+{
+  "organization": "組織",
+  "org_code": "組織代碼",
+  "org_name": "組織名稱",
+  "add_org": "新增組織",
+  "add_sub_org": "新增下層組織",
+  "edit_org": "組織編輯",
+  "remove_org": "組織刪除",
+  "org_manage":"組織管理"
+}

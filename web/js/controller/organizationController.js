@@ -1,36 +1,38 @@
 /**
- * Created by user on 2015/8/6.
+ * Created by user on 2015/8/22.
  */
-backendApp.controller("PermissionController", PermissionController);
-function PermissionController($scope, $modal, $log, Restangular, PermissionService, PermissionMoveService, locale) {
-    $log.info("PermissionController!!");
-    var tree = $("#permissionTree");
+backendApp.controller("OrganizationController", OrganizationController);
+function OrganizationController($scope, $modal, $log, $translatePartialLoader, $translate, Restangular, OrganizationService, OrganizationMoveService, locale) {
+    $translatePartialLoader.addPart("organization");
+    $translate.refresh();
+
+    var tree = $("#organizationTree");
     var zTreeObj;
     var nodeMoveSetting = {
         targetNode: undefined,
-            treeNode: undefined,
-            moveType: undefined
+        treeNode: undefined,
+        moveType: undefined
     };
     var treeSetting = {
         data: {
             simpleData: {
                 enable: true
+            },
+            key:{
+                name:"org_name"
             }
         }
     };
-    $scope.editSize = undefined;
-    $scope.editTitle = "新增節點";
 
-    PermissionService.getList().then(function (data) {
-        $scope.permissionList = data;
-        locale.formatPermissionList($scope.permissionList);
+    OrganizationService.getList().then(function (data) {
+        $scope.organizationList = data;
         $scope.initTree();
+        //$scope.rowCollection = $scope.organizationList;
     });
 
     $scope.initTree = function () {
-        tree = $("#permissionTree");
-        $.fn.zTree.init(tree, treeSetting, $scope.permissionList);
-        zTreeObj = $.fn.zTree.getZTreeObj("permissionTree");
+        $.fn.zTree.init(tree, treeSetting, $scope.organizationList);
+        zTreeObj = $.fn.zTree.getZTreeObj("organizationTree");
         zTreeObj.expandAll(true);
         $scope.initTreeContextMenu();
     };
@@ -51,81 +53,80 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
                 zTreeObj.selectNode(currentNode);
                 var menu = {};
                 menu[Action.NewNode] = {
-                    name: "新增節點",
+                    name: $translate.instant("add_org"),
                     callback: function () {
-                        $log.info(Action.NewNode);
                         $scope.currentAction = Action.NewNode;
                         if (currentNode.level == 0) {
                             $scope.editNewObject();
                         } else {
                             $scope.editNewObject(currentNode.getParentNode());
                         }
-                        $scope.editTitle = "新增節點";
+                        $scope.editTitle = $translate.instant("add_org");
                         $scope.open();
                     }
                 };
                 menu[Action.NewChildNode] = {
-                    name: "新增子節點",
+                    name: $translate.instant("add_sub_org"),
                     callback: function () {
-                        $log.info(Action.NewChildNode);
                         $scope.currentAction = Action.NewChildNode;
                         $scope.editNewObject(currentNode);
-                        $scope.editTitle = currentNode[locale.zh_TW] + ":新增子節點";
+                        $log.info(currentNode);
+                        $scope.editTitle = currentNode.org_name + ":"+$translate.instant("add_sub_org");
                         $scope.open();
                     }
                 };
                 menu[Action.MoveFirst] = {
-                    name: "移到最上",
+                    name: $translate.instant("move_top"),
                     callback: function () {
                         nodeMoveSetting.targetNode = moveNodes[0];
                         nodeMoveSetting.moveType = "prev";
                         nodeMoveSetting.moveAction = Action.MoveFirst;
-                        PermissionMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
+                        OrganizationMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
                     }
                 };
                 menu[Action.MoveUp] = {
-                    name: "往上移",
+                    name: $translate.instant("move_up"),
                     disabled: !currentNode.getPreNode(),
                     callback: function () {
                         nodeMoveSetting.targetNode = currentNode.getPreNode();
                         nodeMoveSetting.moveType = "prev";
                         nodeMoveSetting.moveAction = Action.MoveUp;
-                        PermissionMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
+                        OrganizationMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
                     }
                 };
                 menu[Action.MoveDown] = {
-                    name: "往下移",
+                    name: $translate.instant("move_down"),
                     disabled: !currentNode.getNextNode(),
                     callback: function () {
                         nodeMoveSetting.targetNode = currentNode.getNextNode();
                         nodeMoveSetting.moveType = "next";
                         nodeMoveSetting.moveAction = Action.MoveDown;
-                        PermissionMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
+                        OrganizationMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
                     }
                 };
                 menu[Action.MoveLast] = {
-                    name: "移到最下",
+                    name: $translate.instant("move_bottom"),
                     callback: function () {
                         nodeMoveSetting.targetNode = moveNodes[moveNodes.length - 1];
                         nodeMoveSetting.moveType = "next";
                         nodeMoveSetting.moveAction = Action.MoveLast;
-                        PermissionMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
+                        OrganizationMoveService.post(nodeMoveSetting).then($scope.onNodeMove);
                     }
                 };
                 menu['sep2'] = '';
                 menu[Action.Edit] = {
-                    name: "編輯",
+                    name: $translate.instant("edit"),
                     callback: function () {
                         $scope.currentAction = Action.Edit;
                         $scope.editNode = Restangular.copy(currentNode);
-                        locale.convertDashToBaseLine($scope.editNode.permissionNameMap);
-                        $scope.editTitle = currentNode.name + ":編輯";
+                        $scope.editTitle = currentNode.org_name + ":"+$translate.instant("edit");
                         $scope.open();
                     }
                 };
                 menu[Action.Remove] = {
-                    name: "移除",
+                    name: $translate.instant("delete"),
                     callback: function () {
+                        $log.info(currentNode);
                         Restangular.copy(currentNode).remove().then(function (data) {
                             var selectedNode = zTreeObj.getSelectedNodes()[0];
                             zTreeObj.removeNode(selectedNode);
@@ -148,7 +149,7 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
             } else {
                 $scope.editNode.sequence = 0;
             }
-            $scope.editNode.parent_permission_id = parentNode.permission_id;
+            $scope.editNode.parent_org_id = parentNode.org_id;
         } else {
             var rootNodes = zTreeObj.getNodes();
             if (rootNodes) {
@@ -156,13 +157,13 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
             } else {
                 $scope.editNode.sequence = 0;
             }
-            $scope.editNode.parent_permission_id = undefined;
+            $scope.editNode.parent_org_id = undefined;
         }
     };
 
     $scope.onNodeMove = function (data) {
         for (var i = 0; i < data.length; i++) {
-            var node = zTreeObj.getNodeByParam("permission_id", data[i].permission_id);
+            var node = zTreeObj.getNodeByParam("org_id", data[i].org_id);
             node.sequence = data[i].sequence;
         }
         zTreeObj.moveNode(nodeMoveSetting.targetNode, nodeMoveSetting.treeNode, nodeMoveSetting.moveType, true);
@@ -182,7 +183,7 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
         } else {
             $scope.editNewObject(selectedNode);
         }
-        $scope.editTitle = "新增節點";
+        $scope.editTitle = $translate.instant("add_org");
         $scope.open();
     };
 
@@ -190,8 +191,8 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
         //$scope.editSize = "sm";
         var modalInstance = $modal.open({
             animation: true,
-            templateUrl: 'permissionEdit.html',
-            controller: 'permissionEditCtrl',
+            templateUrl: 'organizationEdit.html',
+            controller: 'organizationEditCtrl',
             size: $scope.editSize,
             resolve: {
                 editNode: function () {
@@ -210,11 +211,10 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
 
             var selectedNode = undefined;
             $scope.editNode = editNode;
-            locale.node($scope.editNode, $scope.editNode);
             switch ($scope.currentAction) {
                 case Action.NewNode:
-                    if ($scope.editNode.parent_permission_id) {
-                        var parent_node = zTreeObj.getNodeByParam("permission_id", $scope.editNode.parent_permission_id);
+                    if ($scope.editNode.parent_org_id) {
+                        var parent_node = zTreeObj.getNodeByParam("org_id", $scope.editNode.parent_org_id);
                         zTreeObj.addNodes(parent_node, $scope.editNode, true);
                     } else {
                         zTreeObj.addNodes(null, $scope.editNode, true);
@@ -222,14 +222,17 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
                     break;
                 case Action.NewChildNode:
                     selectedNode = zTreeObj.getSelectedNodes()[0];
+                    $log.info(selectedNode);
                     zTreeObj.addNodes(selectedNode, $scope.editNode, true);
+                    $log.info(selectedNode);
                     zTreeObj.expandNode(selectedNode, true);
                     break;
                 case Action.Edit:
                     selectedNode = zTreeObj.getSelectedNodes()[0];
-                    selectedNode.permission_code = $scope.editNode.permission_code;
-                    selectedNode.permissionNameMap = $scope.editNode.permissionNameMap;
+                    selectedNode.org_code = $scope.editNode.org_code;
+                    selectedNode.org_name = $scope.editNode.org_name;
                     locale.node(selectedNode, $scope.editNode);
+                    $log.info(selectedNode);
                     zTreeObj.updateNode(selectedNode);
                     break;
             }
@@ -237,17 +240,17 @@ function PermissionController($scope, $modal, $log, Restangular, PermissionServi
             //$log.info('Modal dismissed at: ' + new Date());
         });
     };
+
 }
 
-backendApp.controller('permissionEditCtrl', function ($scope, $modalInstance, $log, PermissionService, locale, title, editNode, currentAction) {
+backendApp.controller('organizationEditCtrl', function ($scope, $modalInstance, $log, OrganizationService, locale, title, editNode, currentAction) {
     $scope.title = title;
     $scope.editNode = editNode;
     $scope.ok = function () {
-        locale.convertBaseLineToDash($scope.editNode.permissionNameMap);
         switch (currentAction) {
             case Action.NewNode:
             case Action.NewChildNode:
-                PermissionService.post( $scope.editNode).then(function (data) {
+                OrganizationService.post( $scope.editNode).then(function (data) {
                     $modalInstance.close(data);
                 });
                 break;

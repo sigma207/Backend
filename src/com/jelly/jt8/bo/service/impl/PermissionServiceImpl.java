@@ -34,7 +34,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<Permission> getPermissionList() throws Exception {
-        List<Permission> treePermissionList = new ArrayList<Permission>();
+        List<Permission> treeList = new ArrayList<Permission>();
         Map<String, Permission> treePermissionMap = new HashMap<String, Permission>();
         List<Permission> permissionList = permissionDao.selectPermission();
         List<PermissionName> permissionNameList = permissionNameDao.selectPermissionName();
@@ -61,7 +61,7 @@ public class PermissionServiceImpl implements PermissionService {
             }
             permission.setPermissionNameMap(permissionNameMap);
             if (permission.getParent_permission_id() == 0) {
-                treePermissionList.add(permission);
+                treeList.add(permission);
                 treePermissionMap.put(String.valueOf(permission.getPermission_id()), permission);
             } else {
                 Permission parentPermission = treePermissionMap.get(String.valueOf(permission.getParent_permission_id()));
@@ -74,7 +74,7 @@ public class PermissionServiceImpl implements PermissionService {
                 treePermissionMap.put(String.valueOf(permission.getPermission_id()), permission);
             }
         }
-        return treePermissionList;
+        return treeList;
     }
 
     @Override

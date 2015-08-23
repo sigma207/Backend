@@ -43,6 +43,14 @@ backendApp.factory('UserService', function (Restangular) {
 backendApp.factory('RoleService', function (Restangular) {
     return Restangular.service('role');
 });
+backendApp.factory('OrganizationService', function (Restangular) {
+    return Restangular.service('organization');
+});
+
+backendApp.factory('OrganizationMoveService', function (Restangular) {
+    return Restangular.service('organization/move');
+});
+
 
 backendApp.factory('PermissionService', function (Restangular) {
     return Restangular.service('permission');
@@ -71,6 +79,9 @@ backendApp.config(["$routeProvider", function ($routeProvider) {
         }).
         when("/C1", {
             templateUrl: "userManage/user/User.html"
+        }).
+        when("/C2", {
+            templateUrl: "userManage/organization/Organization.html"
         }).
         otherwise({redirectTo: '/'})
 }]);
@@ -152,7 +163,9 @@ function BackendController($scope, $translate, $location, $log, PermissionServic
     //$scope.dateFormat = $translate.instant("format.date");
     //$scope.dateFormat = "yyyy-MM-dd";
     //$log.info("dateFormat=%s",$scope.dateFormat);
-    $scope.menuTreeSetting = {
+    var tree = $("#menuTree");
+    var zTreeObj;
+    var treeSetting = {
         data: {
             simpleData: {
                 enable: true
@@ -174,10 +187,9 @@ function BackendController($scope, $translate, $location, $log, PermissionServic
     });
 
     $scope.initMenuTree = function () {
-        $scope.menuTree = $("#menuTree");
-        $.fn.zTree.init($scope.menuTree, $scope.menuTreeSetting, $scope.menuList);
-        $scope.menuZTreeObj = $.fn.zTree.getZTreeObj("menuTree");
-        $scope.menuZTreeObj.expandAll(true);
+        $.fn.zTree.init(tree, treeSetting, $scope.menuList);
+        zTreeObj = $.fn.zTree.getZTreeObj("menuTree");
+        zTreeObj.expandAll(true);
     };
 
     $scope.changeLanguage = function (langKey) {

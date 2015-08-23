@@ -13,6 +13,11 @@
   "operate": "操作",
   "add": "新增",
   "delete": "刪除",
+  "edit": "編輯",
+  "move_top":"移到最上",
+  "move_up":"往上移",
+  "move_down":"往下移",
+  "move_bottom":"移到最下",
   "error": {
     "dirtyData": "資料已被異動過,請重新查詢後再操作"
   },

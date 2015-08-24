@@ -11,21 +11,21 @@
             <ul id="organizationTree" class="ztree"></ul>
         </div>
         <div class="col-md-10">
-            <button type="button" class="btn-xs btn-primary" translate="add_org" ng-click="addNodeClick()"></button>
+            <button type="button" class="btn-xs btn-primary" translate="add_organization" ng-click="addNodeClick()"></button>
             <table st-table="rowCollection" class="table table-striped table-condensed">
                 <thead>
                 <tr>
-                    <th>{{'org_code'|translate}}</th>
-                    <th>{{'org_name'|translate}}</th>
-                    <th>{{'org_manage'|translate}}</th>
+                    <th>{{'organization_code'|translate}}</th>
+                    <th>{{'organization_name'|translate}}</th>
+                    <th>{{'organization_manage'|translate}}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="row in rowCollection">
-                    <td>{{row.org_code}}</td>
-                    <td>{{row.org_name}}</td>
-                    <td> <button type="button" class="btn-xs btn-primary" translate="remove_org" ng-click="removeRoleClick(row)" ></button>
-                        <button type="button" class="btn-xs btn-primary" translate="edit_org" ng-click="editRoleClick(row)" ></button>
+                    <td>{{row.organization_code}}</td>
+                    <td>{{row.organization_name}}</td>
+                    <td> <button type="button" class="btn-xs btn-primary" translate="remove_organization" ng-click="removeRoleClick(row)" ></button>
+                        <button type="button" class="btn-xs btn-primary" translate="edit_organization" ng-click="editRoleClick(row)" ></button>
                     </td>
                 </tr>
                 </tbody>
@@ -40,23 +40,23 @@
         <div class="modal-body">
             <form name="editForm" class="form-horizontal" role="form">
                 <div class="form-group">
-                    <label for="org_code" class="col-md-2 control-label" translate="org_code"></label>
+                    <label for="organization_code" class="col-md-2 control-label" translate="organization_code"></label>
                     <div class="col-md-10">
-                        <input id="org_code"  type="text" ng-model="editNode.org_code" class="input-sm form-control" focus="true" required/>
+                        <input id="organization_code"  type="text" ng-model="editNode.organization_code" class="input-sm form-control" focus="true" required/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="org_name" class="col-md-2 control-label" translate="org_name"></label>
+                    <label for="organization_name" class="col-md-2 control-label" translate="organization_name"></label>
                     <div class="col-md-10">
-                        <input id="org_name"  type="text" ng-model="editNode.org_name" class="input-sm form-control" required/>
+                        <input id="organization_name"  type="text" ng-model="editNode.organization_name" class="input-sm form-control" required/>
                     </div>
                 </div>
 
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-warning" ng-click="cancel()"translate="cancel"><span class="glyphicon glyphicon-remove"></span>Cancel</button>
-            <button class="btn btn-primary" ng-disabled="editForm.$invalid" ng-click="ok()"translate="save"><span class="glyphicon glyphicon-ok"></span>OK</button>
+            <button class="btn btn-warning" ng-click="cancel()" translate="cancel"><span class="glyphicon glyphicon-remove"></span>Cancel</button>
+            <button class="btn btn-primary" ng-disabled="editForm.$invalid" ng-click="ok()" translate="save"><span class="glyphicon glyphicon-ok"></span>OK</button>
         </div>
     </script>
 </div>

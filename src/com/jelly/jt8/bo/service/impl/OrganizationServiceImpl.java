@@ -36,13 +36,13 @@ public class OrganizationServiceImpl implements OrganizationService {
         List<Organization> organizationList = organizationDao.select();
         String key = null;
         for(Organization organization:organizationList){
-            key = String.valueOf(organization.getOrg_id());
+            key = String.valueOf(organization.getOrganization_id());
 
-            if (organization.getParent_org_id() == 0) {
+            if (organization.getParent_organization_id() == 0) {
                 treeList.add(organization);
                 treeMap.put(key, organization);
             } else {
-                Organization parentOrganization = treeMap.get(String.valueOf(organization.getParent_org_id()));
+                Organization parentOrganization = treeMap.get(String.valueOf(organization.getParent_organization_id()));
                 List<Organization> children = parentOrganization.getChildren();
                 if (children == null) {
                     children = new ArrayList<Organization>();
@@ -112,7 +112,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 recursiveDelete(conn, child);
             }
         }
-        organizationDao.delete(conn, organization.getOrg_id());
+        organizationDao.delete(conn, organization.getOrganization_id());
     }
 
     @Override

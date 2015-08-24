@@ -17,10 +17,10 @@ import java.util.List;
  */
 @Repository("OrganizationDao")
 public class OrganizationDaoImpl extends BaseDao implements OrganizationDao {
-    private final static String QUERY = "SELECT org_id, org_code, org_name, parent_org_id, sequence FROM bo_org ";
-    private final static String INSERT = "INSERT INTO bo_org (org_code, org_name, parent_org_id, sequence) VALUES (?, ?, ?, ?);";
-    private final static String DELETE = "DELETE bo_org WHERE org_id = ? ";
-    private final static String UPDATE = "UPDATE bo_org SET org_code = ?, org_name = ?, sequence = ? WHERE org_id = ? ";
+    private final static String QUERY = "SELECT organization_id, organization_code, organization_name, parent_organization_id, sequence FROM bo_organization ";
+    private final static String INSERT = "INSERT INTO bo_organization (organization_code, organization_name, parent_organization_id, sequence) VALUES (?, ?, ?, ?);";
+    private final static String DELETE = "DELETE bo_organization WHERE organization_id = ? ";
+    private final static String UPDATE = "UPDATE bo_organization SET organization_code = ?, organization_name = ?, sequence = ? WHERE organization_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -39,12 +39,12 @@ public class OrganizationDaoImpl extends BaseDao implements OrganizationDao {
         int lastKey = -1;
         try {
             stmt = conn.prepareStatement(INSERT,Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, organization.getOrg_code());
-            stmt.setString(2, organization.getOrg_name());
-            if(organization.getParent_org_id()==0){
+            stmt.setString(1, organization.getOrganization_code());
+            stmt.setString(2, organization.getOrganization_name());
+            if(organization.getParent_organization_id()==0){
                 stmt.setNull(3, Types.INTEGER);
             }else{
-                stmt.setInt(3, organization.getParent_org_id());
+                stmt.setInt(3, organization.getParent_organization_id());
             }
 
             stmt.setInt(4, organization.getSequence());
@@ -54,7 +54,7 @@ public class OrganizationDaoImpl extends BaseDao implements OrganizationDao {
             if (keys.next()) {
                 lastKey = keys.getInt(1);
             }
-            organization.setOrg_id(lastKey);
+            organization.setOrganization_id(lastKey);
         } catch (Exception e){
             throw e;
         } finally {
@@ -74,8 +74,8 @@ public class OrganizationDaoImpl extends BaseDao implements OrganizationDao {
         try {
             stmt = conn.prepareStatement(UPDATE);
 
-            stmt.setString(1, organization.getOrg_code());
-            stmt.setString(2, organization.getOrg_name());
+            stmt.setString(1, organization.getOrganization_code());
+            stmt.setString(2, organization.getOrganization_name());
             stmt.setInt(3, organization.getSequence());
             stmt.setInt(4, id);
 

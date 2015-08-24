@@ -19,7 +19,7 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
                 enable: true
             },
             key:{
-                name:"org_name"
+                name:"organization_name"
             }
         }
     };
@@ -53,7 +53,7 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
                 zTreeObj.selectNode(currentNode);
                 var menu = {};
                 menu[Action.NewNode] = {
-                    name: $translate.instant("add_org"),
+                    name: $translate.instant("add_organization"),
                     callback: function () {
                         $scope.currentAction = Action.NewNode;
                         if (currentNode.level == 0) {
@@ -61,17 +61,17 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
                         } else {
                             $scope.editNewObject(currentNode.getParentNode());
                         }
-                        $scope.editTitle = $translate.instant("add_org");
+                        $scope.editTitle = $translate.instant("add_organization");
                         $scope.open();
                     }
                 };
                 menu[Action.NewChildNode] = {
-                    name: $translate.instant("add_sub_org"),
+                    name: $translate.instant("add_sub_organization"),
                     callback: function () {
                         $scope.currentAction = Action.NewChildNode;
                         $scope.editNewObject(currentNode);
                         $log.info(currentNode);
-                        $scope.editTitle = currentNode.org_name + ":"+$translate.instant("add_sub_org");
+                        $scope.editTitle = currentNode.organization_name + ":"+$translate.instant("add_sub_organization");
                         $scope.open();
                     }
                 };
@@ -119,7 +119,7 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
                     callback: function () {
                         $scope.currentAction = Action.Edit;
                         $scope.editNode = Restangular.copy(currentNode);
-                        $scope.editTitle = currentNode.org_name + ":"+$translate.instant("edit");
+                        $scope.editTitle = currentNode.organization_name + ":"+$translate.instant("edit");
                         $scope.open();
                     }
                 };
@@ -149,7 +149,7 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
             } else {
                 $scope.editNode.sequence = 0;
             }
-            $scope.editNode.parent_org_id = parentNode.org_id;
+            $scope.editNode.parent_organization_id = parentNode.organization_id;
         } else {
             var rootNodes = zTreeObj.getNodes();
             if (rootNodes) {
@@ -157,13 +157,13 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
             } else {
                 $scope.editNode.sequence = 0;
             }
-            $scope.editNode.parent_org_id = undefined;
+            $scope.editNode.parent_organization_id = undefined;
         }
     };
 
     $scope.onNodeMove = function (data) {
         for (var i = 0; i < data.length; i++) {
-            var node = zTreeObj.getNodeByParam("org_id", data[i].org_id);
+            var node = zTreeObj.getNodeByParam("organization_id", data[i].organization_id);
             node.sequence = data[i].sequence;
         }
         zTreeObj.moveNode(nodeMoveSetting.targetNode, nodeMoveSetting.treeNode, nodeMoveSetting.moveType, true);
@@ -183,7 +183,7 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
         } else {
             $scope.editNewObject(selectedNode);
         }
-        $scope.editTitle = $translate.instant("add_org");
+        $scope.editTitle = $translate.instant("add_organization");
         $scope.open();
     };
 
@@ -213,8 +213,8 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
             $scope.editNode = editNode;
             switch ($scope.currentAction) {
                 case Action.NewNode:
-                    if ($scope.editNode.parent_org_id) {
-                        var parent_node = zTreeObj.getNodeByParam("org_id", $scope.editNode.parent_org_id);
+                    if ($scope.editNode.parent_organization_id) {
+                        var parent_node = zTreeObj.getNodeByParam("organization_id", $scope.editNode.parent_organization_id);
                         zTreeObj.addNodes(parent_node, $scope.editNode, true);
                     } else {
                         zTreeObj.addNodes(null, $scope.editNode, true);
@@ -222,17 +222,13 @@ function OrganizationController($scope, $modal, $log, $translatePartialLoader, $
                     break;
                 case Action.NewChildNode:
                     selectedNode = zTreeObj.getSelectedNodes()[0];
-                    $log.info(selectedNode);
                     zTreeObj.addNodes(selectedNode, $scope.editNode, true);
-                    $log.info(selectedNode);
                     zTreeObj.expandNode(selectedNode, true);
                     break;
                 case Action.Edit:
                     selectedNode = zTreeObj.getSelectedNodes()[0];
-                    selectedNode.org_code = $scope.editNode.org_code;
-                    selectedNode.org_name = $scope.editNode.org_name;
-                    locale.node(selectedNode, $scope.editNode);
-                    $log.info(selectedNode);
+                    selectedNode.organization_code = $scope.editNode.organization_code;
+                    selectedNode.organization_name = $scope.editNode.organization_name;
                     zTreeObj.updateNode(selectedNode);
                     break;
             }

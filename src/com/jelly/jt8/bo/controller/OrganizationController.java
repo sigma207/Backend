@@ -45,7 +45,7 @@ public class OrganizationController extends BaseController{
     @RequestMapping( method = RequestMethod.POST)
     public
     @ResponseBody
-    ResponseEntity<String> addRole(@RequestBody Organization organization) {
+    ResponseEntity<String> add(@RequestBody Organization organization) {
         Gson gson = new Gson();
         String payload = "";
         try {
@@ -61,11 +61,11 @@ public class OrganizationController extends BaseController{
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public
     @ResponseBody
-    ResponseEntity<String> updateRole(@PathVariable("id") String id, @RequestBody Organization organization) {
+    ResponseEntity<String> update(@PathVariable("id") int id, @RequestBody Organization organization) {
         Gson gson = new Gson();
         String payload = "";
         try {
-            service.update(organization.getOrg_id(), organization);
+            service.update(id, organization);
         } catch (Exception e) {
             return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
         }
@@ -77,11 +77,11 @@ public class OrganizationController extends BaseController{
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    ResponseEntity<String> deleteRole(@PathVariable("id") String id, @RequestBody Organization organization) {
+    ResponseEntity<String> delete(@PathVariable("id") int id, @RequestBody Organization organization) {
         Gson gson = new Gson();
         String payload = "";
         try {
-            service.delete(organization.getOrg_id(),organization);
+            service.delete(id,organization);
         } catch (Exception e) {
             return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
         }

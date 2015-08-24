@@ -153,9 +153,10 @@ backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, $m
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
-                UserService.post( $scope.editObj).then(function (data) {
-                    $modalInstance.close(data);
-                });
+                $log.info($scope.editObj);
+                //UserService.post( $scope.editObj).then(function (data) {
+                //    $modalInstance.close(data);
+                //});
                 break;
             case Action.Edit:
                 $scope.editObj.put().then(function (data) {
@@ -185,7 +186,7 @@ backendApp.controller('selectOrganizationCtrl', function ($scope, $modalInstance
                         enable: true
                     },
                     key:{
-                        name:"org_name"
+                        name:"organization_name"
                     }
                 }
             };

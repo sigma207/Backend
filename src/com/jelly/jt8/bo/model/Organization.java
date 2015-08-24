@@ -8,43 +8,43 @@ import java.util.List;
  */
 public class Organization extends BaseModel{
     @Id
-    private int org_id;
-    private String org_code;
-    private String org_name;
-    private int parent_org_id;
+    private int organization_id;
+    private String organization_code;
+    private String organization_name;
+    private int parent_organization_id;
     private int sequence;
     private List<Organization> children;
 
-    public int getOrg_id() {
-        return org_id;
+    public int getOrganization_id() {
+        return organization_id;
     }
 
-    public void setOrg_id(int org_id) {
-        this.org_id = org_id;
+    public void setOrganization_id(int organization_id) {
+        this.organization_id = organization_id;
     }
 
-    public String getOrg_code() {
-        return org_code;
+    public String getOrganization_code() {
+        return organization_code;
     }
 
-    public void setOrg_code(String org_code) {
-        this.org_code = org_code;
+    public void setOrganization_code(String organization_code) {
+        this.organization_code = organization_code;
     }
 
-    public String getOrg_name() {
-        return org_name;
+    public String getOrganization_name() {
+        return organization_name;
     }
 
-    public void setOrg_name(String org_name) {
-        this.org_name = org_name;
+    public void setOrganization_name(String organization_name) {
+        this.organization_name = organization_name;
     }
 
-    public int getParent_org_id() {
-        return parent_org_id;
+    public int getParent_organization_id() {
+        return parent_organization_id;
     }
 
-    public void setParent_org_id(int parent_org_id) {
-        this.parent_org_id = parent_org_id;
+    public void setParent_organization_id(int parent_organization_id) {
+        this.parent_organization_id = parent_organization_id;
     }
 
     public int getSequence() {

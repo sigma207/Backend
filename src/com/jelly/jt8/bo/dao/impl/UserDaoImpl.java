@@ -25,10 +25,49 @@ public class UserDaoImpl extends BaseDao implements UserDao {
     private final static String INSERT = "INSERT INTO bo_user (login_id, password, create_time, permission, concurrent, retry, max_retry, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     private final static String UPDATE = "UPDATE bo_user SET update_time = ? WHERE user_id = ? ";
     private final static String DELETE = "DELETE bo_user WHERE user_id = ? ";
+    private final static String WHERE_LOGIN = "WHERE login_id = ? ";
 
     @Autowired
     @Qualifier("jt8Ds")
     private DataSource jt8Ds;
+
+    @Override
+    public User login(String login_id) throws Exception {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
+
+        List<User> list = new LinkedList<User>();
+        User user = null;
+        try {
+            conn = jt8Ds.getConnection();
+            stmt = conn.prepareStatement(QUERY + WHERE_LOGIN);
+            stmt.setString(1,login_id);
+
+            rs = stmt.executeQuery();
+            RsMapper.map(rs, list, User.class);
+            if(list.size()>0){
+                user = list.get(0);
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return user;
+    }
 
     @Override
     public List<User> selectUser() throws Exception {

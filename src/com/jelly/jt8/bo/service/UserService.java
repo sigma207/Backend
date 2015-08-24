@@ -9,6 +9,8 @@ import java.util.List;
  * Created by user on 2015/7/30.
  */
 public interface UserService {
+    User login(String login_id, String password) throws Exception;
+
     public List<User> selectUser() throws Exception;
 
     public List<UserRole> selectUserRole(int user_id) throws Exception;

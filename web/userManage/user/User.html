@@ -50,11 +50,43 @@
                         <input id="inputAgain" type="password" ng-model="editObj.inputAgain" class="input-sm form-control" required/>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="org_id" class="col-md-2 control-label" translate=" org.code"></label>
+                    <div class="col-md-10">
+                        <input id="org_id" type="text" ng-model="editObj.organization.org_name" class="input-sm " />
+                        <button type="button" class="btn-xs btn-primary" translate="org.select" ng-click="selectOrganization()"></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="parent_user_name" class="col-md-2 control-label" translate="user.parent"></label>
+                    <div class="col-md-10">
+                        <input id="parent_user_name" type="text" ng-model="editObj.parent_user.login_id" class="input-sm " />
+                    </div>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
             <button class="btn btn-primary" ng-disabled="editForm.$invalid" ng-click="save()" translate="save"></button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="selectOrganization.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{title}}</h3>
+        </div>
+        <div class="modal-body" ng-init="init()">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <ul id="organizationTree" class="ztree"></ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-warning" ng-click="cancel()" translate="cancel"></button>
+            <button class="btn btn-primary" ng-click="save()" translate="save"></button>
         </div>
     </script>
 

@@ -5,6 +5,7 @@ import com.jelly.jt8.bo.dao.UserRoleDao;
 import com.jelly.jt8.bo.model.User;
 import com.jelly.jt8.bo.model.UserRole;
 import com.jelly.jt8.bo.service.UserService;
+import com.jelly.jt8.bo.util.ErrorMsg;
 import com.jelly.jt8.bo.util.Password;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +34,23 @@ public class UserServiceImpl implements UserService {
     @Autowired
     @Qualifier("jt8Ds")
     private DataSource jt8Ds;
+
+    @Override
+    public User login(String login_id, String password) throws Exception {
+        User checkUser =  userDao.login(login_id);
+        User loginUser = null;
+        if(checkUser==null){
+            throw new Exception(ErrorMsg.LOGIN_ACCOUNT);
+        }else {
+            if(Password.authenticatePassword(checkUser.getPassword(),password)){
+                loginUser = checkUser;
+                loginUser.setPassword(null);
+            }else {
+                throw new Exception(ErrorMsg.LOGIN_PASSWORD);
+            }
+        }
+        return loginUser;
+    }
 
     @Override
     public List<User> selectUser() throws Exception {

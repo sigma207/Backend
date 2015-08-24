@@ -66,7 +66,7 @@ public class RoleController extends BaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public
     @ResponseBody
-    ResponseEntity<String> updateRole(@RequestBody Role role) {
+    ResponseEntity<String> updateRole(@PathVariable("id") String id, @RequestBody Role role) {
         System.out.println("updateRole");
         Gson gson = new Gson();
         String payload = "";
@@ -83,7 +83,7 @@ public class RoleController extends BaseController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    ResponseEntity<String> deleteRole(@RequestBody Role role) {
+    ResponseEntity<String> deleteRole(@PathVariable("id") String id, @RequestBody Role role) {
         Gson gson = new Gson();
         String payload = "";
         try {

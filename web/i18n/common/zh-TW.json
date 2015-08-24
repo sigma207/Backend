@@ -18,6 +18,16 @@
   "move_up":"往上移",
   "move_down":"往下移",
   "move_bottom":"移到最下",
+  "org": {
+    "code":"組織代碼",
+    "name":"組織名稱",
+    "select":"選擇組織"
+  },
+  "login":"登入",
+  "user":{
+    "login":"用戶登入",
+    "parent":"組長"
+  },
   "error": {
     "dirtyData": "資料已被異動過,請重新查詢後再操作"
   },

@@ -25,6 +25,8 @@ public class User extends BaseModel{
     private String last_login_time;
     private String org_id;
     private List<UserRole> userRoleList;
+    private Organization organization;
+    private User parent_user;
 
 //    public User(String login_id, String password, String create_time, int permission, int concurrent, int retry, int max_retry, String active_date, int duration, String expire_date, String update_time, int is_active, String login_time, String last_login_time, String org_id) {
 //        this.login_id = login_id;
@@ -179,5 +181,21 @@ public class User extends BaseModel{
 
     public void setUserRoleList(List<UserRole> userRoleList) {
         this.userRoleList = userRoleList;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
+    public User getParent_user() {
+        return parent_user;
+    }
+
+    public void setParent_user(User parent_user) {
+        this.parent_user = parent_user;
     }
 }

@@ -40,6 +40,10 @@ backendApp.factory('UserService', function (Restangular) {
     return Restangular.service('users');
 });
 
+backendApp.factory('LoginService', function (Restangular) {
+    return Restangular.service('login');
+});
+
 backendApp.factory('RoleService', function (Restangular) {
     return Restangular.service('role');
 });
@@ -62,6 +66,9 @@ backendApp.factory('PermissionMoveService', function (Restangular) {
 
 backendApp.config(["$routeProvider", function ($routeProvider) {
     $routeProvider.
+        when("/Login", {
+            templateUrl: "Login.html"
+        }).
         when("/A1", {
             templateUrl: "permissionManage/permission/Permission.html"
         }).
@@ -156,7 +163,7 @@ backendApp.directive('datePickerOpen', DatePickerOpen);
 //backendApp.directive('dateGreaterThan', DateGreaterThan);
 
 backendApp.controller("BackendController", BackendController);
-function BackendController($scope, $translate, $location, $log, PermissionService, HostUrl, request, locale, datepickerPopupConfig) {
+function BackendController($scope, $translate, $location, $log, $modal, PermissionService, HostUrl, request, locale, datepickerPopupConfig) {
     $log.info("BackendController!!");
     request.changeHostUrl(HostUrl);
     locale.changeLang(locale.zh_TW);
@@ -180,11 +187,7 @@ function BackendController($scope, $translate, $location, $log, PermissionServic
         }
     };
 
-    PermissionService.getList().then(function (data) {
-        $scope.menuList = data;
-        locale.formatPermissionList($scope.menuList);
-        $scope.initMenuTree();
-    });
+
 
     $scope.initMenuTree = function () {
         $.fn.zTree.init(tree, treeSetting, $scope.menuList);
@@ -198,6 +201,18 @@ function BackendController($scope, $translate, $location, $log, PermissionServic
         datepickerPopupConfig.currentText = $translate.instant("datePicker.currentText");
         datepickerPopupConfig.clearText = $translate.instant("datePicker.clearText");
         datepickerPopupConfig.closeText = $translate.instant("datePicker.closeText");
+    };
+
+    $location.path("/Login");
+
+    $scope.onLogin = function (user) {
+        $location.path("/");
+        $scope.loginUser = user;
+        PermissionService.getList().then(function (data) {
+            $scope.menuList = data;
+            locale.formatPermissionList($scope.menuList);
+            $scope.initMenuTree();
+        });
     };
 }
 

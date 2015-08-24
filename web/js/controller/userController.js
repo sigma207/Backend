@@ -49,6 +49,8 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.addUserClick = function () {
         $scope.currentAction = Action.Add;
         $scope.editUser = {};
+        $log.info($scope.loginUser);
+        $scope.editUser.parent_user = $scope.loginUser;
         $scope.modalTitle = $translate.instant("addUser");
         $scope.openEditUser();
     };
@@ -124,9 +126,30 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
     $scope.getUserList();
 }
 
-backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, UserService, locale, title, editObj, currentAction) {
+backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, $modal, UserService, title, editObj, currentAction) {
     $scope.title = title;
     $scope.editObj = editObj;
+
+    $scope.selectOrganization = function () {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: 'selectOrganization.html',
+            controller: 'selectOrganizationCtrl',
+            size: $scope.editSize,
+            resolve: {
+            }
+        });
+
+        modalInstance.result.then(
+            function (selectedNode) {
+                $scope.editObj.organization = selectedNode;
+            },
+            function () {
+                //$log.info('Modal dismissed at: ' + new Date());
+            }
+        )
+    };
+
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
@@ -140,6 +163,42 @@ backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, Us
                 });
                 break;
         }
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+
+});
+
+backendApp.controller('selectOrganizationCtrl', function ($scope, $modalInstance, $log, $translate, OrganizationService) {
+
+    var zTreeObj;
+    $scope.init = function() {
+        $scope.title = $translate.instant("org.select");
+        OrganizationService.getList().then(function (data) {
+            var tree = $("#organizationTree");
+            var treeSetting = {
+                data: {
+                    simpleData: {
+                        enable: true
+                    },
+                    key:{
+                        name:"org_name"
+                    }
+                }
+            };
+            $.fn.zTree.init(tree, treeSetting, data);
+            zTreeObj = $.fn.zTree.getZTreeObj("organizationTree");
+            zTreeObj.expandAll(true);
+        });
+
+    };
+
+    $scope.save = function () {
+        var selectedNode = zTreeObj.getSelectedNodes()[0];
+        $modalInstance.close(selectedNode);
     };
 
     $scope.cancel = function () {

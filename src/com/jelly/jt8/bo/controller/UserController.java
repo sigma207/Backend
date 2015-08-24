@@ -40,6 +40,36 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<String> addRole(@RequestBody User user){
+        String payload = "";
+        try {
+            userService.insertUser(user);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        Gson gson = new Gson();
+        payload = gson.toJson(user);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
+    public @ResponseBody ResponseEntity<String> deleteRole(@PathVariable("id") String id, @RequestBody User user){
+        String payload = "";
+        try {
+            userService.deleteUser(user);
+        } catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        Gson gson = new Gson();
+        payload = gson.toJson(user);
+        return getResponseEntity(payload);
+    }
+
     @RequestMapping(value = "{id}/userRoles", method = RequestMethod.GET)
     public @ResponseBody
     ResponseEntity<String> selectUserRole(@PathVariable("id") int id) {
@@ -57,38 +87,8 @@ public class UserController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> addRole(@RequestBody User user){
-        String payload = "";
-        try {
-            userService.insertUser(user);
-        } catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
-        }
-
-        Gson gson = new Gson();
-        payload = gson.toJson(user);
-        return getResponseEntity(payload);
-    }
-
-    @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
-    public @ResponseBody ResponseEntity<String> deleteRole(@RequestBody User user){
-        String payload = "";
-        try {
-            userService.deleteUser(user);
-        } catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<String>(e.getMessage(),HttpStatus.SERVICE_UNAVAILABLE);
-        }
-
-        Gson gson = new Gson();
-        payload = gson.toJson(user);
-        return getResponseEntity(payload);
-    }
-
     @RequestMapping(value="{id}/userRoles",method = RequestMethod.POST)
-    public @ResponseBody ResponseEntity<String> allocateUserRole(@RequestBody User user){
+    public @ResponseBody ResponseEntity<String> allocateUserRole(@PathVariable("id") String id, @RequestBody User user){
         String payload = "";
         try {
             userService.allocateUserRole(user);

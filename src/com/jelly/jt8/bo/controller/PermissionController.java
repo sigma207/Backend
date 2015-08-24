@@ -70,7 +70,7 @@ public class PermissionController extends BaseController{
     }
 
     @RequestMapping(value = "{id}",method = RequestMethod.PUT)
-    public @ResponseBody ResponseEntity<String> updatePermission(@RequestBody Permission permission){
+    public @ResponseBody ResponseEntity<String> updatePermission(@PathVariable("id") int id, @RequestBody Permission permission){
 
         String payload = "";
         try {
@@ -86,7 +86,7 @@ public class PermissionController extends BaseController{
     }
 
     @RequestMapping(value = "{id}",method = RequestMethod.DELETE)
-    public @ResponseBody ResponseEntity<String> removePermission(@RequestBody Permission permission){
+    public @ResponseBody ResponseEntity<String> removePermission(@PathVariable("id") int id, @RequestBody Permission permission){
         System.out.println("removePermission");
 
         String payload = "";

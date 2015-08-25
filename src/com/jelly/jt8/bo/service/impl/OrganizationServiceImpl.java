@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by user on 2015/8/22.
@@ -31,25 +28,47 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public List<Organization> select() throws Exception {
-        List<Organization> treeList = new ArrayList<Organization>();
-        Map<String, Organization> treeMap = new HashMap<String, Organization>();
         List<Organization> organizationList = organizationDao.select();
+        return group(organizationList);
+    }
+
+    @Override
+    public Organization select(int id) throws Exception {
+        return organizationDao.select(id);
+    }
+
+    @Override
+    public List<Organization> selectWithChildren(int id) throws Exception {
+        List<Organization> organizationList = organizationDao.selectWithChildren(id);
+        return group(organizationList);
+    }
+
+    private List<Organization> group(List<Organization> organizationList) throws Exception{
+        List<Organization> treeList = new ArrayList<Organization>();
+        Map<String, List<Organization>> groupMap = new HashMap<String,List<Organization>>();
+        Set<Integer> keySet = new HashSet<Integer>();
+        List<Organization> children = null;
         String key = null;
+        String parentKey = null;
+        for(Organization organization:organizationList){
+            parentKey = String.valueOf(organization.getParent_organization_id());
+            children = groupMap.get(parentKey);
+            if(children==null){
+                children = new ArrayList<Organization>();
+                groupMap.put(parentKey,children);
+            }
+            children.add(organization);
+            keySet.add(organization.getOrganization_id());
+        }
+        Set<String> treeSet = new HashSet<String>();
         for(Organization organization:organizationList){
             key = String.valueOf(organization.getOrganization_id());
-
-            if (organization.getParent_organization_id() == 0) {
-                treeList.add(organization);
-                treeMap.put(key, organization);
-            } else {
-                Organization parentOrganization = treeMap.get(String.valueOf(organization.getParent_organization_id()));
-                List<Organization> children = parentOrganization.getChildren();
-                if (children == null) {
-                    children = new ArrayList<Organization>();
-                    parentOrganization.setChildren(children);
+            children = groupMap.get(key);
+            if(children!=null ){
+                if(!keySet.contains(organization.getParent_organization_id())) {
+                    treeList.add(organization);
                 }
-                children.add(organization);
-                treeMap.put(key, organization);
+                organization.setChildren(children);
             }
         }
         return treeList;

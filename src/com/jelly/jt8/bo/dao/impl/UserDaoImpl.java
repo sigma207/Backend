@@ -21,8 +21,8 @@ import java.util.List;
 @Repository("UserDao")
 public class UserDaoImpl extends BaseDao implements UserDao {
     private final static String QUERY = "SELECT user_id, login_id, password, create_time, permission, concurrent, retry, max_retry, active_date, duration, expire_date, update_time," +
-            " is_active, login_time, last_login_time, org_id FROM bo_user ";
-    private final static String INSERT = "INSERT INTO bo_user (login_id, password, create_time, permission, concurrent, retry, max_retry, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+            " is_active, login_time, last_login_time, org_id, organization_id, parent_user_id FROM bo_user ";
+    private final static String INSERT = "INSERT INTO bo_user (login_id, password, create_time, permission, concurrent, retry, max_retry, update_time, organization_id, parent_user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     private final static String UPDATE = "UPDATE bo_user SET update_time = ? WHERE user_id = ? ";
     private final static String DELETE = "DELETE bo_user WHERE user_id = ? ";
     private final static String WHERE_LOGIN = "WHERE login_id = ? ";
@@ -83,12 +83,23 @@ public class UserDaoImpl extends BaseDao implements UserDao {
             stmt = connection.prepareStatement(INSERT);
             stmt.setString(1, user.getLogin_id());
             stmt.setString(2, user.getPassword());
-            stmt.setString(3,  Utils.updateTime());//create_time
+            stmt.setString(3, Utils.updateTime());//create_time
             stmt.setInt(4, 1);//permission
             stmt.setInt(5, 1);//concurrent
             stmt.setInt(6, 0);//retry
             stmt.setInt(7, 5);//max_retry
             stmt.setString(8, Utils.updateTime());//update_time
+            if(user.getOrganization()!=null){
+                stmt.setInt(9,user.getOrganization().getOrganization_id());
+            }else{
+                stmt.setNull(9, Types.INTEGER);
+            }
+            if(user.getParent_user()!=null){
+                stmt.setInt(10, user.getParent_user().getUser_id());
+            }else{
+                stmt.setNull(10, Types.INTEGER);
+            }
+
             stmt.executeUpdate();
 
         } catch (Exception e){

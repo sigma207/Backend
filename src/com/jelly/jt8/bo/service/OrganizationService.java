@@ -11,6 +11,10 @@ import java.util.List;
 public interface OrganizationService {
     List<Organization> select() throws Exception;
 
+    Organization select(int id) throws Exception;
+
+    List<Organization> selectWithChildren(int id) throws Exception;
+
     void insert(Organization organization) throws Exception;
 
     void delete(int id, Organization organization) throws Exception;

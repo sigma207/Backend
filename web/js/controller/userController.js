@@ -129,7 +129,6 @@ function UserController($scope, $translatePartialLoader, $translate, $log, $moda
 backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, $modal, UserService, title, editObj, currentAction) {
     $scope.title = title;
     $scope.editObj = editObj;
-
     $scope.selectOrganization = function () {
         var modalInstance = $modal.open({
             animation: true,
@@ -137,6 +136,9 @@ backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, $m
             controller: 'selectOrganizationCtrl',
             size: $scope.editSize,
             resolve: {
+                organization: function () {
+                    return $scope.editObj.parent_user.organization;
+                }
             }
         });
 
@@ -153,10 +155,10 @@ backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, $m
     $scope.save = function () {
         switch (currentAction) {
             case Action.Add:
-                $log.info($scope.editObj);
-                //UserService.post( $scope.editObj).then(function (data) {
-                //    $modalInstance.close(data);
-                //});
+                //$log.info($scope.editObj);
+                UserService.post( $scope.editObj).then(function (data) {
+                    $modalInstance.close(data);
+                });
                 break;
             case Action.Edit:
                 $scope.editObj.put().then(function (data) {
@@ -173,28 +175,40 @@ backendApp.controller('userEditCtrl', function ($scope, $modalInstance, $log, $m
 
 });
 
-backendApp.controller('selectOrganizationCtrl', function ($scope, $modalInstance, $log, $translate, OrganizationService) {
+backendApp.controller('selectOrganizationCtrl', function ($scope, $modalInstance, $log, $translate, OrganizationService, organization) {
 
     var zTreeObj;
+    $log.info(organization);
     $scope.init = function() {
         $scope.title = $translate.instant("org.select");
-        OrganizationService.getList().then(function (data) {
-            var tree = $("#organizationTree");
-            var treeSetting = {
-                data: {
-                    simpleData: {
-                        enable: true
-                    },
-                    key:{
-                        name:"organization_name"
-                    }
-                }
-            };
-            $.fn.zTree.init(tree, treeSetting, data);
-            zTreeObj = $.fn.zTree.getZTreeObj("organizationTree");
-            zTreeObj.expandAll(true);
-        });
+        if(organization){
+            organization.getList("with_children").then(function (data) {
+                $scope.initTree(data);
+            });
+        }else{
+            OrganizationService.getList().then(function (data) {
+                $scope.initTree(data);
+            });
+        }
 
+
+    };
+
+    $scope.initTree = function (data) {
+        var tree = $("#organizationTree");
+        var treeSetting = {
+            data: {
+                simpleData: {
+                    enable: true
+                },
+                key:{
+                    name:"organization_name"
+                }
+            }
+        };
+        $.fn.zTree.init(tree, treeSetting, data);
+        zTreeObj = $.fn.zTree.getZTreeObj("organizationTree");
+        zTreeObj.expandAll(true);
     };
 
     $scope.save = function () {

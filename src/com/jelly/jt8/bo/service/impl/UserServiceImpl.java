@@ -1,5 +1,6 @@
 package com.jelly.jt8.bo.service.impl;
 
+import com.jelly.jt8.bo.dao.OrganizationDao;
 import com.jelly.jt8.bo.dao.UserDao;
 import com.jelly.jt8.bo.dao.UserRoleDao;
 import com.jelly.jt8.bo.model.User;
@@ -30,6 +31,10 @@ public class UserServiceImpl implements UserService {
     @Qualifier("UserRoleDao")
     private UserRoleDao userRoleDao;
 
+    @Autowired
+    @Qualifier("OrganizationDao")
+    private OrganizationDao organizationDao;
+
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -45,6 +50,9 @@ public class UserServiceImpl implements UserService {
             if(Password.authenticatePassword(checkUser.getPassword(),password)){
                 loginUser = checkUser;
                 loginUser.setPassword(null);
+//                if(loginUser.getOrganization_id()!=0){
+//                    loginUser.setOrganization(organizationDao.select(loginUser.getOrganization_id()));
+//                }
             }else {
                 throw new Exception(ErrorMsg.LOGIN_PASSWORD);
             }

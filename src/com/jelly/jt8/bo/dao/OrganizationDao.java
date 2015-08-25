@@ -11,6 +11,10 @@ import java.util.List;
 public interface OrganizationDao {
     List<Organization> select() throws Exception;
 
+    Organization select(int id) throws Exception;
+
+    List<Organization> selectWithChildren(int id) throws Exception;
+
     void insert(Connection conn, Organization organization) throws Exception;
 
     void update(Connection conn, int id, Organization organization) throws Exception;

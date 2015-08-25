@@ -42,7 +42,43 @@ public class OrganizationController extends BaseController{
         return getResponseEntity(payload);
     }
 
-    @RequestMapping( method = RequestMethod.POST)
+    @RequestMapping(value = "{id}",  method = RequestMethod.GET)
+    public
+    @ResponseBody
+    ResponseEntity<String> get(@PathVariable("id") int id) {
+        Gson gson = new Gson();
+        Organization organization = null;
+        String payload = "";
+        try {
+            organization = service.select(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        payload = gson.toJson(organization);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(value = "{id}/with_children",  method = RequestMethod.GET)
+    public
+    @ResponseBody
+    ResponseEntity<String> getList(@PathVariable("id") int id) {
+        Gson gson = new Gson();
+        List<Organization> list = null;
+        String payload = "";
+        try {
+            list = service.selectWithChildren(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>(gson.toJson(exceptionToJson(e)), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        payload = gson.toJson(list);
+        return getResponseEntity(payload);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
     public
     @ResponseBody
     ResponseEntity<String> add(@RequestBody Organization organization) {

@@ -3,6 +3,7 @@ package com.jelly.jt8.bo.dao.impl;
 import com.jelly.jt8.bo.dao.OrganizationDao;
 import com.jelly.jt8.bo.model.Organization;
 import com.jelly.jt8.bo.model.Permission;
+import com.jelly.jt8.bo.util.RsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,21 @@ public class OrganizationDaoImpl extends BaseDao implements OrganizationDao {
     private final static String INSERT = "INSERT INTO bo_organization (organization_code, organization_name, parent_organization_id, sequence) VALUES (?, ?, ?, ?);";
     private final static String DELETE = "DELETE bo_organization WHERE organization_id = ? ";
     private final static String UPDATE = "UPDATE bo_organization SET organization_code = ?, organization_name = ?, sequence = ? WHERE organization_id = ? ";
+    private final static String WHERE_ID = " WHERE organization_id = ? ";
+    private final static String QUERY_WITH_CHILDREN = "WITH my_organization as\n" +
+            "(\n" +
+            "  SELECT *\n" +
+            "  FROM bo_organization o\n" +
+            "  WHERE organization_id = ? \n" +
+            "\n" +
+            "  UNION ALL\n" +
+            "\n" +
+            "  SELECT o1.*\n" +
+            "  FROM bo_organization o1  \n" +
+            "  INNER JOIN my_organization M\n" +
+            "  ON M.organization_id = o1.parent_organization_id\n" +
+            " )\n" +
+            "SELECT organization_id, organization_code, organization_name, parent_organization_id, sequence From my_organization ";
 
     @Autowired
     @Qualifier("jt8Ds")
@@ -30,6 +46,78 @@ public class OrganizationDaoImpl extends BaseDao implements OrganizationDao {
     public List<Organization> select() throws Exception {
         List<Organization> list =  new LinkedList<Organization>();
         execute(jt8Ds.getConnection(),QUERY,list,Organization.class);
+        return list;
+    }
+
+    @Override
+    public Organization select(int id) throws Exception {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
+
+        List<Organization> list = new LinkedList<Organization>();
+        Organization organization = null;
+        try {
+            conn = jt8Ds.getConnection();
+            stmt = conn.prepareStatement(QUERY+WHERE_ID);
+            stmt.setInt(1, id);
+
+            rs = stmt.executeQuery();
+            RsMapper.map(rs, list, Organization.class);
+            if(list.size()>0){
+                organization = list.get(0);
+            }
+        } catch (Exception e){
+            throw e;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return organization;
+    }
+
+    @Override
+    public List<Organization> selectWithChildren(int id) throws Exception {
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Connection conn = null;
+
+        List<Organization> list = new LinkedList<Organization>();
+        try {
+            conn = jt8Ds.getConnection();
+            stmt = conn.prepareStatement(QUERY_WITH_CHILDREN);
+            stmt.setInt(1, id);
+
+            rs = stmt.executeQuery();
+            RsMapper.map(rs, list, Organization.class);
+        } catch (Exception e){
+            throw e;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         return list;
     }
 
